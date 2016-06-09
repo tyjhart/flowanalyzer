@@ -3,7 +3,7 @@
 # Last modified 6/9/2016 
 
 #### Tuning options for Netflow v5, 9, and 10 (IPFIX) ####
-#
+
 #### Bulk Insert Cache ####
 # bulk_insert_count sets the amount of flow records that will be cached before bulk indexing into Elasticsearch
 # 700 - 800 has been found to be good for smaller WISPs and medium-sized organizations
@@ -19,16 +19,19 @@ bulk_insert_count = 700
 #### Netflow v5 UDP Port ####
 # This is the port that the Netflow v5 listener runs on.
 # By default the port is set to 2055, the typical Netflow v5 port.
+# After changing this port run 'service netflow_v5 restart' from a root-level shell
 netflow_v5_port = 2055
 
 #### Netflow v9 UDP Port ####
 # This is the port that the Netflow v9 listener runs on.
 # By default the port is set to 9995, the typical Netflow v9 port.
+# After changing this port run 'service netflow_v9 restart' from a root-level shell
 netflow_v9_port = 9995
 
 #### Netflow v10 (IPFIX) UDP Port ####
 # This is the port that the IPFIX listener runs on.
 # By default the port is set to 4739, the typical IPFIX port.
+# After changing this port run 'service ipfix restart' from a root-level shell
 ipfix_port = 4739
 
 #### DNS Lookups ####
@@ -37,13 +40,15 @@ ipfix_port = 4739
 # domains is also categorized based on domain name for higher-level reporting. The appliance
 # must be pointed to an **INTERNAL** DNS server, which is able to resolve internal addresses, as
 # well as addresses outside the organization. While the appliance does cache the reverse-DNS entries
-# once they are made, and prunes them automatically much like the real DNS system, turning this on
-# can generate a high volume of DNS queries, which is why you must point the appliance to an internal
-# DNS server. **DO NOT** point the appliance to an external DNS service like Google's Public DNS, DynDNS,
+# once they are resolved, and prunes them automatically much like the real DNS system, turning this on
+# can generate a high volume of DNS queries. For that reason you must point the appliance to an internal, 
+# caching DNS server. 
+#
+# **DO NOT** point the appliance to an external DNS service like Google's Public DNS, DynDNS,
 # or other services - the high volume of requests will most likely result in the appliance's IP getting
 # throttled by that DNS resolver, and possibly cut off due to unusually high volumes of requests.
 #
-# Set to False if you don't want to enable DNS lookups.
+# Set to False if you don't want to enable DNS lookups, otherwise change to True to enable lookups.
 dns = False
 
 #### End tuning ####
