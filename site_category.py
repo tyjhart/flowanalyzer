@@ -28,6 +28,7 @@ site_categories = {
 
 # Blogging
 'wordpress.com':'Blogging',
+'tumblr.com':'Blogging',
 
 # CDN
 'akadns.net':'CDN',
@@ -134,6 +135,7 @@ site_categories = {
 'pornhub.com':'Adult',
 'youporn.com':'Adult',
 'xvideos.com':'Adult',
+'motherless.com':'Adult',
 
 # Streaming Video
 #
