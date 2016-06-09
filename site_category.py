@@ -126,6 +126,7 @@ site_categories = {
 # Adult
 'xhamster.com':'Adult',
 'pornhub.com':'Adult',
+'pornhubgay.com':'Adult',
 'youporn.com':'Adult',
 'xvideos.com':'Adult',
 'motherless.com':'Adult',
