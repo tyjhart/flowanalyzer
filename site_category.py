@@ -15,6 +15,7 @@ site_categories = {
 'criteo.com':'Advertising',
 'turn.com':'Advertising',
 'valueclick.com':'Advertising',
+'disqus.com':'Advertising',
 
 # Apple
 'aaplimg.com':'Apple',
@@ -24,6 +25,9 @@ site_categories = {
 'bankofamerica.com':'Banking',
 'navyfederal.org':'Banking',
 'navyfcul.org':'Banking',
+
+# Blogging
+'wordpress.com':'Blogging',
 
 # CDN
 'akadns.net':'CDN',
