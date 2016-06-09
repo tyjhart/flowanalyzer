@@ -6,6 +6,14 @@
 # Categories of mainstream websites
 
 site_categories = {
+# Adult
+'xhamster.com':'Adult',
+'pornhub.com':'Adult',
+'pornhubgay.com':'Adult',
+'youporn.com':'Adult',
+'xvideos.com':'Adult',
+'motherless.com':'Adult',
+
 # Advertising
 'adnexus.net':'Advertising',
 'dotomi.com':'Advertising',
@@ -60,6 +68,10 @@ site_categories = {
 # Bing
 'bing.com':'Bing',
 
+# Image Boards
+'imgur.com':'Image Boards',
+'4chan.org':'Image Boards',
+
 # Internet Service Providers
 'cox.net':'ISP',
 'comcast.net':'ISP',
@@ -112,9 +124,15 @@ site_categories = {
 
 # Social Media
 #
+# 9gag
+'9gag.com':'9Gag',
+#
 # Facebook
 'facebook.com':'Facebook',
 'fbcdn.net':'Facebook',
+#
+# Reddit
+'reddit.com':'Reddit',
 #
 # Twitter
 'twitter.com':'Twitter',
@@ -122,15 +140,7 @@ site_categories = {
 # Gaming
 'xbox.com':'Gaming',
 'xboxlive.com':'Gaming',
-
-# Adult
-'xhamster.com':'Adult',
-'pornhub.com':'Adult',
-'pornhubgay.com':'Adult',
-'youporn.com':'Adult',
-'xvideos.com':'Adult',
-'motherless.com':'Adult',
-
+#
 # Streaming Music
 'pandora.com':'Streaming Music',
 'spotify.com':'Streaming Music',
