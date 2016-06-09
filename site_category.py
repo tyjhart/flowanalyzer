@@ -2,7 +2,7 @@
 # Not for distribution or publication.
 #
 # Last modified 6/9/2016
-#
+
 # Categories of mainstream websites
 
 site_categories = {

@@ -1,3 +1,7 @@
+# Copyright 2016, Manito Networks, LLC. All rights reserved
+#
+# Last modified 6/9/2016
+
 import time, datetime, socket, struct, sys, json, socket, logging, logging.handlers
 from struct import *
 from socket import inet_ntoa
