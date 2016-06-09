@@ -53,13 +53,12 @@ site_categories = {
 'google.com':'Google',
 '1e100.com':'Google',
 '1e100.net':'Google',
-
+#
 # Yahoo
 'yahoo.com':'Yahoo',
-
+#
 # Bing
 'bing.com':'Bing',
-
 
 # Internet Service Providers
 'cox.net':'ISP',
@@ -75,11 +74,9 @@ site_categories = {
 'telus.net':'ISP',
 'sky.com':'ISP',
 
-
 # Infrastructure / Cloud
 'amazonaws.com':'Cloud',
 'rackspace.com':'Cloud',
-
 
 # Job Search
 'indeed.com':'Job Search',
@@ -87,7 +84,6 @@ site_categories = {
 'monster.com':'Job Search',
 'simplyhired.com':'Job Search',
 'careerbuilder.com':'Job Search',
-
 
 # Media
 #
@@ -101,12 +97,11 @@ site_categories = {
 'vanityfair.com':'News',
 'usatoday.com':'News',
 
-
 # Productivity
 #
 # Dropbox
 'dropbox.com':'Productivity',
-
+#
 # Box
 'box.com':'Productivity',
 
@@ -115,16 +110,14 @@ site_categories = {
 # Amazon
 'amazon.com':'Shopping',
 
-
 # Social Media
 #
 # Facebook
 'facebook.com':'Facebook',
 'fbcdn.net':'Facebook',
-
+#
 # Twitter
 'twitter.com':'Twitter',
-
 
 # Gaming
 'xbox.com':'Gaming',
@@ -137,19 +130,19 @@ site_categories = {
 'xvideos.com':'Adult',
 'motherless.com':'Adult',
 
+# Streaming Music
+'pandora.com':'Streaming Music',
+'spotify.com':'Streaming Music',
+
 # Streaming Video
 #
 # YouTube
 'youtube.com':'Streaming Video',
-
+#
 # Vimeo
 'vimeo.com':'Streaming Video',
-
+#
 # Netflix
 'netflix.com':'Streaming Video',
-'nflxvideo.net':'Streaming Video',
-
-# Streaming Music
-'pandora.com':'Streaming Music',
-'spotify.com':'Streaming Music'
+'nflxvideo.net':'Streaming Video'
 }
