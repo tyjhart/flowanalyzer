@@ -42,7 +42,7 @@ except ValueError as socket_error:
 
 # Spin up ES instance
 try:
-	es = Elasticsearch(['127.0.0.1'])
+	es = Elasticsearch([elasticsearch_host])
 	logger.info(logging_ops.log_time() + ' Connected to Elasticsearch')
 except ValueError as elasticsearch_connect_error:
 	logger.critical(logging_ops.log_time() + ': Could not connect to Elasticsearch')
