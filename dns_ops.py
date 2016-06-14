@@ -11,22 +11,25 @@ import site_category
 
 def dns_add_address(ip):
 	second_level_domains = {
-	"com.au",
-	"net.au",
-	"org.au",
-	"edu.au",
-	"co.uk",
+	"co.id",
+	"co.in",
 	"co.jp",
-	"com.sg",
-	"com.br",
-	"com.gh",
-	"net.il",
 	"co.nz",
+	"co.uk",
+	"co.za",
 	"com.ar",
-	"com.sg",
-	"com.mx",
+	"com.au",
 	"com.bn",
-	"co.za"
+	"com.br",
+	"com.cn",
+	"com.gh",
+	"com.hk",
+	"com.mx",
+	"com.sg",
+	"edu.au",
+	"net.au",
+	"net.il",
+	"org.au"
 	}
 
 	# Haven't already resolved the IP - do the lookup and cache the result
