@@ -38,6 +38,10 @@ netflow_v9_port = 9995
 # After changing this port run 'service ipfix restart' from a root-level shell
 ipfix_port = 4739
 
+#### Elasticsearch Host and Port ####
+# The Elasticsearch host and port to send flow data to
+elasticsearch_host = '127.0.0.1'
+
 #### DNS Lookups ####
 # The appliance will attempt to do a reverse DNS lookup for IP addresses reported in flows,
 # in order to make correlations between traffic and different domains. Traffic to / from certain
