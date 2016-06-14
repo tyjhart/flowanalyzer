@@ -67,6 +67,9 @@ site_categories = {
 #
 # Bing
 'bing.com':'Bing',
+#
+# Baidu
+'baidu.com':'Baidu',
 
 # Image Boards
 'imgur.com':'Image Boards',
@@ -140,20 +143,24 @@ site_categories = {
 # Gaming
 'xbox.com':'Gaming',
 'xboxlive.com':'Gaming',
+
+# Streaming
 #
 # Streaming Music
-'pandora.com':'Streaming Music',
-'spotify.com':'Streaming Music',
+'pandora.com':'Streaming',
+'spotify.com':'Streaming',
 
 # Streaming Video
 #
 # YouTube
-'youtube.com':'Streaming Video',
+'youtube.com':'Streaming',
+'ytimg.com':'Streaming',
+'googlevideo.com':'Streaming',
 #
 # Vimeo
-'vimeo.com':'Streaming Video',
+'vimeo.com':'Streaming',
 #
 # Netflix
-'netflix.com':'Streaming Video',
-'nflxvideo.net':'Streaming Video'
+'netflix.com':'Streaming',
+'nflxvideo.net':'Streaming'
 }
