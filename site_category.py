@@ -76,22 +76,23 @@ site_categories = {
 '4chan.org':'Image Boards',
 
 # Internet Service Providers
-'cox.net':'ISP',
-'comcast.net':'ISP',
-'charter.com':'ISP',
-'verizon.net':'ISP',
-'telstra.com.au':'ISP',
-'telstraglobal.net':'ISP',
-'sbcglobal.net':'ISP',
-'skybroadband.com':'ISP',
-'quest.net':'ISP',
-'cableone.net':'ISP',
-'telus.net':'ISP',
-'sky.com':'ISP',
+# 'cox.net':'ISP',
+# 'comcast.net':'ISP',
+# 'charter.com':'ISP',
+# 'verizon.net':'ISP',
+# 'telstra.com.au':'ISP',
+# 'telstraglobal.net':'ISP',
+# 'sbcglobal.net':'ISP',
+# 'skybroadband.com':'ISP',
+# 'quest.net':'ISP',
+# 'cableone.net':'ISP',
+# 'telus.net':'ISP',
+# 'sky.com':'ISP',
 
 # Infrastructure / Cloud
 'amazonaws.com':'Cloud',
 'rackspace.com':'Cloud',
+'linode.com':'Cloud',
 
 # Job Search
 'indeed.com':'Job Search',
