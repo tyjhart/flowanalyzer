@@ -436,7 +436,7 @@ registered_ports = {
 #517:'Tenex Link-Like',
 #518:'Ntalk',
 #519:'unixtime',
-#520:'extended file name server',
+520:{"Name": "RIP","Category":"Routing"},
 521:{"Name": "RIPng","Category":"Routing"},
 #522:'ULP',
 523:{"Name": "IBM-DB2"},
