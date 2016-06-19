@@ -10,28 +10,7 @@ import dns_base
 import site_category
 
 def dns_add_address(ip):
-	second_level_domains = {
-	"co.id",
-	"co.in",
-	"co.jp",
-	"co.nz",
-	"co.uk",
-	"co.za",
-	"com.ar",
-	"com.au",
-	"com.bn",
-	"com.br",
-	"com.cn",
-	"com.gh",
-	"com.hk",
-	"com.mx",
-	"com.sg",
-	"edu.au",
-	"net.au",
-	"net.il",
-	"org.au"
-	}
-
+	
 	# Haven't already resolved the IP - do the lookup and cache the result
 	if ip not in dns_base.dns_cache["Records"]:
 		
@@ -48,11 +27,13 @@ def dns_add_address(ip):
 			# Update the local cache
 			dns_base.dns_cache["Records"][ip]["FQDN"] = fqdn_lookup
 			
-			# ***Need to build code in here to account for .co.uk and other domains that are three-deep typically***
+			# Parse the FQDN for Domain information
 			if "." in fqdn_lookup:
 				fqdns_exploded = fqdn_lookup.split('.')
 				domain = str(fqdns_exploded[-2]) + "." + str(fqdns_exploded[-1]) 
-				if domain in second_level_domains:
+				
+				# Check for .co.uk, .com.jp, etc...
+				if domain in dns_base.second_level_domains:
 					domain = str(fqdns_exploded[-3]) + "." + str(fqdns_exploded[-2]) + "." + str(fqdns_exploded[-1]) 
 				else:
 					pass
@@ -61,12 +42,14 @@ def dns_add_address(ip):
 						
 				if domain in site_category.site_categories:
 					dns_base.dns_cache["Records"][ip]["Category"] = site_category.site_categories[domain]
-					
+				else:
+					dns_base.dns_cache["Records"][ip]["Category"] = "Uncategorized"
+
 			else:
-				dns_base.dns_cache["Records"][ip]["FQDN"] = fqdn_lookup
+				dns_base.dns_cache["Records"][ip]["Domain"] = "None"
+				dns_base.dns_cache["Records"][ip]["Category"] = "Uncategorized"
 			
 		else:
-			#dns_base.dns_cache["Records"][ip]["FQDN"] = ip
 			dns_base.dns_cache["Records"][ip]["FQDN"] = "No record"
 			dns_base.dns_cache["Records"][ip]["Domain"] = "No record"
 			dns_base.dns_cache["Records"][ip]["Category"] = "Uncategorized"
