@@ -8,6 +8,7 @@ from struct import *
 from socket import inet_ntoa,inet_ntop
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
+from IPy import IP
 
 # Field types, ports, etc
 from defined_ports import registered_ports,other_ports
@@ -260,22 +261,69 @@ def ipfix_server():
 								
 								# Tag the flow with Source and Destination FQDN and Domain info (if available)
 								if dns is True:
-									if template_key == 8 or template_key == 27:
+
+									# IPv4 Source IP
+									if template_key == 8:
+										source_ip = IP(str(flow_payload)+"/32")
+										if lookup_internal is False and source_ip.iptype() == 'PRIVATE':
+											pass
+										else:
+											resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+											flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
+											flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
+											if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+									
+									# IPv4 Destination IP
+									elif template_key == 12: 
+										destination_ip = IP(str(flow_payload)+"/32")
+										if lookup_internal is False and destination_ip.iptype() == 'PRIVATE':
+											pass
+										else:
+											resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+											flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
+											flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
+											if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]			
+									
+									# IPv6 Source IP
+									elif template_key == 27:
 										resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
 										flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
-										if "Domain" in resolved_fqdn_dict:
-											flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-										if "Category" in resolved_fqdn_dict:
-											flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
-									elif template_key == 12 or template_key == 28:
+										flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
+										if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+									
+									# IPv6 Destination IP
+									elif template_key == 28:
 										resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
 										flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
-										if "Domain" in resolved_fqdn_dict:
-											flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-										if "Category" in resolved_fqdn_dict:
-											flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
+										flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
+										if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+
 									else:
 										pass
+								
+								
+								# Tag the flow with Source and Destination FQDN and Domain info (if available)
+								#if dns is True:
+									#if template_key == 8 or template_key == 27:
+										#resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+										#flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
+										#if "Domain" in resolved_fqdn_dict:
+											#flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
+										#if "Category" in resolved_fqdn_dict:
+											#flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
+									#elif template_key == 12 or template_key == 28:
+										#resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+										#flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
+										#if "Domain" in resolved_fqdn_dict:
+											#flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
+										#if "Category" in resolved_fqdn_dict:
+											#flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
+									#else:
+										#pass
 								
 								# Move the byte position the number of bytes in the field we just parsed
 								data_position += field_size
