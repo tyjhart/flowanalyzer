@@ -195,9 +195,13 @@ def ipfix_server():
 									# Set the IANA protocol number for the index, in case the customer wants to sort by protocol number instead of name
 									if template_key == 4:
 										flow_index["_source"]['Protocol Number'] = flow_payload
+										
+										# Add "Category" of the protocol if there is one ("Routing", "ICMP", etc.)
+										if "Category" in protocol_type[flow_payload]:
+											flow_index["_source"]['Traffic Category'] = protocol_type[flow_payload]["Category"] 
 
 									# Based on source / destination port try to classify as a common service
-									elif template_key == 7 or template_key == 11:							
+									elif (template_key == 7 or template_key == 11) and "Traffic" not in flow_index["_source"]:							
 										if flow_payload in registered_ports:
 											flow_index["_source"]['Traffic'] = registered_ports[flow_payload]["Name"]
 											if "Category" in registered_ports[flow_payload]:

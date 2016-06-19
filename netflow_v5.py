@@ -82,11 +82,14 @@ def netflow_v5_server():
 				base = packet_header_size + (flow_num * flow_record_size)
 				data = struct.unpack('!IIIIHH',flow_packet_contents[base+16:base+36])
 				now = datetime.datetime.utcnow()
+				protocol_number = ord(flow_packet_contents[base+38])
+				
+				# Protocol Name
 				try:
-					flow_protocol = str(protocol_type[ord(flow_packet_contents[base+38])])
+					flow_protocol = protocol_type[protocol_number]["Name"]
 				except:
 					flow_protocol = "Other"
-				
+		
 				flow_index = {
 				"_index": str("flow-" + now.strftime("%Y-%m-%d")),
 				"_type": "Flow",
@@ -103,13 +106,17 @@ def netflow_v5_server():
 				"Output Interface": struct.unpack('!h',flow_packet_contents[base+14:base+16])[0],
 				"Destination Port": data[5],
 				"Protocol": flow_protocol,
-				"Protocol Number": ord(flow_packet_contents[base+38]),
+				"Protocol Number": protocol_number,
 				"Type of Service": struct.unpack('!B',flow_packet_contents[base+39])[0],
 				"Source AS": struct.unpack('!h',flow_packet_contents[base+40:base+42])[0],
 				"Destination AS": struct.unpack('!h',flow_packet_contents[base+42:base+44])[0],
 				"Bytes In": data[1]
 				}
 				}
+
+				# Protocol Category for protocols not TCP/UDP
+				if "Category" in protocol_type[protocol_number]:
+					flow_index["_source"]['Traffic Category'] = protocol_type[protocol_number]["Category"]
 				
 				source_port = flow_index["_source"]["Source Port"]
 				destination_port = flow_index["_source"]["Destination Port"]
@@ -143,8 +150,8 @@ def netflow_v5_server():
 						flow_index["_source"]['Traffic Category'] = "Other"
 					
 					else:
-						pass
-						
+						pass		
+				
 				if dns is True:	
 					# Tag the flow with Source and Destination FQDN and Domain info (if available)
 					source_ip = IP(str(flow_index["_source"]["IPv4 Source"])+"/32")
