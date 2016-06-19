@@ -27,6 +27,7 @@ site_categories = {
 
 # Apple
 'aaplimg.com':'Apple',
+'apple.com':'Apple',
 
 # Banking
 'chase.com':'Banking',
@@ -59,6 +60,7 @@ site_categories = {
 #
 # Google
 'google.com':'Google',
+'gstatic.com':'Google',
 '1e100.com':'Google',
 '1e100.net':'Google',
 #
@@ -137,6 +139,8 @@ site_categories = {
 #
 # Reddit
 'reddit.com':'Reddit',
+'redditstatic.com':'Reddit',
+'redditmedia.com':'Reddit',
 #
 # Twitter
 'twitter.com':'Twitter',
