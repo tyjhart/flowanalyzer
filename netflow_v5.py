@@ -8,6 +8,7 @@ from struct import *
 from socket import inet_ntoa
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
+from IPy import IP
 
 # Protocol numbers and types of traffic for comparison
 from protocol_numbers import *
@@ -140,19 +141,25 @@ def netflow_v5_server():
 						
 				if dns is True:	
 					# Tag the flow with Source and Destination FQDN and Domain info (if available)
-					resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Source"])
-					flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
-					if "Domain" in resolved_fqdn_dict:
+					source_ip = IP(str(flow_index["_source"]["IPv4 Source"])+"/32")
+					if lookup_internal is False and source_ip.iptype() == 'PRIVATE':
+						pass
+					else:
+						resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Source"])
+						flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
 						flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-					if "Category" in resolved_fqdn_dict:
-						flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
-						
-					resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Destination"])
-					flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
-					if "Domain" in resolved_fqdn_dict:
+						if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+							flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+					
+					destination_ip = IP(str(flow_index["_source"]["IPv4 Destination"])+"/32")
+					if lookup_internal is False and destination_ip.iptype() == 'PRIVATE':
+						pass
+					else:	
+						resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Destination"])
+						flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
 						flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-					if "Category" in resolved_fqdn_dict:
-						flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
+						if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+							flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
 				
 				logger.debug(logging_ops.log_time() + " Flow data: " + str(flow_index))		
 				flow_dic.append(flow_index)
