@@ -137,6 +137,12 @@ def netflow_v5_server():
 							flow_index["_source"]['Traffic Category'] = other_ports[destination_port]["Category"]
 					
 					else:
+						flow_index["_source"]['Traffic'] = "Other"
+
+					if "Traffic Category" not in flow_index["_source"]:
+						flow_index["_source"]['Traffic Category'] = "Other"
+					
+					else:
 						pass
 						
 				if dns is True:	
@@ -166,16 +172,6 @@ def netflow_v5_server():
 				flow_num += 1
 				
 			if len(flow_dic) >= bulk_insert_count:
-				
-				# For the counter below
-				flow_dic_length = len(flow_dic)
-				
-				# Set Traffic and Traffic Category to "Other" if not already defined, to normalize graphs
-				for bulk_index_line in range(0,flow_dic_length):
-					if "Traffic" not in flow_dic[bulk_index_line]["_source"]:
-						flow_dic[bulk_index_line]["_source"]["Traffic"] = "Other"
-					if "Traffic Category" not in flow_dic[bulk_index_line]["_source"]:
-						flow_dic[bulk_index_line]["_source"]["Traffic Category"] = "Other"
 				
 				try:
 					helpers.bulk(es,flow_dic)
