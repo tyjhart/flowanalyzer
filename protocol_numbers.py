@@ -5,7 +5,7 @@
 # Array of protocol numbers and names according to IANA http:{"Name": ""},//www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
 
 protocol_type = {
-0:{"Name":{"Name": "HOPOPT"},
+0:{"Name":"HOPOPT"},
 1:{"Name": "ICMP","Category":"ICMP"},
 2:{"Name": "IGMP"},
 3:{"Name": "GGP"},
