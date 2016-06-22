@@ -14,6 +14,7 @@ from IPy import IP
 from defined_ports import registered_ports,other_ports
 from field_types import ipfix_fields
 from netflow_options import *
+from protocol_numbers import *
 
 # DNS Resolution
 import dns_base
