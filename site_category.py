@@ -6,13 +6,6 @@
 # Categories of mainstream websites
 
 site_categories = {
-# Adult
-'xhamster.com':'Adult',
-'pornhub.com':'Adult',
-'pornhubgay.com':'Adult',
-'youporn.com':'Adult',
-'xvideos.com':'Adult',
-'motherless.com':'Adult',
 
 # Advertising
 'adnexus.net':'Advertising',
@@ -95,6 +88,9 @@ site_categories = {
 'amazonaws.com':'Cloud',
 'rackspace.com':'Cloud',
 'linode.com':'Cloud',
+'windowsazure.com':'Cloud',
+'azure.com':'Cloud',
+'cloudapp.net':'Cloud',
 
 # Job Search
 'indeed.com':'Job Search',
