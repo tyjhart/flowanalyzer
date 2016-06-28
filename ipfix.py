@@ -123,6 +123,10 @@ def ipfix_server():
 					logger.debug(logging_ops.log_time() + " Finished template set at " + str(byte_position))
 					logger.debug(logging_ops.log_time() + " Working templates: " + str(template_list))
 					
+				# Is it an IPFIX options template set (ID 3)?
+				elif flow_set_id == 3:
+					break # Code to parse the Options Template will go here eventually
+
 				# Received an IPFIX flow data set, corresponding with a template that should have already been rcvd
 				elif flow_set_id > 255:
 					logger.debug(logging_ops.log_time() + " Processing data flow " + str(flow_set_id) + " at byte position " + str(byte_position))
