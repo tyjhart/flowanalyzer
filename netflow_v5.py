@@ -75,7 +75,11 @@ def netflow_v5_server():
 			logger.warning(logging_ops.log_time() + " Rcvd non-Netflow v5 packet from " + str(sensor_address[0]))
 			continue
 		else:
+			
+			# Set overall flow counter
 			flow_num = 0
+
+			# Iterate over flows in packet
 			for flow in range(0, flow_count):
 				
 				logger.debug(logging_ops.log_time() + " Flow " + str(flow_num+1) + " of " + str(flow_count))
@@ -88,7 +92,7 @@ def netflow_v5_server():
 				try:
 					flow_protocol = protocol_type[protocol_number]["Name"]
 				except:
-					flow_protocol = "Other"
+					flow_protocol = "Other" # Should never see this
 		
 				flow_index = {
 				"_index": str("flow-" + now.strftime("%Y-%m-%d")),
@@ -118,11 +122,12 @@ def netflow_v5_server():
 				if "Category" in protocol_type[protocol_number]:
 					flow_index["_source"]['Traffic Category'] = protocol_type[protocol_number]["Category"]
 				
-				source_port = flow_index["_source"]["Source Port"]
-				destination_port = flow_index["_source"]["Destination Port"]
-				
 				# If the protocol is TCP or UDP try to apply traffic labels
 				if flow_index["_source"]["Protocol Number"] == 6 or flow_index["_source"]["Protocol Number"] == 17:
+					
+					source_port = flow_index["_source"]["Source Port"]
+					destination_port = flow_index["_source"]["Destination Port"]
+
 					if source_port in registered_ports:
 						flow_index["_source"]['Traffic'] = registered_ports[source_port]["Name"]
 						if "Category" in registered_ports[source_port]:
@@ -153,22 +158,17 @@ def netflow_v5_server():
 						pass		
 				
 				if dns is True:	
-					# Tag the flow with Source and Destination FQDN and Domain info (if available)
-					source_ip = IP(str(flow_index["_source"]["IPv4 Source"])+"/32")
-					if lookup_internal is False and source_ip.iptype() == 'PRIVATE':
-						pass
-					else:
-						resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Source"])
+					
+					# Tag the flow with Source FQDN and Domain info (if available)
+					resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Source"])
+					if resolved_fqdn_dict:
 						flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
 						flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-						if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-							flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+						flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
 					
-					destination_ip = IP(str(flow_index["_source"]["IPv4 Destination"])+"/32")
-					if lookup_internal is False and destination_ip.iptype() == 'PRIVATE':
-						pass
-					else:	
-						resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Destination"])
+					# Tag the flow with Source FQDN and Domain info (if available)	
+					resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Destination"])
+					if resolved_fqdn_dict:
 						flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
 						flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
 						if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
