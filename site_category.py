@@ -56,6 +56,7 @@ site_categories = {
 'gstatic.com':'Google',
 '1e100.com':'Google',
 '1e100.net':'Google',
+'googleusercontent.com':'Google',
 #
 # Yahoo
 'yahoo.com':'Yahoo',
