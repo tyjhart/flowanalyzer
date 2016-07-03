@@ -5,11 +5,33 @@
 import time, datetime, socket, struct, sys, json, socket, logging, logging.handlers
 from struct import *
 from socket import inet_ntoa
+from IPy import IP
 
 import dns_base
 import site_category
+from netflow_options import *
 
 def dns_add_address(ip):
+	
+	# Check if IPv4
+	if IP(ip).version() == 4:
+		
+		# Add a /32 mask to make the address usable
+		v4_ip = IP(str(ip)+"/32")
+
+		# Check if broadcast address
+		ip == '255.255.255.255':
+			return False
+
+		# Check if it's a local address that we're not looking up
+		elif lookup_internal is False and v4_ip.iptype() == 'PRIVATE':
+			return False
+
+		else:
+			pass
+
+	else:
+		pass				
 	
 	# Haven't already resolved the IP - do the lookup and cache the result
 	if ip not in dns_base.dns_cache["Records"]:
