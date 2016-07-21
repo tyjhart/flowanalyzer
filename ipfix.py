@@ -60,6 +60,7 @@ def ipfix_server():
 	# Cache the IPFIX templates, in order to decode the data flows
 	template_list = {}
 	
+	# Continually run
 	while True:
 		
 		# Listen for packets inbound
@@ -68,6 +69,8 @@ def ipfix_server():
 		# Get the Netflow version and flow size, or just continue listening
 		try:
 			(netflow_version, ipfix_flow_bytes) = struct.unpack('!HH',flow_packet_contents[0:4])
+		
+		# Something went wrong, reset
 		except:
 			continue
 				
@@ -146,7 +149,7 @@ def ipfix_server():
 						# Get the current UTC time for the flows
 						now = datetime.datetime.utcnow()
 							
-						data_position = byte_position
+						data_position = byte_position # Temporary counter
 						while data_position+4 <= (flow_set_length + (byte_position-4)):
 							
 							# Cache the flow data, to be appended to flow_dic[]						
@@ -202,6 +205,8 @@ def ipfix_server():
 
 									# Based on TCP and UDP source / destination ports try to classify the service
 									elif (template_key == 7 or template_key == 11) and "Traffic" not in flow_index["_source"]:							
+										
+										# Registered IANA ports < 1024
 										if flow_payload in registered_ports:
 
 											# Tag the service
@@ -211,6 +216,7 @@ def ipfix_server():
 											if "Category" in registered_ports[flow_payload]:
 												flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_payload)]["Category"]
 										
+										# Not a registered port, check if it's a popular port
 										elif flow_payload in other_ports:
 											
 											# Tag the service
@@ -219,6 +225,8 @@ def ipfix_server():
 											# Tag the service category
 											if "Category" in other_ports[flow_payload]:
 												flow_index["_source"]['Traffic Category'] = other_ports[int(flow_payload)]["Category"]
+										
+										# Not a categorized port
 										else:
 											pass
 									
@@ -330,7 +338,7 @@ def ipfix_server():
 									else:
 										pass
 								
-								# Move the byte position the number of bytes in the field we just parsed
+								# Move the byte position the number of bytes we just parsed
 								data_position += field_size
 							
 							# Append this single flow to the flow_dic[] for bulk upload
@@ -378,7 +386,7 @@ def ipfix_server():
 					for flow_debug in flow_dic:
 						logger.error(flow_debug)
 					
-				# Reset flow_dic to empty so flow artifacts don't persist
+				# Reset flow_dic
 				flow_dic = []
 				
 		# Not IPFIX packet
