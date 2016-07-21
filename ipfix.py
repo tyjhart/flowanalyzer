@@ -325,26 +325,6 @@ def ipfix_server():
 									else:
 										pass
 								
-								
-								# Tag the flow with Source and Destination FQDN and Domain info (if available)
-								#if dns is True:
-									#if template_key == 8 or template_key == 27:
-										#resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-										#flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
-										#if "Domain" in resolved_fqdn_dict:
-											#flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-										#if "Category" in resolved_fqdn_dict:
-											#flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
-									#elif template_key == 12 or template_key == 28:
-										#resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-										#flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
-										#if "Domain" in resolved_fqdn_dict:
-											#flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-										#if "Category" in resolved_fqdn_dict:
-											#flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
-									#else:
-										#pass
-								
 								# Move the byte position the number of bytes in the field we just parsed
 								data_position += field_size
 							
