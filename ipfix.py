@@ -53,6 +53,7 @@ except ValueError as elasticsearch_connect_error:
 	
 # IPFIX server
 def ipfix_server():
+	
 	# Stage the flows for the bulk API index operation
 	flow_dic = []
 	
@@ -64,7 +65,11 @@ def ipfix_server():
 		# Listen for packets inbound
 		flow_packet_contents, sensor_address = netflow_sock.recvfrom(65565)
 		
-		(netflow_version, ipfix_flow_bytes) = struct.unpack('!HH',flow_packet_contents[0:4])
+		# Get the Netflow version and flow size, or just continue listening
+		try:
+			(netflow_version, ipfix_flow_bytes) = struct.unpack('!HH',flow_packet_contents[0:4])
+		except:
+			continue
 				
 		# Is it a IPFIX (Netflow v10) packet?
 		if int(netflow_version) == 10:
