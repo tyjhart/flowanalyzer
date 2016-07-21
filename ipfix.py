@@ -171,11 +171,65 @@ def ipfix_server():
 								if ipfix_fields[template_key]["Type"] == "IPv4":
 									flow_payload = inet_ntoa(flow_packet_contents[data_position:(data_position+field_size)])
 									flow_index["_source"]["IP Protocol Version"] = 4
+
+									# Domain and FQDN lookups
+									if dns is True:
+
+										# IPv4 Source IP
+										if template_key == 8:
+											source_ip = IP(str(flow_payload)+"/32")
+											if lookup_internal is False and source_ip.iptype() == 'PRIVATE':
+												pass
+											else:
+												resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+												flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
+												flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
+												if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+													flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+										
+										# IPv4 Destination IP
+										elif template_key == 12: 
+											destination_ip = IP(str(flow_payload)+"/32")
+											if lookup_internal is False and destination_ip.iptype() == 'PRIVATE':
+												pass
+											else:
+												resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+												flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
+												flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
+												if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+													flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+
+										# Not source or destination IP, don't resolve it
+										else:
+											pass
 									
 								# IPv6 Address
 								elif ipfix_fields[template_key]["Type"] == "IPv6":
 									flow_payload = inet_ntop(socket.AF_INET6,flow_packet_contents[data_position:(data_position+field_size)])
-									flow_index["_source"]["IP Protocol Version"] = 6	
+									flow_index["_source"]["IP Protocol Version"] = 6
+
+									# Domain and FQDN lookups
+									if dns is True:
+
+										# IPv6 Source IP
+										if template_key == 27:
+											resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+											flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
+											flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
+											if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+													flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+										
+										# IPv6 Destination IP
+										elif template_key == 28:
+											resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+											flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
+											flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
+											if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+													flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+
+										# Not source or destination IP, don't resolve it
+										else:
+											pass	
 								
 								# Integer type field, parse further
 								elif ipfix_fields[template_key]["Type"] == "Integer":
@@ -291,52 +345,6 @@ def ipfix_server():
 								
 								# Add the friendly Index ID and value (flow_payload) to flow_index
 								flow_index["_source"][ipfix_fields[int(template_key)]["Index ID"]] = flow_payload
-								
-								# Tag the flow with Source and Destination FQDN and Domain info (if available)
-								if dns is True:
-
-									# IPv4 Source IP
-									if template_key == 8:
-										source_ip = IP(str(flow_payload)+"/32")
-										if lookup_internal is False and source_ip.iptype() == 'PRIVATE':
-											pass
-										else:
-											resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-											flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
-											flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-											if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
-									
-									# IPv4 Destination IP
-									elif template_key == 12: 
-										destination_ip = IP(str(flow_payload)+"/32")
-										if lookup_internal is False and destination_ip.iptype() == 'PRIVATE':
-											pass
-										else:
-											resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-											flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
-											flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-											if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]			
-									
-									# IPv6 Source IP
-									elif template_key == 27:
-										resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-										flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
-										flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-										if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
-									
-									# IPv6 Destination IP
-									elif template_key == 28:
-										resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-										flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
-										flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-										if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
-
-									else:
-										pass
 								
 								# Move the byte position the number of bytes we just parsed
 								data_position += field_size
