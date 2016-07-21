@@ -156,23 +156,11 @@ def ipfix_server():
 							}
 							}
 
-							# Iterate through lines in the template
+							# Iterate through lines in the template to parse flow payloads
 							for template_key, field_size in template_list[hashed_id]["Definitions"].iteritems():
 								
-								# Check if we've been passed a "Vendor Proprietary" field, and if so skip it
-								if ipfix_fields[template_key]["Type"] == "Vendor Proprietary":
-									logger.info(
-									logging_ops.log_time() + 
-									" Rcvd vendor proprietary field, " + 
-									str(template_key) + 
-									", in " + 
-									str(flow_set_id) + 
-									" from " + 
-									str(sensor_address[0])
-									)
-								
 								# IPv4 Address
-								elif ipfix_fields[template_key]["Type"] == "IPv4":
+								if ipfix_fields[template_key]["Type"] == "IPv4":
 									flow_payload = inet_ntoa(flow_packet_contents[data_position:(data_position+field_size)])
 									flow_index["_source"]["IP Protocol Version"] = 4
 									
@@ -204,15 +192,26 @@ def ipfix_server():
 										# Add "Category" of the protocol if there is one ("Routing", "ICMP", etc.)
 										if "Category" in protocol_type[flow_payload]:
 											flow_index["_source"]['Traffic Category'] = protocol_type[flow_payload]["Category"] 
+										else:
+											flow_index["_source"]['Traffic Category'] = "Other" # To normalize graphs
 
-									# Based on source / destination port try to classify as a common service
+									# Based on TCP and UDP source / destination ports try to classify the service
 									elif (template_key == 7 or template_key == 11) and "Traffic" not in flow_index["_source"]:							
 										if flow_payload in registered_ports:
+
+											# Tag the service
 											flow_index["_source"]['Traffic'] = registered_ports[flow_payload]["Name"]
+											
+											# Tag the service category
 											if "Category" in registered_ports[flow_payload]:
 												flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_payload)]["Category"]
+										
 										elif flow_payload in other_ports:
+											
+											# Tag the service
 											flow_index["_source"]['Traffic'] = other_ports[flow_payload]["Name"]
+											
+											# Tag the service category
 											if "Category" in other_ports[flow_payload]:
 												flow_index["_source"]['Traffic Category'] = other_ports[int(flow_payload)]["Category"]
 										else:
@@ -223,7 +222,7 @@ def ipfix_server():
 										flow_index["_source"]['ICMP Type'] = int(flow_payload)//256
 										flow_index["_source"]['ICMP Code'] = int(flow_payload)%256
 
-									# Not a specially parsed field, just ignore
+									# Not a specially parsed field, just ignore and log the payload
 									else:
 										pass
 										
@@ -251,6 +250,18 @@ def ipfix_server():
 											flow_payload = ""
 										else:
 											flow_payload = (':'.join(mac_list)).upper()	
+								
+								# Check if we've been passed a "Vendor Proprietary" field, and if so log it and skip it
+								elif ipfix_fields[template_key]["Type"] == "Vendor Proprietary":
+									logger.info(
+									logging_ops.log_time() + 
+									" Rcvd vendor proprietary field, " + 
+									str(template_key) + 
+									", in " + 
+									str(flow_set_id) + 
+									" from " + 
+									str(sensor_address[0])
+									)
 								
 								# Something we haven't accounted for yet						
 								else:
@@ -369,8 +380,8 @@ def ipfix_server():
 				for bulk_index_line in range(0,flow_dic_length):
 					if "Traffic" not in flow_dic[bulk_index_line]["_source"]:
 						flow_dic[bulk_index_line]["_source"]["Traffic"] = "Other"
-					if "Traffic Category" not in flow_dic[bulk_index_line]["_source"]:
-						flow_dic[bulk_index_line]["_source"]["Traffic Category"] = "Other"
+					#if "Traffic Category" not in flow_dic[bulk_index_line]["_source"]:
+						#flow_dic[bulk_index_line]["_source"]["Traffic Category"] = "Other"
 				
 				# Perform the bulk upload to the index
 				try:
