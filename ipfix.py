@@ -113,7 +113,9 @@ def ipfix_server():
 						(template_id, template_id_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
 						if template_id > 255:
 							logger.debug(logging_ops.log_time() + " Rcvd template " + str(template_id) + ", sequence " + str(packet_attributes["sequence_number"]))
-							hashed_id = hash(str(sensor_address[0])+str(template_id))
+							
+							# Produce unique hash to identify unique template ID and sensor
+							hashed_id = hash(str(sensor_address[0])+str(template_id)) 
 							temp_template_cache[hashed_id] = {}
 							temp_template_cache[hashed_id]["Sensor"] = str(sensor_address[0])
 							temp_template_cache[hashed_id]["Template ID"] = template_id
