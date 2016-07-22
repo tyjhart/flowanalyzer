@@ -331,7 +331,10 @@ def ipfix_server():
 							
 							# If TCP, UDP, DCCP, or SCTP try to classify the service based on IANA port numbers
 							# http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
-							if flow_index["_source"]['Protocol Number'] == 6 or flow_index["_source"]['Protocol Number'] == 17 or flow_index["_source"]['Protocol Number'] == 33 or flow_index["_source"]['Protocol Number'] == 132: 						
+							if (flow_index["_source"]['Protocol Number'] == 6 or 
+							flow_index["_source"]['Protocol Number'] == 17 or 
+							flow_index["_source"]['Protocol Number'] == 33 or 
+							flow_index["_source"]['Protocol Number'] == 132): 						
 
 								# Registered IANA ports < 1024 - Source Port
 								if flow_index["_source"]['Source Port'] in registered_ports:
