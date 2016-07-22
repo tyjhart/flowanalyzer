@@ -47,7 +47,7 @@ protocol_type = {
 39:{"Name": "TP++"},
 40:{"Name": "IL"},
 41:{"Name": "IPv6 6in4","Category":"Tunnel"},
-42:{"Name": "SDRP"},
+42:{"Name": "SDRP","Category":"Routing"},
 43:{"Name": "IPv6 Routing","Category":"IPv6"},
 44:{"Name": "IPv6 Fragment","Category":"IPv6"},
 45:{"Name": "IDRP"},
