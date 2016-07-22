@@ -28,8 +28,8 @@ dns_base.init()
 
 # Set the logging level per https://docs.python.org/2/library/logging.html#levels
 # Levels include DEBUG, INFO, WARNING, ERROR, CRITICAL (case matters)
-#logging.basicConfig(level=logging.DEBUG) # For logging to a file in PROD
-logging.basicConfig(filename='/opt/manitonetworks/flow/ipfix.log',level=logging.WARNING)
+#logging.basicConfig(level=logging.WARNING) # For logging to console in DEV
+logging.basicConfig(filename='/opt/manitonetworks/flow/ipfix.log',level=logging.WARNING) # For logging to a file in PROD
 logger = logging.getLogger('IPFIX')
 
 # Set up socket listener
@@ -90,7 +90,8 @@ def ipfix_server():
 			byte_position = 16
 			logger.debug(logging_ops.log_time() + " End of header, byte position " + str(byte_position))
 			
-			# Iterate through the total flows in the packet overall
+			# Iterate through the total flows in the packet overall, could be any length
+			# Can be any combination of templates and data flows
 			while True:
 			
 				logger.debug(logging_ops.log_time() + " Start of flow with " + str(ipfix_flow_bytes) + " total bytes, at position " + str(byte_position)) 
