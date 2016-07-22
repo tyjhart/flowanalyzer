@@ -70,7 +70,7 @@ def ipfix_server():
 		try:
 			(netflow_version, ipfix_flow_bytes) = struct.unpack('!HH',flow_packet_contents[0:4])
 		
-		# Something went wrong, reset
+		# Something went wrong or we're being fuzzed, reset
 		except:
 			continue
 				
