@@ -103,7 +103,7 @@ protocol_type = {
 95:{"Name": "MICP"}, 
 96:{"Name": "SCC-SP"},
 97:{"Name": "ETHERIP","Category":"Tunnel"},
-98:{"Name": "ENCAP"},
+98:{"Name": "ENCAP","Category":"Tunnel"},
 99:{"Name": "Private Encryption Scheme"},
 100:{"Name": "GMTP"},
 101:{"Name": "IFMP"},
