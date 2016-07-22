@@ -414,9 +414,9 @@ def ipfix_server():
 				# Perform the bulk upload to the index
 				try:
 					helpers.bulk(es,flow_dic)
-					logger.info(str(len(flow_dic)) + " flow(s) uploaded to Elasticsearch")
+					logger.info(str(flow_dic_length) + " flow(s) uploaded to Elasticsearch")
 				except ValueError as bulk_index_error:
-					logger.error(str(len(flow_dic)) + " flow(s) DROPPED - Unable to index flows")
+					logger.error(str(flow_dic_length) + " flow(s) DROPPED - Unable to index flows")
 					logger.error(bulk_index_error)
 					for flow_debug in flow_dic:
 						logger.error(flow_debug)
