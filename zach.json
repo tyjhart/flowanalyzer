@@ -1,0 +1,24 @@
+{
+    "query": {
+        "bool": {
+            "must": [ 
+                {
+                    "or": [
+                        {
+                            "and": [
+                                { "term": { "Sensor": "192.168.90.1" } },
+                                { "term": { "Input Interface": 0 } }
+                            ]
+                        }, 
+                        {
+                            "and": [
+                                { "term": {"Sensor": "192.168.90.184"} },
+                                { "term": {"Input Interface": 0} }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }      
+    }  
+}

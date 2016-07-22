@@ -299,6 +299,7 @@ def ipfix_server():
 									else:
 										pass
 										
+									# Apply friendly Options name if available
 									if "Options" in ipfix_fields[template_key]:	
 										flow_index["_source"][ipfix_fields[template_key]["Index ID"]] = ipfix_fields[template_key]['Options'][int(flow_payload)]
 										
