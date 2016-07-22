@@ -262,33 +262,6 @@ def ipfix_server():
 											flow_index["_source"]['Traffic Category'] = protocol_type[flow_payload]["Category"] 
 										else:
 											flow_index["_source"]['Traffic Category'] = "Other" # To normalize graphs
-
-									# Based on TCP and UDP source / destination ports try to classify the service
-									elif (template_key == 7 or template_key == 11) and "Traffic" not in flow_index["_source"]:							
-										
-										# Registered IANA ports < 1024
-										if flow_payload in registered_ports:
-
-											# Tag the service
-											flow_index["_source"]['Traffic'] = registered_ports[flow_payload]["Name"]
-											
-											# Tag the service category
-											if "Category" in registered_ports[flow_payload]:
-												flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_payload)]["Category"]
-										
-										# Not a registered port, check if it's a popular port
-										elif flow_payload in other_ports:
-											
-											# Tag the service
-											flow_index["_source"]['Traffic'] = other_ports[flow_payload]["Name"]
-											
-											# Tag the service category
-											if "Category" in other_ports[flow_payload]:
-												flow_index["_source"]['Traffic Category'] = other_ports[int(flow_payload)]["Category"]
-										
-										# Not a categorized port
-										else:
-											pass
 									
 									# Do the special calculations for ICMP Code and Type (% operator)
 									elif template_key == 32 or template_key == 139:
@@ -356,6 +329,59 @@ def ipfix_server():
 								# Move the byte position the number of bytes we just parsed
 								data_position += field_size
 							
+							# If TCP, UDP, DCCP, or SCTP try to classify the service based on port numbers
+							if flow_index["_source"]['Protocol Number'] = 6 or flow_index["_source"]['Protocol Number'] = 17 or flow_index["_source"]['Protocol Number'] = 33 or flow_index["_source"]['Protocol Number'] = 132: 						
+
+								# Registered IANA ports < 1024 - Source Port
+								if flow_index["_source"]['Source Port'] in registered_ports:
+
+									# Tag the service
+									flow_index["_source"]['Traffic'] = registered_ports[flow_index["_source"]['Source Port']]["Name"]
+									
+									# Tag the service category
+									if "Category" in registered_ports[flow_index["_source"]['Source Port']]:
+										flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_index["_source"]['Source Port'])]["Category"]
+								
+								# Not a registered port, check if it's a popular port - Source Port
+								elif flow_index["_source"]['Source Port'] in other_ports:
+									
+									# Tag the service
+									flow_index["_source"]['Traffic'] = other_ports[flow_index["_source"]['Source Port']]["Name"]
+									
+									# Tag the service category
+									if "Category" in other_ports[flow_index["_source"]['Source Port']]:
+										flow_index["_source"]['Traffic Category'] = other_ports[int(flow_index["_source"]['Source Port'])]["Category"]
+								
+								# Registered IANA ports < 1024 - Destination Port
+								elif flow_index["_source"]['Destination Port'] in registered_ports:
+
+									# Tag the service
+									flow_index["_source"]['Traffic'] = registered_ports[flow_index["_source"]['Destination Port']]["Name"]
+									
+									# Tag the service category
+									if "Category" in registered_ports[flow_index["_source"]['Destination Port']]:
+										flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_index["_source"]['Destination Port'])]["Category"]
+								
+								# Not a registered port, check if it's a popular port - Destination Port
+								elif flow_index["_source"]['Destination Port'] in other_ports:
+									
+									# Tag the service
+									flow_index["_source"]['Traffic'] = other_ports[flow_index["_source"]['Destination Port']]["Name"]
+									
+									# Tag the service category
+									if "Category" in other_ports[flow_index["_source"]['Destination Port']]:
+										flow_index["_source"]['Traffic Category'] = other_ports[int(flow_index["_source"]['Destination Port'])]["Category"]
+								
+								# Not a categorized port
+								else:
+									pass
+							
+							# Set Traffic and Traffic Category to "Other" if not already defined, to normalize graphs
+							if "Traffic" not in flow_index["_source"]:
+								flow_index["_source"]["Traffic"] = "Other"
+							if "Traffic Category" not in flow_index["_source"]:
+								flow_index["_source"]["Traffic Category"] = "Other"
+							
 							# Append this single flow to the flow_dic[] for bulk upload
 							flow_dic.append(flow_index)
 							logger.debug(logging_ops.log_time() + " " + str(flow_index))
@@ -383,13 +409,6 @@ def ipfix_server():
 				
 				# For the counter below
 				flow_dic_length = len(flow_dic)
-				
-				# Set Traffic and Traffic Category to "Other" if not already defined, to normalize graphs
-				for bulk_index_line in range(0,flow_dic_length):
-					if "Traffic" not in flow_dic[bulk_index_line]["_source"]:
-						flow_dic[bulk_index_line]["_source"]["Traffic"] = "Other"
-					#if "Traffic Category" not in flow_dic[bulk_index_line]["_source"]:
-						#flow_dic[bulk_index_line]["_source"]["Traffic Category"] = "Other"
 				
 				# Perform the bulk upload to the index
 				try:
