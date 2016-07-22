@@ -175,7 +175,7 @@ def ipfix_server():
 									flow_payload = inet_ntoa(flow_packet_contents[data_position:(data_position+field_size)])
 									flow_index["_source"]["IP Protocol Version"] = 4
 
-									# Domain and FQDN lookups
+									# Domain and FQDN lookups for IPv4
 									if dns is True:
 
 										# IPv4 Source IP
@@ -217,7 +217,7 @@ def ipfix_server():
 									flow_payload = inet_ntop(socket.AF_INET6,flow_packet_contents[data_position:(data_position+field_size)])
 									flow_index["_source"]["IP Protocol Version"] = 6
 
-									# Domain and FQDN lookups
+									# Domain and FQDN lookups for IPv6
 									if dns is True:
 
 										# IPv6 Source IP
@@ -242,6 +242,7 @@ def ipfix_server():
 								
 								# Integer type field, parse further
 								elif ipfix_fields[template_key]["Type"] == "Integer":
+									
 									# Unpack the integer so we can process it
 									if field_size == 1:
 										flow_payload = struct.unpack('!B',flow_packet_contents[data_position:(data_position+field_size)])[0]
@@ -254,7 +255,7 @@ def ipfix_server():
 									else:
 										logger.warning(logging_ops.log_time() + " Failed to unpack an integer for " + str(ipfix_fields[template_key]["Index ID"]))
 										data_position += field_size
-										continue	
+										continue # Bail out	
 									
 									# Set the IANA protocol number for the index, in case the customer wants to sort by protocol number instead of name
 									if template_key == 4:
@@ -271,7 +272,7 @@ def ipfix_server():
 										flow_index["_source"]['ICMP Type'] = int(flow_payload)//256
 										flow_index["_source"]['ICMP Code'] = int(flow_payload)%256
 
-									# Not a specially parsed field, just ignore and log the payload
+									# Not a specially parsed integer field, just ignore and log the payload
 									else:
 										pass
 										
@@ -279,9 +280,9 @@ def ipfix_server():
 									if "Options" in ipfix_fields[template_key]:	
 										flow_index["_source"][ipfix_fields[template_key]["Index ID"]] = ipfix_fields[template_key]['Options'][int(flow_payload)]
 										
-										# Advance the position for the field and skip the rest, it's fully parsed
+										# Advance the position for the field
 										data_position += field_size
-										continue			
+										continue # Skip the rest, it's fully parsed			
 									
 									# No "Options" specified for this field type
 									else:
@@ -407,7 +408,7 @@ def ipfix_server():
 				# Rcvd a flow set ID we haven't accounted for
 				else:
 					logger.warning(logging_ops.log_time() + " Unknown flow ID " + str(flow_set_id) + " from " + str(sensor_address[0]))
-					break
+					break # Bail out
 			
 			logger.debug(logging_ops.log_time() + " " + str(packet_attributes))
 			
