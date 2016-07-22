@@ -162,6 +162,7 @@ def ipfix_server():
 							"Flow Type": "IPFIX",
 							"Sensor": sensor_address[0],
 							"Sequence": str(packet_attributes["sequence_number"]),
+							"Observation Domain": str(packet_attributes["observation_id"]),
 							"Time": now.strftime("%Y-%m-%dT%H:%M:%S") + ".%03d" % (now.microsecond / 1000) + "Z",
 							}
 							}
