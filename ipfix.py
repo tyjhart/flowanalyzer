@@ -276,7 +276,7 @@ def ipfix_server():
 									if "Options" in ipfix_fields[template_key]:	
 										flow_index["_source"][ipfix_fields[template_key]["Index ID"]] = ipfix_fields[template_key]['Options'][int(flow_payload)]
 										
-										# Advance the position for each field and skip the rest
+										# Advance the position for the field and skip the rest, it's fully parsed
 										data_position += field_size
 										continue			
 									
@@ -329,7 +329,8 @@ def ipfix_server():
 								# Move the byte position the number of bytes we just parsed
 								data_position += field_size
 							
-							# If TCP, UDP, DCCP, or SCTP try to classify the service based on port numbers
+							# If TCP, UDP, DCCP, or SCTP try to classify the service based on IANA port numbers
+							# http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
 							if flow_index["_source"]['Protocol Number'] == 6 or flow_index["_source"]['Protocol Number'] == 17 or flow_index["_source"]['Protocol Number'] == 33 or flow_index["_source"]['Protocol Number'] == 132: 						
 
 								# Registered IANA ports < 1024 - Source Port
