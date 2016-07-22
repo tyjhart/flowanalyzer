@@ -72,6 +72,7 @@ def ipfix_server():
 		
 		# Something went wrong or we're being fuzzed, reset
 		except:
+			logger.critical(logging_ops.log_time() + str(" - Unable to parse Netflow version and bytes"))
 			continue
 				
 		# Is it a IPFIX (Netflow v10) packet?
