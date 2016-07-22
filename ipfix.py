@@ -329,7 +329,7 @@ def ipfix_server():
 								# Move the byte position the number of bytes we just parsed
 								data_position += field_size
 							
-							# If TCP, UDP, DCCP, or SCTP try to classify the service based on IANA port numbers
+							# If TCP, UDP, DCCP, or SCTP (transport) try to classify the service based on IANA port numbers
 							# http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
 							if (flow_index["_source"]['Protocol Number'] == 6 or 
 							flow_index["_source"]['Protocol Number'] == 17 or 
