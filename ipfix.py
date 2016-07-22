@@ -177,27 +177,33 @@ def ipfix_server():
 
 										# IPv4 Source IP
 										if template_key == 8:
-											source_ip = IP(str(flow_payload)+"/32")
-											if lookup_internal is False and source_ip.iptype() == 'PRIVATE':
+											if flow_payload == "255.255.255.255":
 												pass
 											else:
-												resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-												flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
-												flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-												if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-													flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+												source_ip = IP(str(flow_payload)+"/32")
+												if lookup_internal is False and source_ip.iptype() == 'PRIVATE':
+													pass
+												else:
+													resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+													flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
+													flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
+													if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+														flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
 										
 										# IPv4 Destination IP
-										elif template_key == 12: 
-											destination_ip = IP(str(flow_payload)+"/32")
-											if lookup_internal is False and destination_ip.iptype() == 'PRIVATE':
+										elif template_key == 12:
+											if flow_payload == "255.255.255.255":
 												pass
-											else:
-												resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-												flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
-												flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-												if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-													flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+											else: 
+												destination_ip = IP(str(flow_payload)+"/32")
+												if lookup_internal is False and destination_ip.iptype() == 'PRIVATE':
+													pass
+												else:
+													resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+													flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
+													flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
+													if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+														flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
 
 										# Not source or destination IP, don't resolve it
 										else:
