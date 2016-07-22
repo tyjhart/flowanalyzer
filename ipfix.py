@@ -101,8 +101,8 @@ def ipfix_server():
 					logger.debug(logging_ops.log_time() + " Found ID " + str(flow_set_id) + ", length " + str(flow_set_length))
 				except:
 					logger.debug(logging_ops.log_time() + " Out of bytes to unpack, breaking")
-					break
-				byte_position += 4
+					break # Done with the packet
+				byte_position += 4 # Advance past the initial header of ID and length
 				
 				# Is it an IPFIX template set (ID 2)?
 				if flow_set_id == 2:
@@ -118,13 +118,11 @@ def ipfix_server():
 							temp_template_cache[hashed_id]["Sensor"] = str(sensor_address[0])
 							temp_template_cache[hashed_id]["Template ID"] = template_id
 							temp_template_cache[hashed_id]["Length"] = template_id_length
-							temp_template_cache[hashed_id]["Definitions"] = collections.OrderedDict()
-							template_line_counter = 1
-							while template_line_counter <= template_id_length:
+							temp_template_cache[hashed_id]["Definitions"] = collections.OrderedDict() # ORDER MATTERS
+							for template_line in range(0,template_id_length):
 								template_position += 4
 								(template_element, template_element_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
-								temp_template_cache[hashed_id]["Definitions"][template_element] = template_element_length
-								template_line_counter += 1
+								temp_template_cache[hashed_id]["Definitions"][template_element] = template_element_length # Cache each line
 						template_position += 4
 					template_list.update(temp_template_cache)	
 					byte_position = (flow_set_length + byte_position)-4
