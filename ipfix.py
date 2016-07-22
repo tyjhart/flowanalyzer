@@ -330,7 +330,7 @@ def ipfix_server():
 								data_position += field_size
 							
 							# If TCP, UDP, DCCP, or SCTP try to classify the service based on port numbers
-							if flow_index["_source"]['Protocol Number'] = 6 or flow_index["_source"]['Protocol Number'] = 17 or flow_index["_source"]['Protocol Number'] = 33 or flow_index["_source"]['Protocol Number'] = 132: 						
+							if flow_index["_source"]['Protocol Number'] == 6 or flow_index["_source"]['Protocol Number'] == 17 or flow_index["_source"]['Protocol Number'] == 33 or flow_index["_source"]['Protocol Number'] == 132: 						
 
 								# Registered IANA ports < 1024 - Source Port
 								if flow_index["_source"]['Source Port'] in registered_ports:
