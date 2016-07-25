@@ -104,7 +104,9 @@ def ipfix_server():
 				except:
 					logger.debug(logging_ops.log_time() + " Out of bytes to unpack, breaking")
 					break # Done with the packet
-				byte_position += 4 # Advance past the initial header of ID and length
+				
+				# Advance past the initial header of ID and length
+				byte_position += 4 
 				
 				# Is it an IPFIX template set (ID 2)?
 				if flow_set_id == 2:
