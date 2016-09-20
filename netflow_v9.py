@@ -238,6 +238,7 @@ def netflow_v9_server():
 									else:
 										pass
 									
+									# Special integer-type fields with pre-defined values in the v9 standard
 									if "Options" in v9_fields[template_key]:	
 										flow_index["_source"][v9_fields[template_key]["Index ID"]] = v9_fields[template_key]['Options'][int(flow_payload)]
 										
