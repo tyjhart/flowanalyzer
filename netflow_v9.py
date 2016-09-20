@@ -57,7 +57,7 @@ def netflow_v9_server():
 	# Stage the flows for the bulk API index operation
 	flow_dic = []
 	
-	# Cache the Netflow v9 templates, in order to decode the data flows
+	# Cache the Netflow v9 templates, in received order to decode the data flows
 	template_list = {}
 	
 	while True:
@@ -80,7 +80,6 @@ def netflow_v9_server():
 			packet_attributes = {}
 			packet_attributes["Observed Flow Count"] = total_flow_count
 			
-			# Unpack the packet header, get attributes
 			(
 			packet_attributes["sys_uptime"],
 			packet_attributes["unix_secs"],
@@ -88,7 +87,7 @@ def netflow_v9_server():
 			packet_attributes["source_id"]
 			) = struct.unpack('!LLLL',flow_packet_contents[4:20])
 			
-			# Counter for total bytes in the packet
+			# Counter for total bytes in the packet, at current position after header
 			byte_position = 20
 			
 			# Iterate through the total flows in the packet overall
@@ -130,9 +129,9 @@ def netflow_v9_server():
 						template_position += 4
 					template_list.update(temp_template_cache)	
 					byte_position = (flow_set_length + byte_position)-4
-					logger.debug(logging_ops.log_time() + " Working templates: " + str(template_list))
 					logger.debug(logging_ops.log_time() + " Finished template set at " + str(byte_position))
-					
+					logger.debug(logging_ops.log_time() + " Working templates: " + str(template_list))
+										
 				# Options template set
 				elif flow_set_id == 1:
 					logger.debug(logging_ops.log_time() + " Unpacking Options template set at " + str(byte_position))
@@ -361,17 +360,7 @@ def netflow_v9_server():
 			
 			# Have enough flows to do a bulk index to Elasticsearch
 			if len(flow_dic) >= bulk_insert_count:
-				
-				# For the counter below
-				#flow_dic_length = len(flow_dic)
-				
-				# Set Traffic and Traffic Category to "Other" if not already defined, to normalize graphs
-				#for bulk_index_line in range(0,flow_dic_length):
-					#if "Traffic" not in flow_dic[bulk_index_line]["_source"]:
-						#flow_dic[bulk_index_line]["_source"]["Traffic"] = "Other"
-					#if "Traffic Category" not in flow_dic[bulk_index_line]["_source"]:
-						#flow_dic[bulk_index_line]["_source"]["Traffic Category"] = "Other"
-				
+								
 				# Perform the bulk upload to the index
 				try:
 					helpers.bulk(es,flow_dic)
