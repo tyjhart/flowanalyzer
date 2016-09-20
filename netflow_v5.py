@@ -146,13 +146,12 @@ def netflow_v5_server():
 							flow_index["_source"]['Traffic Category'] = other_ports[destination_port]["Category"]
 					
 					else:
+						# To normalize graphs
 						flow_index["_source"]['Traffic'] = "Other"
 
+					# Tag Traffic Category as "Other" to normalize graphs
 					if "Traffic Category" not in flow_index["_source"]:
-						flow_index["_source"]['Traffic Category'] = "Other"
-					
-					else:
-						pass		
+						flow_index["_source"]['Traffic Category'] = "Other"		
 				
 				if dns is True:	
 					
