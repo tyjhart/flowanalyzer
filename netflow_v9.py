@@ -241,7 +241,7 @@ def netflow_v9_server():
 									if "Options" in v9_fields[template_key]:	
 										flow_index["_source"][v9_fields[template_key]["Index ID"]] = v9_fields[template_key]['Options'][int(flow_payload)]
 										
-										# Advance the position for each field and skip the rest
+										# Advance the position for the field and skip the rest, nothing more to parse
 										data_position += field_size
 										continue
 									
@@ -277,8 +277,14 @@ def netflow_v9_server():
 										str(unpack_error)
 										)
 								
-								# Add the friendly Index ID and value (flow_payload) to flow_index
-								flow_index["_source"][v9_fields[template_key]["Index ID"]] = flow_payload
+								# Add value to the flow_index and move the data pointer
+								finally:
+
+									# Add the friendly Index ID and value (flow_payload) to flow_index
+									flow_index["_source"][v9_fields[template_key]["Index ID"]] = flow_payload
+
+									# Move the byte position the number of bytes in the field we just parsed
+									data_position += field_size
 								
 								# Tag the flow with Source and Destination FQDN and Domain info (if available)
 								if dns is True:
@@ -323,13 +329,15 @@ def netflow_v9_server():
 										if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
 												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
 
+									# Not a source or destination IP
 									else:
 										pass	
 								
-								# Move the byte position the number of bytes in the field we just parsed
-								data_position += field_size
-							
-							# Append this single, completed flow to the flow_dic[] for bulk upload
+								# Not doing DNS lookups
+								else:
+									pass
+
+							# Append this parsed flow to the flow_dic[] for bulk upload
 							flow_dic.append(flow_index)
 							logger.debug(logging_ops.log_time() + " Flow index: " + str(flow_index))	
 					
