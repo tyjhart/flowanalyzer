@@ -11,7 +11,7 @@ from elasticsearch import helpers
 from IPy import IP
 
 # Protocol numbers and types of traffic for comparison
-from protocol_numbers import *
+from protocol_numbers import protocol_type
 from defined_ports import registered_ports,other_ports
 from netflow_options import *
 
@@ -71,28 +71,25 @@ def netflow_v5_server():
 			logger.warning(logging_ops.log_time() + " Failed unpacking flow header from " + str(sensor_address[0]))
 			continue
 		
-		if netflow_version != 5:
-			logger.warning(logging_ops.log_time() + " Rcvd non-Netflow v5 packet from " + str(sensor_address[0]))
-			continue
-		else:
+		# Rcvd a Netflow v5 packet, parse it
+		if netflow_version == 5:
 			
 			# Set overall flow counter
 			flow_num = 0
 
 			# Iterate over flows in packet
 			for flow in range(0, flow_count):
-				
+				now = datetime.datetime.utcnow() # Timestamp for flow rcv
 				logger.debug(logging_ops.log_time() + " Flow " + str(flow_num+1) + " of " + str(flow_count))
 				base = packet_header_size + (flow_num * flow_record_size)
 				data = struct.unpack('!IIIIHH',flow_packet_contents[base+16:base+36])
-				now = datetime.datetime.utcnow()
-				protocol_number = ord(flow_packet_contents[base+38])
+				protocol_number = ord(flow_packet_contents[base+38]) # For protocol name lookup
 				
 				# Protocol Name
 				try:
 					flow_protocol = protocol_type[protocol_number]["Name"]
 				except:
-					flow_protocol = "Other" # Should never see this
+					flow_protocol = "Other" # Should never see this unless undefined protocol in use
 		
 				flow_index = {
 				"_index": str("flow-" + now.strftime("%Y-%m-%d")),
@@ -175,6 +172,8 @@ def netflow_v5_server():
 							flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
 				
 				logger.debug(logging_ops.log_time() + " Flow data: " + str(flow_index))		
+				
+				# Add the parsed flow to flow_dic for bulk insert
 				flow_dic.append(flow_index)
 				flow_num += 1
 				
@@ -192,6 +191,12 @@ def netflow_v5_server():
 				
 				# Check if the DNS records need to be pruned
 				dns_ops.dns_prune()
+			
+		# Got something else, drop it
+		else:
+			logger.warning(logging_ops.log_time() + " Rcvd non-Netflow v5 packet from " + str(sensor_address[0]))
+			continue
+		
 	return
 
 # Start Netflow v5 listener	
