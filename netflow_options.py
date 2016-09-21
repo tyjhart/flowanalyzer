@@ -64,4 +64,10 @@ dns = False
 # This includes the 10.0.0.0/8, 172.16.0.0/21, and 192.168.0.0/16 ranges
 lookup_internal = False
 
+#### MAC OUI Lookups ####
+# The appliance will attempt to resolve a manufacturer's name to a MAC address OUI.
+#
+# Set to False if you don't want to enable MAC OUI lookups, otherwise change to True to enable lookups.
+mac_lookup = False
+
 #### End tuning ####
