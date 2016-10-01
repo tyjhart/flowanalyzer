@@ -36,7 +36,7 @@ browsing on the network.
 
 DNS reverse lookups are disabled by default due to their potential impact on DNS servers in high traffic environments.
 
-They can be enabled by changing the following option in /opt/manitonetworks/netflow_options.py:
+They can be enabled by changing the following default option in /opt/manitonetworks/netflow_options.py:
 
 ```
 dns = False
@@ -48,11 +48,23 @@ to
 dns = True
 ```
 
+If you have a local DNS server that can resolve internal addresses in the RFC-1918 range you can also change this default option:
+
+```
+lookup_internal = False
+```
+
+to
+
+```
+lookup_internal = True
+```
+
 ### MAC Address Lookups
 
 Correlation of MAC address OUI's to top manufacturer's is done to help graph traffic sources in hetergenous environments. 
 
-Note: This feature is in beta, and the list of OUI's to be built is extensive.
+Note: This feature is in beta, and the list of OUI's to be built is quite extensive.
 
 ## **Access**
 
@@ -118,6 +130,21 @@ and contains all the configurable options for the system. As part of the initial
 must copy netflow_options_example.py to netflow_options.py and make any changes you'd like. 
 
 It already has the basic, typical settings in place, including the ports listed above.
+
+## **Tuning**
+
+Depending on the traffic volume you're feeding to Flow Analyzer you may need to tune a couple settings to get the best
+performance.
+
+By default, the software is configured to do a bulk upload of flow data to Elasticsearch every 700 flows. For smaller organizations
+it may take some time to fill up a 700 flow buffer, and so flows won't be observed in a timely fashion. 
+For medium and large organizations it may only take a few moments to fill up a 700 flow buffer, 
+and bulk uploads to Elasticsearch will happen too often to keep up. This setting can be changed in the 
+/opt/manitonetworks/flow/netflow_options.py file by changing the following setting:
+
+```
+bulk\_insert\_count = 700
+```
 
 ## **Attributions**
 
