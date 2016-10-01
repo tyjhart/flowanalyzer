@@ -1,11 +1,11 @@
-# Manito Networks Flow Analyzer
+# **Manito Networks Flow Analyzer**
 
 The Flow Analyzer is a freely available Netflow and IPFIX collector and parser, that stores flows in Elasticsearch and graphs flow
 data in Kibana. 
 
-Visualizations and Dashboards are provided to support flow analysis right out of the box.
+Visualizations and Dashboards are provided to support network flow analysis right out of the box.
 
-## Features
+## **Features**
 
 The Manito Networks Flow Analyzer supports the following:
 
@@ -34,9 +34,9 @@ browsing on the network.
 
 Correlation of MAC address OUI's to top manufacturer's is done to help graph traffic sources in hetergenous environments. 
 
-**Note**: This feature is in beta, and the list of OUI's to be built is extensive.
+Note: This feature is in beta, and the list of OUI's to be built is extensive.
 
-## Access
+## **Access**
 
 Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
 Kibana login page via an .htaccess file. The default login credentials are shown below:
@@ -45,10 +45,12 @@ Username: **admin**
 
 Password: **manitonetworks**
 
-## Architecture
+## **Architecture**
 
-Three listeners run in the background as services, one for each of the supported flow standards. Should a service fail they are
-configured to restart automatically. If you're not using particular services you can disable them. 
+The Flow Analyzer is designed to run on Ubuntu Server, either as a single installation or in an Elasticsearch cluster.
+
+Three listeners written in Python 2.x run in the background as services, one for each of the supported flow standards. 
+Should a service fail they are configured to restart automatically. If you're not using particular services you can disable them. 
 
 ### Services
 
@@ -81,3 +83,19 @@ As part of the initial configuration you must copy netflow_options_example.py to
 changes you'd like. 
 
 It already has the basic, typical settings in place, including the ports listed above.
+
+## **Attributions**
+
+Elasticsearch is a registered trademark of Elasticsearch BV.
+
+Kibana is a registered trademark of Elasticsearch BV.
+
+Elasticsearch and Kibana are distributed under the Apache 2 license by Elasticsearch BV.
+
+Ubuntu is a trademark of Canonical Ltd.
+
+## **Copyright**
+
+All Python and configuration files, unless otherwise noted, are copyright 2016 Manito Networks, LLC.
+
+All rights are reserved.
