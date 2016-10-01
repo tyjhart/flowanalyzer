@@ -513,7 +513,7 @@ registered_ports = {
 600:{"Name":"Sun IPC Server"},
 #601:'Reliable Syslog Service',
 #602:'XML-RPC over BEEP',
-#603:'IDXP',
+603:{"Name": "IDXP"},
 #604:'TUNNEL',
 #605:'SOAP over BEEP',
 #606:'Cray Unified Resource Manager',
