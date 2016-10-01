@@ -5,6 +5,8 @@ data in Kibana.
 
 Visualizations and Dashboards are provided to support network flow analysis right out of the box.
 
+See the **Licensing** section below for licensing details.
+
 ## **Features**
 
 The Manito Networks Flow Analyzer supports the following:
@@ -45,12 +47,26 @@ Username: **admin**
 
 Password: **manitonetworks**
 
+Users can be created with the following command:
+
+```
+htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
+```
+
 ## **Architecture**
 
 The Flow Analyzer is designed to run on Ubuntu Server, either as a single installation or in an Elasticsearch cluster.
 
 Three listeners written in Python 2.x run in the background as services, one for each of the supported flow standards. 
 Should a service fail they are configured to restart automatically. If you're not using particular services you can disable them. 
+
+### Install Location
+
+Flow Analyzer files and configurations are installed in the following directories:
+
+- /opt/manitonetworks/flow
+- /opt/manitonetworks/kibana
+- /opt/manitonetworks/squid
 
 ### Services
 
@@ -60,10 +76,13 @@ Service names correspond to their respective protocols:
 - netflow_v9
 - ipfix
 
-You can view the status of the services by running the following:
+You can view the status of the services listed above and control their operations by running the following:
 
 ```
 service service_name status
+service service_name start
+service service_name stop
+service service_name restart
 ```
 
 ### Ports & protocols
@@ -78,9 +97,9 @@ These ports can be changed by editing netflow_options.py and restarting the serv
 
 ### Files
 
-The master configuration file is **netflow_options.py**, and contains all the configurable options for the system. 
-As part of the initial configuration you must copy netflow_options_example.py to netflow_options.py and make any 
-changes you'd like. 
+The master configuration file is **/opt/manitonetworks/flow/netflow_options.py**, 
+and contains all the configurable options for the system. As part of the initial configuration you 
+must copy netflow_options_example.py to netflow_options.py and make any changes you'd like. 
 
 It already has the basic, typical settings in place, including the ports listed above.
 
