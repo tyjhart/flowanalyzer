@@ -1,5 +1,10 @@
 # Manito Networks Flow Analyzer
 
+The Flow Analyzer is a freely available Netflow and IPFIX collector and parser, that stores flows in Elasticsearch and graphs flow
+data in Kibana. 
+
+Visualizations and Dashboards are provided to support flow analysis right out of the box.
+
 ## Features
 
 The Manito Networks Flow Analyzer supports the following:
@@ -17,7 +22,7 @@ also take it a step further and correlate the following:
 
 - Protocol numbers to protocol names (eg protocol 1 to "ICMP", 6 to "TCP")
 - IANA-registered port numbers to services (eg port 80 to "HTTP", 53 to "DNS")
-- Services to categories (eg HTTP,HTTPS,Alt-HTTP to "Web")
+- Services to categories (eg HTTP, HTTPS, Alt-HTTP to "Web")
 
 ### DNS Reverse Lookups
 
