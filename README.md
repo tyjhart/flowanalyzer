@@ -26,11 +26,27 @@ also take it a step further and correlate the following:
 - IANA-registered port numbers to services (eg port 80 to "HTTP", 53 to "DNS")
 - Services to categories (eg HTTP, HTTPS, Alt-HTTP to "Web")
 
+This tagging functionality is running by default.
+
 ### DNS Reverse Lookups
 
 A reverse lookup against observed IPs is done if DNS lookups are enabled. Resolved domains are cached for 30 minutes to reduce
 the impact on DNS servers. Popular domains like facebook.com and cnn.com are categorized to provide some insight into website
 browsing on the network.
+
+DNS reverse lookups are disabled by default due to their potential impact on DNS servers in high traffic environments.
+
+They can be enabled by changing the following option in /opt/manitonetworks/netflow_options.py:
+
+```
+dns = False
+```
+
+to
+
+```
+dns = True
+```
 
 ### MAC Address Lookups
 
@@ -62,7 +78,7 @@ Should a service fail they are configured to restart automatically. If you're no
 
 ### Install Location
 
-Flow Analyzer files and configurations are installed in the following directories:
+Flow Analyzer files and configurations are installed in /opt/manitonetworks/ and the following subdirectories:
 
 - /opt/manitonetworks/flow
 - /opt/manitonetworks/kibana
@@ -93,7 +109,7 @@ All services listen for TCP flow packets on the following ports:
 - Netflow v9:   TCP/9995
 - IPFIX:        TCP/4739
 
-These ports can be changed by editing netflow_options.py and restarting the services shown above.
+These ports can be changed by editing /opt/manitonetworks/netflow_options.py and restarting the services shown above.
 
 ### Files
 
