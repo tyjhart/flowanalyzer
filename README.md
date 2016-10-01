@@ -143,7 +143,7 @@ and bulk uploads to Elasticsearch will happen too often to keep up. This setting
 /opt/manitonetworks/flow/netflow_options.py file by changing the following setting:
 
 ```
-bulk\_insert\_count = 700
+bulk_insert_count = 700
 ```
 
 ## **Attributions**
