@@ -10,6 +10,14 @@ The Manito Networks Flow Analyzer supports the following:
 
 It ingests Netflow and IPFIX data, parses and tags it, then stores it in Elasticsearch for you to query and graph in Kibana.
 
+## Access
+
+Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
+Kibana login page via an .htaccess file. The default login credentials are shown below:
+
+Username: admin
+Password: manitonetworks
+
 ## Architecture
 
 Three listeners run in the background as services, one for each of the supported flow standards. Should a service fail they are
@@ -38,3 +46,9 @@ All services listen for TCP flow packets on the following ports:
 - IPFIX:        TCP/4739
 
 These ports can be changed by editing netflow_options.py and restarting the services shown above.
+
+### Files
+
+The master configuration file is netflow_options.py, and contains all the configurable options for the system. As part of the initial
+configuration you must copy netflow_options_example.py and rename it netflow_options.py. It already has the basic, typical settings
+in place.
