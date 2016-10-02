@@ -11,10 +11,6 @@
 #ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739 proto udp comment "Netflow inbound"
 #ufw enable
 
-# Allow sudo to run without a TTY
-#echo "Allow sudo to run without a TTY"
-#sed -i 's/Defaults    requiretty/#Defaults    requiretty/g' /etc/sudoers
-
 # Copy example netflow_options_default.py to real netflow_options.py
 echo "Copy example netflow_options_default.py to real netflow_options.py"
 cp ../Python/netflow_options_default.py ../Python/netflow_options.py
