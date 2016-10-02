@@ -29,7 +29,7 @@ dns_base.init()
 # Set the logging level per https://docs.python.org/2/library/logging.html#levels
 # Levels include DEBUG, INFO, WARNING, ERROR, CRITICAL (case matters)
 #logging.basicConfig(level=logging.WARNING) # For logging to console in DEV
-logging.basicConfig(filename='/opt/manitonetworks/flow/ipfix.log',level=logging.WARNING) # For logging to a file in PROD
+logging.basicConfig(filename='ipfix.log',level=logging.WARNING) # For logging to a file in PROD
 logger = logging.getLogger('IPFIX')
 
 # Set up socket listener

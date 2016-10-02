@@ -27,7 +27,7 @@ dns_base.init()
 
 # Set the logging level per https://docs.python.org/2/library/logging.html#levels
 # Levels include DEBUG, INFO, WARNING, ERROR, CRITICAL (case matters)
-logging.basicConfig(filename='/opt/manitonetworks/flow/netflow_v5.log',level=logging.WARNING)
+logging.basicConfig(filename='netflow_v5.log',level=logging.WARNING)
 #logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('Netflow v5')
 

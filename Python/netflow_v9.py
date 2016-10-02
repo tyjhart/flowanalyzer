@@ -29,7 +29,7 @@ dns_base.init()
 # Set the logging level per https://docs.python.org/2/library/logging.html#levels
 # Levels include DEBUG, INFO, WARNING, ERROR, CRITICAL (case matters)
 #logging.basicConfig(level=logging.DEBUG) # For logging to a file in PROD
-logging.basicConfig(filename='/opt/manitonetworks/flow/netflow_v9.log',level=logging.WARNING) # For logging to a file in PROD
+logging.basicConfig(filename='netflow_v9.log',level=logging.WARNING) # For logging to a file in PROD
 logger = logging.getLogger('Netflow v9')
 
 # Set up socket listener
