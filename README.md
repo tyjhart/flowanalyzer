@@ -50,7 +50,8 @@ browsing on the network.
 
 DNS reverse lookups are disabled by default due to their potential impact on DNS servers in high traffic environments.
 
-They can be enabled by changing the following default option in **netflow_options.py** once it's copied, per the [installation directions](Install/README.md):
+They can be enabled by changing the following default option in **netflow_options.py** once it's copied 
+in the [installation script](Install/ubuntu_install.sh):
 
 ```
 dns = False
