@@ -75,7 +75,7 @@ Kibana login page via an .htaccess file. The default login credentials are shown
 
 The Kibana portal can be accessed via the following URL:
 
-**http://<Server IP>**
+**http://your_server_ip**
 
 Default Username: **admin**
 
