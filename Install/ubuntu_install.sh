@@ -15,6 +15,10 @@
 #echo "Allow sudo to run without a TTY"
 #sed -i 's/Defaults    requiretty/#Defaults    requiretty/g' /etc/sudoers
 
+# Copy example netflow_options_default.py to real netflow_options.py
+echo "Copy example netflow_options_default.py to real netflow_options.py"
+cp ../Python/netflow_options_default.py ../Python/netflow_options.py
+
 # Set the hostname for Squid
 echo "Set the hostname"
 hostnamectl set-hostname Flow00
