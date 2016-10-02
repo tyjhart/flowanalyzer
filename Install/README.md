@@ -27,7 +27,7 @@ cd /your/directory/
 Run the command below to clone the Git repository into your directory:
 
 ```
-git clone https://gitlab.com/thart/flowanalyzer/tree/master .
+git clone https://gitlab.com/thart/flowanalyzer.git
 ```
 
 The ubuntu_install.sh script handles almost everything:
