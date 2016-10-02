@@ -41,6 +41,6 @@ It does the following:
 - Updates, upgrades the Ubuntu install
 - Installs Elasticsearch pre-reqs
 - Creates the following services for Netflow and IPFIX:
-* netflow_v5
-* netflow_v9
-* ipfix
+  - netflow_v5
+  - netflow_v9
+  - ipfix
