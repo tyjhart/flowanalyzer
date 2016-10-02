@@ -22,7 +22,7 @@ chmod -R 777 ./manitonetworks
 #echo "Allow sudo to run without a TTY"
 #sed -i 's/Defaults    requiretty/#Defaults    requiretty/g' /etc/sudoers
 
-# Set the hostname
+# Set the hostname for Squid
 echo "Set the hostname"
 hostnamectl set-hostname Flow00
 
@@ -195,7 +195,7 @@ echo "127.0.0.1    Flow00" >> /etc/hosts
 
 # Set the default proxy password for Squid
 echo "Set the default proxy password for Squid"
-htpasswd -bc /opt/manitonetworks/squid/.htpasswd admin manitonetworks
+htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
 
 # Dynamic updating cron script, get updated Python daily if it's available
 echo "Dynamic updating cron script, get updated code weekly"
