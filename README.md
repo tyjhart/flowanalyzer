@@ -178,7 +178,9 @@ The setting can be found in /opt/manitonetworks/flow/netflow_options.py, as show
 elasticsearch_host = '127.0.0.1'
 ```
 
-If you already have an existing Elasticsearch cluster running you can change this setting, using either an IP address of FQDN.
+If you already have an existing Elasticsearch cluster running you can change this setting, using either an IP address or FQDN.
+You will be responsible for creating the Flow index on your own cluster, and the curl command can be found in the 
+[build_index.sh file](Install/build_index.sh).
 
 ### Elasticsearch Bulk Insert
 
