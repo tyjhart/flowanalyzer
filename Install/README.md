@@ -37,14 +37,21 @@ If you don't have Git available on your Ubuntu Server installation that's OK, ju
 sudo apt-get install git
 ```
 
-The ubuntu_install.sh script handles almost everything:
+The download should only take a moment. Move into the repo directory:
+
+```
+cd flowanalyzer
+```
+
+The ubuntu_install.sh script handles almost everything, just be sure to run it with sudo privileges:
 
 ```
 sudo sh ./Install/ubuntu_install.sh
 ```
 
-It does the following:
+The ubuntu_install.sh script does the following:
 
+- Moves the Ubuntu Server to UTC time
 - Adds software repos for Elasticsearch and Kibana
 - Updates the repos for the install
 - Installs Elasticsearch pre-reqs (Curl, OpenJDK 8, etc)
