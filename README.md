@@ -5,7 +5,7 @@ data in Kibana.
 
 Visualizations and Dashboards are provided to support network flow analysis right out of the box.
 
-See the **Licensing** section below for licensing details.
+See the [**Licensing**](# Licensing) section below for licensing details.
 
 # **Project Goals**
 
@@ -21,7 +21,7 @@ should be able to realize the benefits of meaningful, beautiful data visualizati
 
 # **Features**
 
-### Protocols
+### **Protocols**
 
 The Manito Networks Flow Analyzer supports the following flow data protocols:
 
@@ -31,7 +31,7 @@ The Manito Networks Flow Analyzer supports the following flow data protocols:
 
 It ingests Netflow and IPFIX data, parses and tags it, then stores it in Elasticsearch for you to query and graph in Kibana.
 
-### Tags
+### **Tags**
 
 Our custom Netflow and IPFIX collectors ingest and tag flow data. We record not only the basic protocol and port numbers, but we 
 also take it a step further and correlate the following:
@@ -42,7 +42,7 @@ also take it a step further and correlate the following:
 
 This tagging functionality is running by default.
 
-### DNS Reverse Lookups
+### **DNS Reverse Lookups**
 
 A reverse lookup against observed IPs is done if DNS lookups are enabled. Resolved domains are cached for 30 minutes to reduce
 the impact on DNS servers. Popular domains like facebook.com and cnn.com are categorized to provide some insight into website
@@ -74,7 +74,7 @@ to
 lookup_internal = True
 ```
 
-### MAC Address Lookups
+### **MAC Address Lookups**
 
 Correlation of MAC address OUI's to top manufacturer's is done to help graph traffic sources in hetergenous environments. 
 
@@ -116,7 +116,7 @@ The Flow Analyzer is designed to run on Ubuntu Server, either as a single instal
 Three listeners written in Python 2.x run in the background as services, one for each of the supported flow standards. 
 Should a service fail they are configured to restart automatically. If you're not using particular services you can disable them. 
 
-### Install Location
+### **Install Location**
 
 Install by cloning the latest Git repo:
 
@@ -124,7 +124,7 @@ Install by cloning the latest Git repo:
 git clone https://gitlab.com/thart/flowanalyzer.git
 ```
 
-### Services
+### **Services**
 
 Service names correspond to their respective protocols:
 
@@ -141,7 +141,7 @@ service service_name stop
 service service_name restart
 ```
 
-### Ports & protocols
+### **Ports & protocols**
 
 All services listen for TCP flow packets on the following ports:
 
@@ -151,7 +151,7 @@ All services listen for TCP flow packets on the following ports:
 
 These ports can be changed by editing /opt/manitonetworks/netflow_options.py and restarting the services shown above.
 
-### Time Zone
+### **Time Zone**
 
 The Ubuntu Server's timezone is set to UTC during the install, and all events are logged into Elasticsearch with UTC timestamps.
 This is for Elasticsearch purposes, and to ensure that it's possible to correlate flow data from devices across time zones and
@@ -159,7 +159,7 @@ DST implementations.
 
 Kibana corrects for local time automatically.
 
-### Files
+### **Files**
 
 The master configuration file is **/opt/manitonetworks/flow/netflow_options.py**, 
 and contains all the configurable options for the system. As part of the initial configuration you 
@@ -169,7 +169,7 @@ It already has the basic, typical settings in place, including the ports listed 
 
 # **Tuning**
 
-### Elasticsearch Connection
+### **Elasticsearch Connection**
 
 By default the flow collector services are configured to connect to an Elasticsearch instance running on locahost.
 The setting can be found in /opt/manitonetworks/flow/netflow_options.py, as shown below:
@@ -182,7 +182,7 @@ If you already have an existing Elasticsearch cluster running you can change thi
 You will be responsible for creating the Flow index on your own cluster, and the curl command can be found in the 
 [build_index.sh file](Install/build_index.sh).
 
-### Elasticsearch Bulk Insert
+### **Elasticsearch Bulk Insert**
 
 Depending on the traffic volume you're feeding to Flow Analyzer you may need to tune a couple settings to get the best
 performance.

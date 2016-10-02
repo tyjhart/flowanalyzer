@@ -28,8 +28,8 @@ of those fields is static. This makes it easy to export and collect v5 flows, bu
 A crucial difference between v5 and v9 is that v5 is static and doesn't use templates, while v9 is dynamic and requires templates to
 decode flow packets.
 
-There are [18 reportable fields](http://www.cisco.com/c/en/us/td/docs/net_mgmt/netflow_collection_engine/3-6/user/guide/format.html#wp1006186) in the v5 format,
-including source and destination IP address and port, AS numbers, protocol, ToS code, and more.
+There are [18 reportable fields](http://www.cisco.com/c/en/us/td/docs/net_mgmt/netflow_collection_engine/3-6/user/guide/format.html#wp1006186)
+in the v5 format, including source and destination IP address and port, AS numbers, protocol, ToS code, and more.
 
 Netflow v5 is a great choice if you're using legacy devices that only support v5, or if you're just starting out in flow monitoring
 and want to see if it's right for you without being inundated with data fields. Configuration of Netflow v5 on routers and switches also
@@ -39,9 +39,9 @@ tends to be very simple and straightforward.
 
 Netflow v9 is a standard originally published by Cisco Systems that has been adopted across the industry.
 
-It has [just over 100 fields](http://www.cisco.com/en/US/technologies/tk648/tk362/technologies_white_paper09186a00800a3db9.html) it can report on, and unlike v5 it supports both IPv4 and IPv6. While the v9 standard can report
-on many kinds of flow metrics, not all vendors support all fields on every platform. Consult your vendor for a list of the fields 
-that they support on your platforms and software versions.
+It has [just over 100 fields](http://www.cisco.com/en/US/technologies/tk648/tk362/technologies_white_paper09186a00800a3db9.html) it can report on, 
+and unlike v5 it supports both IPv4 and IPv6. While the v9 standard can report on many kinds of flow metrics, not all vendors support 
+all fields on every platform. Consult your vendor for a list of the fields that they support on your platforms and software versions.
 
 With Netflow v9 being dynamic a new piece gets thrown into the works - templates. Netflow v9 templates are sent separately from
 data flows, and tell the collector what data fields will be in flow packets, how big the fields are, and what order they arrive in.
