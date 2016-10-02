@@ -106,11 +106,11 @@ Should a service fail they are configured to restart automatically. If you're no
 
 ### Install Location
 
-Flow Analyzer files and configurations are installed in /opt/manitonetworks/ and the following subdirectories:
+Install by cloning the latest Git repo:
 
-- /opt/manitonetworks/flow
-- /opt/manitonetworks/kibana
-- /opt/manitonetworks/squid
+```
+git clone https://gitlab.com/thart/flowanalyzer.git
+```
 
 ### Services
 
