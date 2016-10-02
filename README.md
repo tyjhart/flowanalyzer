@@ -5,7 +5,7 @@ data in Kibana.
 
 Visualizations and Dashboards are provided to support network flow analysis right out of the box.
 
-See the [**Licensing**](#Licensing) section below for licensing details.
+See the [**License**](#License) section below for licensing details.
 
 # **Project Goals**
 
