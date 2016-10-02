@@ -53,7 +53,8 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 # Clone the latest Flow code
-git clone https://gitlab.com/thart/flowanalyzer/tree/master .
+git clone git clone https://gitlab.com/thart/flowanalyzer/
+
 
 # Get the latest Netflow code
 #echo "Get the latest Netflow code"
@@ -84,7 +85,7 @@ echo "Set the Elasticsearch cluster details"
 echo "network.host: [_local_,_site_]" >> /etc/elasticsearch/elasticsearch.yml
 echo "node.name: Master01" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.name: manito_networks" >> /etc/elasticsearch/elasticsearch.yml
-echo "#discovery.zen.ping.unicast.hosts: ["192.168.90.195","192.168.90.197"]" >> /etc/elasticsearch/elasticsearch.yml
+echo "#discovery.zen.ping.unicast.hosts: ["192.168.1.10","192.168.1.11"]" >> /etc/elasticsearch/elasticsearch.yml
 
 # Set the Elasticsearch heap size to 50% of RAM (must be <= 32GB per documentation)
 echo "Set the Elasticsearch heap size to 50% of RAM (must be <= 32GB per documentation)"
@@ -125,7 +126,7 @@ echo "After=network.target elasticsearch.service kibana.service" >> /etc/systemd
 echo "[Service]" >> /etc/systemd/system/netflow_v5.service
 echo "Type=simple" >> /etc/systemd/system/netflow_v5.service
 echo "User=root" >> /etc/systemd/system/netflow_v5.service
-echo "ExecStart=/usr/bin/python /opt/manitonetworks/flow/netflow_v5.pyc" >> /etc/systemd/system/netflow_v5.service
+echo "ExecStart=/usr/bin/python $(dirname $PWD)/Python/netflow_v5.pyc" >> /etc/systemd/system/netflow_v5.service
 echo "Restart=on-failure" >> /etc/systemd/system/netflow_v5.service
 echo "RestartSec=30" >> /etc/systemd/system/netflow_v5.service
 echo "[Install]" >> /etc/systemd/system/netflow_v5.service
@@ -139,7 +140,7 @@ echo "After=network.target elasticsearch.service kibana.service" >> /etc/systemd
 echo "[Service]" >> /etc/systemd/system/netflow_v9.service
 echo "Type=simple" >> /etc/systemd/system/netflow_v9.service
 echo "User=root" >> /etc/systemd/system/netflow_v9.service
-echo "ExecStart=/usr/bin/python /opt/manitonetworks/flow/netflow_v9.pyc" >> /etc/systemd/system/netflow_v9.service
+echo "ExecStart=/usr/bin/python $(dirname $PWD)/Python/netflow_v9.pyc" >> /etc/systemd/system/netflow_v9.service
 echo "Restart=on-failure" >> /etc/systemd/system/netflow_v9.service
 echo "RestartSec=30" >> /etc/systemd/system/netflow_v9.service
 echo "[Install]" >> /etc/systemd/system/netflow_v9.service
@@ -153,7 +154,7 @@ echo "After=network.target elasticsearch.service kibana.service" >> /etc/systemd
 echo "[Service]" >> /etc/systemd/system/ipfix.service
 echo "Type=simple" >> /etc/systemd/system/ipfix.service
 echo "User=root" >> /etc/systemd/system/ipfix.service
-echo "ExecStart=/usr/bin/python /opt/manitonetworks/flow/ipfix.pyc" >> /etc/systemd/system/ipfix.service
+echo "ExecStart=/usr/bin/python $(dirname $PWD)/Python/ipfix.pyc" >> /etc/systemd/system/ipfix.service
 echo "Restart=on-failure" >> /etc/systemd/system/ipfix.service
 echo "RestartSec=30" >> /etc/systemd/system/ipfix.service
 echo "[Install]" >> /etc/systemd/system/ipfix.service
