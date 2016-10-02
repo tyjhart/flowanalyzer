@@ -20,7 +20,7 @@ def dns_add_address(ip):
 		v4_ip = IP(str(ip)+"/32")
 
 		# Check if broadcast address
-		ip == '255.255.255.255':
+		if ip == '255.255.255.255':
 			return False
 
 		# Check if it's a local address that we're not looking up
