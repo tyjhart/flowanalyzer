@@ -9,7 +9,9 @@ See the **Licensing** section below for licensing details.
 
 # **Features**
 
-The Manito Networks Flow Analyzer supports the following:
+### Protocols
+
+The Manito Networks Flow Analyzer supports the following flow data protocols:
 
 - Netflow v5
 - Netflow v9
