@@ -40,7 +40,16 @@ It does the following:
 
 - Updates, upgrades the Ubuntu install
 - Installs Elasticsearch pre-reqs
-- Creates the following services for Netflow and IPFIX:
+- Creates the following services for Netflow v5/v9 and IPFIX (aka v10):
   - netflow_v5
   - netflow_v9
   - ipfix
+- Registers services
+- Builds the Flow index in Elasticsearch
+- Sets unknown field defaults in Elasticsearch
+- Installs Curator for Elasticsearch
+- Installs Head plugin for Elasticsearch
+- Installs and configures Kibana
+- Installs and configures Squid
+- Schedules an auto-update Cron job
+- Runs a cleanup and reboots the Ubuntu server
