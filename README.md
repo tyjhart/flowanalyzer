@@ -7,7 +7,7 @@ Visualizations and Dashboards are provided to support network flow analysis righ
 
 See the **Licensing** section below for licensing details.
 
-## **Features**
+# **Features**
 
 The Manito Networks Flow Analyzer supports the following:
 
@@ -66,14 +66,18 @@ Correlation of MAC address OUI's to top manufacturer's is done to help graph tra
 
 Note: This feature is in beta, and the list of OUI's to be built is quite extensive.
 
-## **Access**
+# **Access**
 
 Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
 Kibana login page via an .htaccess file. The default login credentials are shown below:
 
-Username: **admin**
+The Kibana portal can be accessed via the following URL:
 
-Password: **manitonetworks**
+**http://<Server IP>**
+
+Default Username: **admin**
+
+Default Password: **manitonetworks**
 
 Users can be created with the following command:
 
@@ -81,7 +85,7 @@ Users can be created with the following command:
 htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
 ```
 
-## **Architecture**
+# **Architecture**
 
 The Flow Analyzer is designed to run on Ubuntu Server, either as a single installation or in an Elasticsearch cluster.
 
@@ -131,7 +135,7 @@ must copy netflow_options_example.py to netflow_options.py and make any changes 
 
 It already has the basic, typical settings in place, including the ports listed above.
 
-## **Tuning**
+# **Tuning**
 
 ### Elasticsearch Connection
 
@@ -168,7 +172,7 @@ The following bulk_insert_count settings have been found to work, but each netwo
 For wired ISP's that are able to push more data, and other large enterprises the bulk_insert_count may need to go higher.
 Performance for those larger organizations and ISPs will also depend on the performance of their Elasticsearch cluster.
 
-## **Attributions**
+# **Attributions**
 
 Elasticsearch is a registered trademark of Elasticsearch BV.
 
@@ -178,8 +182,13 @@ Elasticsearch and Kibana are distributed under the Apache 2 license by Elasticse
 
 Ubuntu is a trademark of Canonical Ltd.
 
-## **Copyright**
+# **Copyright**
 
 All Python and configuration files, unless otherwise noted, are copyright 2016 Manito Networks, LLC.
 
 All rights are reserved.
+
+# **License**
+
+This product is licensed for commercial and non-commercial use. This product, in whole or in part, may not be resold
+or redistributed without the written permission of Manito Networks, LLC.
