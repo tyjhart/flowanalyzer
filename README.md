@@ -50,7 +50,7 @@ browsing on the network.
 
 DNS reverse lookups are disabled by default due to their potential impact on DNS servers in high traffic environments.
 
-They can be enabled by changing the following default option in /opt/manitonetworks/netflow_options.py:
+They can be enabled by changing the following default option in **netflow_options.py** once it's copied, per the [installation directions](Install/README.md):
 
 ```
 dns = False
@@ -161,7 +161,7 @@ Kibana corrects for local time automatically.
 
 ### **Files**
 
-The master configuration file is **/opt/manitonetworks/flow/netflow_options.py**, 
+The master configuration file is **netflow_options.py**, 
 and contains all the configurable options for the system. As part of the initial configuration you 
 must copy netflow_options_example.py to netflow_options.py and make any changes you'd like. 
 
