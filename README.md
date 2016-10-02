@@ -129,6 +129,14 @@ All services listen for TCP flow packets on the following ports:
 
 These ports can be changed by editing /opt/manitonetworks/netflow_options.py and restarting the services shown above.
 
+### Time Zone
+
+The Ubuntu Server's timezone is set to UTC during the install, and all events are logged into Elasticsearch with UTC timestamps.
+This is for Elasticsearch purposes, and to ensure that it's possible to correlate flow data from devices across time zones and
+DST implementations.
+
+Kibana corrects for local time automatically.
+
 ### Files
 
 The master configuration file is **/opt/manitonetworks/flow/netflow_options.py**, 
