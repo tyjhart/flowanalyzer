@@ -1,6 +1,6 @@
 # Copyright 2016, Manito Networks, LLC. All rights reserved
 #
-# Last modified 6/9/2016 
+# Last modified 10/1/2016 
 
 #### Tuning options for Netflow v5, 9, and 10 (IPFIX) ####
 

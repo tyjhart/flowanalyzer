@@ -1,6 +1,6 @@
 # Copyright 2016, Manito Networks, LLC. All rights reserved
 #
-# Last modified 6/9/2016 
+# Last modified 10/1/2016 
 
 #### Tuning options for Netflow v5, 9, and 10 (IPFIX) ####
 
@@ -64,8 +64,10 @@ dns = False
 # This includes the 10.0.0.0/8, 172.16.0.0/21, and 192.168.0.0/16 ranges
 lookup_internal = False
 
-#### MAC OUI Lookups ####
+#### BETA --- MAC OUI Lookups ####
 # The appliance will attempt to resolve a manufacturer's name to a MAC address OUI.
+#
+# THIS IS A BETA FEATURE, NOT FULLY IMPLEMENTED
 #
 # Set to False if you don't want to enable MAC OUI lookups, otherwise change to True to enable lookups.
 mac_lookup = False

@@ -1,9 +1,10 @@
 # Copyright 2016, Manito Networks, LLC. All rights reserved
 
-# Array of protocol names and numbers according to: 
+# Array of registered and unregistered names and numbers according to: 
 # IANA http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml 
 # Wikipedia https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
 # :{"Name": ""}
+
 registered_ports = {
 0:{"Name": "Reserved"},
 1:{"Name": "TCP Port Service Multiplexer"},

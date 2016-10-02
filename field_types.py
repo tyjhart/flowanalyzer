@@ -1,6 +1,6 @@
 # Copyright 2016, Manito Networks, LLC. All rights reserved
 #
-# Last modified 4/25/2016
+# Last modified 10/1/2016
 
 
 # Types of Netflow v9 fields, per https://www.ietf.org/rfc/rfc3954.txt and http://www.iana.org/assignments/ipfix/ipfix.xhtml#ipfix-information-elements
