@@ -12,11 +12,11 @@
 #ufw enable
 
 # Create folders
-mkdir /opt/manitonetworks
-mkdir /opt/manitonetworks/kibana
-mkdir /opt/manitonetworks/flow
-mkdir /opt/manitonetworks/squid
-chmod -R 777 /opt/manitonetworks
+mkdir ./manitonetworks
+mkdir ./manitonetworks/kibana
+mkdir ./manitonetworks/flow
+mkdir ./manitonetworks/squid
+chmod -R 777 ./manitonetworks
 
 # Allow sudo to run without a TTY
 #echo "Allow sudo to run without a TTY"
@@ -39,18 +39,21 @@ echo "Add the Kibana repo"
 echo "deb http://packages.elastic.co/kibana/4.5/debian stable main" | sudo tee -a /etc/apt/sources.list
 
 # Update APT
-echo "Update APT"
+echo "Update Ubuntu via APT"
 apt-get -y update && apt-get -y upgrade
 
 # Install dependencies
-echo "Install dependencies"
+echo "Install system dependencies"
 apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2-utils php-curl
 
 # Resolving Python dependencies
-echo "Resolving Python dependencies"
+echo "Install Python dependencies"
 apt-get install python-pip -y
 pip install --upgrade pip
 pip install -r requirements.txt
+
+# Clone the latest Flow code
+git clone https://gitlab.com/thart/flowanalyzer/tree/master .
 
 # Get the latest Netflow code
 #echo "Get the latest Netflow code"
