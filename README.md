@@ -7,6 +7,14 @@ Visualizations and Dashboards are provided to support network flow analysis righ
 
 See the **Licensing** section below for licensing details.
 
+# **Project Goals**
+
+Our goal is to provide superior Netflow and IPFIX collection, visualization, and analysis. We'll do that by creating:
+
+- Efficient, accessible, and sustainable software
+- Scalable solutions that can evolve
+- Superior documentation from architecture through installation, configuration, tuning, and troubleshooting
+
 # **Features**
 
 ### Protocols
