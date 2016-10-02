@@ -68,6 +68,16 @@ Correlation of MAC address OUI's to top manufacturer's is done to help graph tra
 
 Note: This feature is in beta, and the list of OUI's to be built is quite extensive.
 
+# **Requirements**
+
+At least one Ubuntu Server installation with the following **minimum** hardware specs:
+
+- 4GB RAM
+- 2 CPU Cores
+- 90GB HDD space
+
+Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure.
+
 # **Access**
 
 Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
