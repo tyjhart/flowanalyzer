@@ -56,14 +56,11 @@ echo "ES_HEAP_SIZE=2g" >> /etc/default/elasticsearch
 # Enabling and starting Elasticsearch service
 echo "Enabling and starting Elasticsearch service"
 systemctl enable elasticsearch
-systemctl start elasticsearch
+systemctl restart elasticsearch
 
 set +e
 
-# Restart the Elasticsearch service
-service elasticsearch restart
-
-# Sleep 10s so Elasticsearch service can start before building index
+# Sleep 10s so Elasticsearch service can restart before building index
 sleep 10s
 
 # Adding Kibana credentials

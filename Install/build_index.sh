@@ -1,5 +1,4 @@
 # Build the Netflow index in Elasticsearch
-echo "Build the Flow index in Elasticsearch"
 curl -XPOST localhost:9200/_template/flow_template -d '
 {
 "template": "flow*",
