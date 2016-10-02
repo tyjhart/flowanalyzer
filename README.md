@@ -15,6 +15,10 @@ Our goal is to provide superior Netflow and IPFIX collection, visualization, and
 - Scalable solutions that can evolve
 - Superior documentation from architecture through installation, configuration, tuning, and troubleshooting
 
+One other goal of ours is to make Elasticsearch and Kibana easy to implement and accessible to those who haven't used it before.
+The learning curve for distributed search systems and dashboarding software can be steap, but we think that everyone
+should be able to realize the benefits of meaningful, beautiful data visualization.
+
 # **Features**
 
 ### Protocols
