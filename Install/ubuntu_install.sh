@@ -11,13 +11,6 @@
 #ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739 proto udp comment "Netflow inbound"
 #ufw enable
 
-# Create folders
-mkdir ./manitonetworks
-mkdir ./manitonetworks/kibana
-mkdir ./manitonetworks/flow
-mkdir ./manitonetworks/squid
-chmod -R 777 ./manitonetworks
-
 # Allow sudo to run without a TTY
 #echo "Allow sudo to run without a TTY"
 #sed -i 's/Defaults    requiretty/#Defaults    requiretty/g' /etc/sudoers
@@ -38,10 +31,6 @@ echo "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main" | sud
 echo "Add the Kibana repo"
 echo "deb http://packages.elastic.co/kibana/4.5/debian stable main" | sudo tee -a /etc/apt/sources.list
 
-# Update APT
-echo "Update Ubuntu via APT"
-apt-get -y update && apt-get -y upgrade
-
 # Install dependencies
 echo "Install system dependencies"
 apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2-utils php-curl
@@ -51,34 +40,6 @@ echo "Install Python dependencies"
 apt-get install python-pip -y
 pip install --upgrade pip
 pip install -r requirements.txt
-
-# Clone the latest Flow code
-git clone git clone https://gitlab.com/thart/flowanalyzer/
-
-
-# Get the latest Netflow code
-#echo "Get the latest Netflow code"
-#wget -N -P /opt/manitonetworks/flow/ https://s3-us-west-2.amazonaws.com/manitonetworks/Update/install.tar
-#tar -xf /opt/manitonetworks/flow/install.tar -C /opt/manitonetworks/flow/ 
-#rm -f /opt/manitonetworks/flow/install.tar
-#python -m compileall /opt/manitonetworks/flow/
-#mv /opt/manitonetworks/flow/netflow_options.py /tmp/
-#rm -f /opt/manitonetworks/flow/*.py
-#mv /tmp/netflow_options.py /opt/manitonetworks/flow/
-#chmod -R 777 /opt/manitonetworks/flow
-
-# Add the license file
-#echo "Add the licensing file"
-#echo "# Copyright Manito Networks, LLC. All rights reserved. Not for distribution or publication." >> /opt/manitonetworks/license.py
-#echo "#" >> /opt/manitonetworks/license.py
-#echo "# Edit the values below with the License ID and Secret provided by your Manito Networks rep" >> /opt/manitonetworks/license.py
-#echo "company_license_id = 999999 # Insert your license ID in place of the numbers already in this line" >> /opt/manitonetworks/license.py
-#echo "customer_secret = \"trial\" # Insert your customer secret between the quotes" >> /opt/manitonetworks/license.py
-#echo "product = \"Flow Analyzer\" # Do not modify" >> /opt/manitonetworks/license.py
-#echo "Get the latest updater scripts"
-#wget -N -P /opt/manitonetworks/ https://s3-us-west-2.amazonaws.com/manitonetworks/Update/updater/__init__.py
-#wget -N -P /opt/manitonetworks/ https://s3-us-west-2.amazonaws.com/manitonetworks/Update/updater/update.py
-#python -m compileall update.py
 
 # Set the Elasticsearch cluster details
 echo "Set the Elasticsearch cluster details"
@@ -166,7 +127,7 @@ systemctl daemon-reload
 
 # Build the Netflow index in Elasticsearch
 echo "Build the Flow index in Elasticsearch"
-sh ./Install/build_index.sh
+sh build_index.sh
 
 # Set the Netflow services to automatically start
 echo "Set the Netflow services to automatically start"
@@ -184,7 +145,7 @@ systemctl enable ntp
 
 # Get the squid.conf file and replace the default squid.conf
 echo "Get the squid.conf file and replace the default squid.conf"
-wget -O /etc/squid/squid.conf https://s3-us-west-2.amazonaws.com/manitonetworks/Update/squid/ubuntu_squid.conf
+wget -O /etc/squid/squid.conf https://gitlab.com/thart/flowanalyzer/blob/master/Install/ubuntu_squid.conf
 
 # Set the Squid service to automatically start
 echo "Set the Squid service to automatically start"
@@ -200,18 +161,11 @@ htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
 
 # Dynamic updating cron script, get updated Python daily if it's available
 echo "Dynamic updating cron script, get updated code weekly"
-echo "python /opt/manitonetworks/update.py" >> /etc/cron.weekly/flow-update
-echo "service netflow_v5 stop" >> /etc/cron.weekly/flow-update
-echo "service netflow_v9 stop" >> /etc/cron.weekly/flow-update
-echo "service ipfix stop" >> /etc/cron.weekly/flow-update
-echo "mv /opt/manitonetworks/flow/netflow_options.py /tmp/" >> /etc/cron.weekly/flow-update
-echo "python -m compileall /opt/manitonetworks/flow" >> /etc/cron.weekly/flow-update
-echo "rm -f /opt/manitonetworks/flow/*.py" >> /etc/cron.weekly/flow-update
-echo "mv /tmp/netflow_options.py /opt/manitonetworks/flow/" >> /etc/cron.weekly/flow-update
-echo "chmod -R 777 /opt/manitonetworks/flow" >> /etc/cron.weekly/flow-update
-echo "service netflow_v5 start" >> /etc/cron.weekly/flow-update
-echo "service netflow_v9 start" >> /etc/cron.weekly/flow-update
-echo "service ipfix start" >> /etc/cron.weekly/flow-update
+echo "cd $(pwd)/flowanalyzer/" >> /etc/cron.weekly/flow-update
+echo "git fetch https://gitlab.com/thart/flowanalyzer.git" >> /etc/cron.weekly/flow-update
+echo "service netflow_v5 restart" >> /etc/cron.weekly/flow-update
+echo "service netflow_v9 restart" >> /etc/cron.weekly/flow-update
+echo "service ipfix restart" >> /etc/cron.weekly/flow-update
 chmod +x /etc/cron.weekly/flow-update
 
 # Prune old indexes
@@ -221,11 +175,3 @@ chmod +x /etc/cron.daily/index_prune
 # Install Head plugin for Elasticsearch for troubleshooting
 echo "Install Head plugin for Elasticsearch for troubleshooting"
 sh /usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head
-
-# Clean up
-echo "Clean up"
-apt-get clean all
-
-# Reboot
-echo "Reboot"
-reboot
