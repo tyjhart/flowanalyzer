@@ -133,6 +133,19 @@ It already has the basic, typical settings in place, including the ports listed 
 
 ## **Tuning**
 
+### Elasticsearch Connection
+
+By default the flow collector services are configured to connect to an Elasticsearch instance running on locahost.
+The setting can be found in /opt/manitonetworks/flow/netflow_options.py, as shown below:
+
+```
+elasticsearch_host = '127.0.0.1'
+```
+
+If you already have an existing Elasticsearch cluster running you can change this setting, using either an IP address of FQDN.
+
+### Elasticsearch Bulk Insert
+
 Depending on the traffic volume you're feeding to Flow Analyzer you may need to tune a couple settings to get the best
 performance.
 
@@ -145,6 +158,15 @@ and bulk uploads to Elasticsearch will happen too often to keep up. This setting
 ```
 bulk_insert_count = 700
 ```
+
+The following bulk_insert_count settings have been found to work, but each network is different and tuning is important:
+
+- Small enterprises: 200
+- Medium enterprises and small WISPs: 700
+- Large enterprises and medium WISPs: 1000
+
+For wired ISP's that are able to push more data, and other large enterprises the bulk_insert_count may need to go higher.
+Performance for those larger organizations and ISPs will also depend on the performance of their Elasticsearch cluster.
 
 ## **Attributions**
 
