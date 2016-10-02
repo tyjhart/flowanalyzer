@@ -143,7 +143,7 @@ systemctl enable ntp
 
 # Get the squid.conf file and replace the default squid.conf
 echo "Get the squid.conf file and replace the default squid.conf"
-wget -O /etc/squid/squid.conf https://gitlab.com/thart/flowanalyzer/blob/master/Install/ubuntu_squid.conf
+cp ubuntu_squid.conf /etc/squid/squid.conf
 
 # Set the Squid service to automatically start
 echo "Set the Squid service to automatically start"
