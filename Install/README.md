@@ -10,7 +10,8 @@ This should be run on a fresh Ubuntu Server installation with the following **mi
 - 2 CPU Cores
 - 90GB HDD space
 
-Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure.
+Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure. Having additional
+Elasticsearch nodes will also allow you to retain more days of flow data.
 
 ### Installation Steps
 
@@ -30,16 +31,24 @@ Run the command below to clone the Git repository into your directory:
 git clone https://gitlab.com/thart/flowanalyzer.git
 ```
 
+If you don't have Git available on your Ubuntu Server installation that's OK, just run the following:
+
+```
+sudo apt-get install git
+```
+
 The ubuntu_install.sh script handles almost everything:
 
 ```
-sh ./Install/ubuntu_install.sh
+sudo sh ./Install/ubuntu_install.sh
 ```
 
 It does the following:
 
-- Updates, upgrades the Ubuntu install
-- Installs Elasticsearch pre-reqs
+- Adds software repos for Elasticsearch and Kibana
+- Updates the repos for the install
+- Installs Elasticsearch pre-reqs (Curl, OpenJDK 8, etc)
+- Installs Elasticsearch and Kibana
 - Creates the following services for Netflow v5/v9 and IPFIX (aka v10):
   - netflow_v5
   - netflow_v9
@@ -49,7 +58,5 @@ It does the following:
 - Sets unknown field defaults in Elasticsearch
 - Installs Curator for Elasticsearch
 - Installs Head plugin for Elasticsearch
-- Installs and configures Kibana
 - Installs and configures Squid
-- Schedules an auto-update Cron job
-- Runs a cleanup and reboots the Ubuntu server
+- Schedules a weekly auto-update Cron job (/etc/cron/cron.weekly)
