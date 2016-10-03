@@ -127,7 +127,7 @@ The Flow Analyzer is designed to run on Ubuntu Server, either as a single instal
 Three listeners written in Python 2.x run in the background as services, one for each of the supported flow standards. 
 Should a service fail they are configured to restart automatically. If you're not using particular services you can disable them. 
 
-### **Install Location**
+### **Installation**
 
 Install by cloning the latest Git repo:
 
