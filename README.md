@@ -39,7 +39,7 @@ The Flow Analyzer supports over 60 pre-configured flow data fields, including th
 Elasticsearch so you don't have to do any guessing. Kibana Visualizations and Dashboards are included, so you can analyze those 60+
 fields right away. We also have dynamic support for other fields defined in the Netflow v5, v9, and IPFIX standards.
 
-Take a look at [Fields.md](Fields.md) for a list of the pre-configured fields. 
+Take a look at [the Fields list](Fields.md) for a list of the pre-configured fields. 
 
 ### **Tags**
 
