@@ -31,6 +31,14 @@ The Manito Networks Flow Analyzer supports the following flow data protocols:
 
 It ingests Netflow and IPFIX data, parses and tags it, then stores it in Elasticsearch for you to query and graph in Kibana.
 
+### **Fields**
+
+The Flow Analyzer supports over 60 pre-configured flow data fields, including the correct field types and analysis settings in 
+Elasticsearch so you don't have to do any guessing. Kibana Visualizations and Dashboards are included, so you can analyze those 60+
+fields right away. We also have dynamic support for other fields defined in the Netflow v5, v9, and IPFIX standards.
+
+Take a look at [Fields.md](Fields.md) for a list of the pre-configured fields. 
+
 ### **Tags**
 
 Our custom Netflow and IPFIX collectors ingest and tag flow data. We record not only the basic protocol and port numbers, but we 
@@ -40,7 +48,7 @@ also take it a step further and correlate the following:
 - IANA-registered port numbers to services (eg port 80 to "HTTP", 53 to "DNS")
 - Services to categories (eg HTTP, HTTPS, Alt-HTTP to "Web")
 
-This tagging functionality is running by default.
+This tagging functionality is running by default, and right now there is no functionality to turn it off.
 
 ### **DNS Reverse Lookups**
 
