@@ -29,6 +29,8 @@ The Manito Networks Flow Analyzer supports the following flow data protocols:
 - Netflow v9
 - IPFIX (aka Netflow v10)
 
+If you're not familiar with Netflow or IPFIX that's alright - take a look at [Network Flow Basics](Network%20Flow%20Basics.md).
+
 It ingests Netflow and IPFIX data, parses and tags it, then stores it in Elasticsearch for you to query and graph in Kibana.
 
 ### **Fields**
