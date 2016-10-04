@@ -4,47 +4,44 @@ The installation is orchestrated with Git, Pip, and Bash scripting. The process 
 
 # **Minimum Requirements**
 
-This should be run on a fresh Ubuntu Server installation with the following **minimum** hardware specs:
+Each instance should be installed on a fresh Ubuntu Server machine with the following **minimum** specs:
 
 - 4GB RAM
 - 2 CPU Cores
-- 90GB HDD space
+- 20GB+ HDD space
 
 Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure. Having additional
 Elasticsearch nodes will also allow you to retain more days of flow data.
 
-# **Installation Steps**
+# **Installation**
 
 1. Installation
-  1. Clone the repo via Git
+  1. Clone the Git repository
   2. Run the installation script
-2. Configure Kibana
-  1. Log in to Kibana
-  2. Configure the default index pattern
-  3. Set special Byte fields
-  4. Import Kibana Visualizations and Dashboards
-3. Point flow data at the installation
-
-## **Installation**
+2. Kibana
+  1. Configure the default index pattern
+  2. Set special Byte fields
+  3. Import Kibana Visualizations and Dashboards
+3. Configure Flows
 
 ### **Clone the Git repository**
 
-First, navigate to a directory you want to run this from, where you also have full read/write permissions:
+If you don't have Git installed on your Ubuntu Server machine that's OK, just run the following:
+
+```
+sudo apt-get install git
+```
+
+Navigate to a directory you want to run the collectors from, where you also have full read/write permissions:
 
 ```
 cd /your/directory/
 ```
 
-Run the command below to clone the Git repository into your directory:
+Run the command below to clone the Git repository into a new directory:
 
 ```
 git clone https://gitlab.com/thart/flowanalyzer.git
-```
-
-If you don't have Git available on your Ubuntu Server installation that's OK, just run the following:
-
-```
-sudo apt-get install git
 ```
 
 The download should only take a moment. Move into the repo directory:
@@ -63,7 +60,7 @@ sudo sh ./Install/ubuntu_install.sh
 
 The ubuntu_install.sh script does the following:
 
-- Moves the Ubuntu Server to UTC time
+- Shifts the Ubuntu Server to UTC time and configures an NTP client so timestamps are accurate
 - Adds software repos for Elasticsearch and Kibana
 - Updates the repos for the install
 - Installs Elasticsearch pre-reqs (Curl, OpenJDK 8, etc)
@@ -72,7 +69,7 @@ The ubuntu_install.sh script does the following:
   - netflow_v5
   - netflow_v9
   - ipfix
-- Registers services
+- Registers collector services
 - Builds the Flow index in Elasticsearch
 - Sets unknown field defaults in Elasticsearch
 - Installs Curator for Elasticsearch
@@ -83,9 +80,7 @@ The ubuntu_install.sh script does the following:
   - Password: **manitonetworks**
 - Schedules a weekly auto-update Cron job (/etc/cron/cron.weekly)
 
-## **Configure Kibana**
-
-### **Log in to Kibana**
+# **Kibana**
 
 Browse to Kibana at http://your_server_ip
 
@@ -114,3 +109,11 @@ Under the **Format** drop-down choose **Bytes** so Kibana will render this field
 Click **Update Field**
 
 Perform the same steps above on the **Bytes Out** field.
+
+### **Import Kibana Visualizations and Dashboards**
+
+Instructions for Visualizations and Dashboards go here eventually...
+
+# **Configure Flows**
+
+See the Flow Analyzer blog at manitonetworks.com for instructions on setting up Cisco, Ubiquiti, Mikrotik, Juniper, and other platforms.
