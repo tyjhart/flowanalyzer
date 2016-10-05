@@ -173,3 +173,6 @@ chmod +x /etc/cron.daily/index_prune
 # Install Head plugin for Elasticsearch for troubleshooting
 echo "Install Head plugin for Elasticsearch for troubleshooting"
 sh /usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head
+
+# Reboot the server to support services
+reboot
