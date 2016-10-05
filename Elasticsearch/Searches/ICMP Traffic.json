@@ -1,0 +1,12 @@
+{
+    "query": {
+        "bool": {
+            "must": {
+                "or": [
+                    { "match": { "Protocol Number": 1 } },
+                    { "match": { "Protocol Number": 58 } }
+                ]
+            }   
+        }
+    }
+}

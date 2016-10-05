@@ -1,0 +1,9 @@
+{
+    "query": {
+        "bool": {
+            "must": {
+                "match": { "Traffic": "DNS" }
+            }
+        }
+    }
+}
