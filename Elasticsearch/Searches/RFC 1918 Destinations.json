@@ -1,0 +1,15 @@
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "or": [
+                        { "range": { "IPv4 Destination": {"gte":"10.0.0.0","lte":"10.255.255.255"} } },
+                        { "range": { "IPv4 Destination": {"gte":"172.16.0.0","lte":"172.31.255.255"} } },
+                        { "range": { "IPv4 Destination": {"gte":"192.168.0.0","lte":"192.168.255.255"} } }
+                    ]
+                }
+            ]
+        }
+    }
+}
