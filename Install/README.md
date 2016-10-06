@@ -1,4 +1,4 @@
-# **Installation**
+# **Overview**
 
 The installation is orchestrated with Git, Pip, and Bash scripting. The process should require no manual intervention on your part.
 
