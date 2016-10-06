@@ -75,3 +75,7 @@ Here are the commonly used fields supported out-of-the-box:
 - Traffic (HTTP, SSH, SMTP, etc parsed for you)
 - Traffic Category (Web, Email, Remote Administration, etc parsed for you)
 - Type of Service
+
+
+**Copyright (c) 2016, Manito Networks, LLC**
+**All rights reserved.**

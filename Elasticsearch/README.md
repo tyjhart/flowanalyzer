@@ -4,3 +4,7 @@ These Elasticsearch queries in JSON format can be used with Kibana in the Discov
 and in raw Elasticsearch queries via Curl.
 
 The standard queries in this directory are used in baseline Visualizations that support included Dashboards.
+
+
+**Copyright (c) 2016, Manito Networks, LLC**
+**All rights reserved.**

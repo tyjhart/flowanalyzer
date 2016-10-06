@@ -119,3 +119,7 @@ Perform the same steps above on the **Bytes Out** field.
 # **Configure Flows**
 
 See the Flow Analyzer blog at manitonetworks.com for instructions on setting up Cisco, Ubiquiti, Mikrotik, Juniper, and other platforms.
+
+
+**Copyright (c) 2016, Manito Networks, LLC**
+**All rights reserved.**

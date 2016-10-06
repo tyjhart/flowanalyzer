@@ -1,4 +1,5 @@
-# Copyright 2016, Manito Networks, LLC. All rights reserved
+# Copyright (c) 2016, Manito Networks, LLC
+# All rights reserved.
 
 # Array of registered and unregistered names and numbers according to: 
 # IANA http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml 

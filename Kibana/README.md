@@ -34,3 +34,7 @@ The [Default JSON file](Default.json) provides a solid foundation with preconfig
   2. Web traffic by protocol (HTTP, HTTPS, HTTP-Alt, etc)
   3. Web traffic metrics
   4. Top web traffic destinations
+
+
+**Copyright (c) 2016, Manito Networks, LLC**
+**All rights reserved.**

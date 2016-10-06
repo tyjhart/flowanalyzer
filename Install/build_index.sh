@@ -1,3 +1,6 @@
+# Copyright (c) 2016, Manito Networks, LLC
+# All rights reserved.
+
 # Build the Netflow index in Elasticsearch
 curl -XPOST localhost:9200/_template/flow_template -d '
 {

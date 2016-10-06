@@ -77,3 +77,7 @@ collection of non-standard IPFIX fields as defined in the [RFC](https://tools.ie
 Some vendors have also released their own proprietary field definitions beyond what is supported in the standard. The openness and
 availability of these field definitions varies from vendor-to-vendor, and we are exploring what would be required to support
 mainstream vendors.
+
+
+**Copyright (c) 2016, Manito Networks, LLC**
+**All rights reserved.**

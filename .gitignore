@@ -4,3 +4,4 @@ Python.sln
 Python.pyproj.user
 .vs
 .vscode
+netflow_options.py

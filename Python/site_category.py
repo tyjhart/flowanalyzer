@@ -1,7 +1,5 @@
-# Copyright 2016, Manito Networks, LLC. All rights reserved.
-# Not for distribution or publication.
-#
-# Last modified 10/1/2016
+# Copyright (c) 2016, Manito Networks, LLC
+# All rights reserved.
 
 # Categories of mainstream websites
 
