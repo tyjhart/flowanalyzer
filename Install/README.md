@@ -16,15 +16,16 @@ Elasticsearch nodes will also allow you to retain more days of flow data.
 # **Installation**
 
 1. Installation
-  1. Clone the Git repository
-  2. Run the installation script
+  1. [Clone the Git repository](#clone-the-git-repository)
+  2. [Run the Installation Script](#installation-script)
 2. Kibana
-  1. Configure the default index pattern
-  2. Set special Byte fields
-  3. Import Kibana Visualizations and Dashboards
-3. Configure Flows
+  1. [Access Kibana](#access-kibana)
+  2. [Configure the default index pattern](#configure-the-default-index-pattern)
+  3. [Set special Byte fields](#set-special-byte-fields)
+  4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
+3. [Configure Flows](#configure-flows)
 
-### **Clone the Git repository**
+### **Clone the Git Repository**
 
 If you don't have Git installed on your Ubuntu Server machine that's OK, just run the following:
 
