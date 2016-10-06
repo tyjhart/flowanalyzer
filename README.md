@@ -1,12 +1,12 @@
 # **Manito Networks Flow Analyzer**
 
-The Flow Analyzer is a Netflow and IPFIX collector and parser, available under the [BSD 3-Clause License](License), 
+The Flow Analyzer is a Netflow and IPFIX collector and parser, available under the [BSD 3-Clause License](#license), 
 that stores flows in Elasticsearch and visualizes them in Kibana. It is designed to run on Ubuntu Server, either as a single 
 installation or in an Elasticsearch cluster. 
 
 Visualizations and Dashboards are provided to support network flow analysis right out of the box.
 
-See the [License section](License) below for licensing details.
+See the [License section](#license) below for licensing details.
 
 # **Project Goals**
 
