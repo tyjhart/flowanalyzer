@@ -130,6 +130,6 @@ Elasticsearch and Kibana are distributed under the Apache 2 license by Elasticse
 
 Ubuntu is a trademark of Canonical Ltd.
 
-#
+# ---
 **Copyright (c) 2016, Manito Networks, LLC**
 **All rights reserved.**
