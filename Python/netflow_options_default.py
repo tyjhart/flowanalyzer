@@ -13,6 +13,7 @@
 # A small organization with only a few dozen flows a minute would take forever to fill up a 700 flow cache
 # A WISP or large organization would fill up a 300 flow buffer a few times a second, causing a massive bloat in indexing connections
 # Tuning is necessary for each organization, set the variable below to a sane integer.
+# 
 # After changing this port run the following commands from a root-level shell:
 # service netflow_v5 restart
 # service netflow_v9 restart

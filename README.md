@@ -1,11 +1,12 @@
 # **Manito Networks Flow Analyzer**
 
-The Flow Analyzer is a freely available Netflow and IPFIX collector and parser, that stores flows in Elasticsearch and graphs flow
-data in Kibana. 
+The Flow Analyzer is a Netflow and IPFIX collector and parser, available under the [BSD 3-Clause License](#License), 
+that stores flows in Elasticsearch and visualizes them in Kibana. It is designed to run on Ubuntu Server, either as a single 
+installation or in an Elasticsearch cluster. 
 
 Visualizations and Dashboards are provided to support network flow analysis right out of the box.
 
-See the License section below for licensing details.
+See the [License section](#License) below for licensing details.
 
 # **Project Goals**
 
@@ -21,7 +22,7 @@ should be able to realize the benefits of meaningful, beautiful data visualizati
 
 # **Features**
 
-### **Protocols**
+### **Flow Monitoring Protocols**
 
 The Manito Networks Flow Analyzer supports the following flow data protocols:
 
@@ -31,7 +32,7 @@ The Manito Networks Flow Analyzer supports the following flow data protocols:
 
 If you're not familiar with Netflow or IPFIX that's alright - take a look at [Network Flow Basics](Network%20Flow%20Basics.md).
 
-It ingests Netflow and IPFIX data, parses and tags it, then stores it in Elasticsearch for you to query and graph in Kibana.
+Our software ingests Netflow and IPFIX data, parses and tags it, then stores it in Elasticsearch for you to query and graph in Kibana.
 
 ### **Fields**
 
@@ -55,35 +56,8 @@ This tagging functionality is running by default, and right now there is no func
 ### **DNS Reverse Lookups**
 
 A reverse lookup against observed IPs is done if DNS lookups are enabled. Resolved domains are cached for 30 minutes to reduce
-the impact on DNS servers. Popular domains like facebook.com and cnn.com are categorized to provide some insight into website
-browsing on the network.
-
-DNS reverse lookups are disabled by default due to their potential impact on DNS servers in high traffic environments.
-
-They can be enabled by changing the following default option in **netflow_options.py** once it's copied 
-in the [installation script](Install/ubuntu_install.sh):
-
-```
-dns = False
-```
-
-to
-
-```
-dns = True
-```
-
-If you have a local DNS server that can resolve internal addresses in the RFC-1918 range you can also change this default option:
-
-```
-lookup_internal = False
-```
-
-to
-
-```
-lookup_internal = True
-```
+the impact on DNS servers. Popular domains like facebook.com and cnn.com are categorized with content tags like "Social Media" and "News"
+to provide insight into website browsing on the network.
 
 ### **MAC Address Lookups**
 
@@ -99,6 +73,7 @@ At least one Ubuntu Server installation with the following **minimum** hardware 
 - 2 CPU Cores
 - 90GB HDD space
 
+This will work for a proof of concept installation or for very small networks.
 Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure.
 
 # **Access**
@@ -114,45 +89,13 @@ Default Username: **admin**
 
 Default Password: **manitonetworks**
 
-Users can be created with the following command:
+# **Installation**
 
-```
-htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
-```
+Install by cloning the latest Git repo, then run the Ubuntu installation script.
 
-# **Architecture**
+See [installation documentation](Install/README.md) for more information.
 
-The Flow Analyzer is designed to run on Ubuntu Server, either as a single installation or in an Elasticsearch cluster.
-
-Three listeners written in Python 2.x run in the background as services, one for each of the supported flow standards. 
-Should a service fail they are configured to restart automatically. If you're not using particular services you can disable them. 
-
-### **Installation**
-
-Install by cloning the latest Git repo:
-
-```
-git clone https://gitlab.com/thart/flowanalyzer.git
-```
-
-### **Services**
-
-Service names correspond to their respective protocols:
-
-- netflow_v5
-- netflow_v9
-- ipfix
-
-You can view the status of the services listed above and control their operations by running the following:
-
-```
-service service_name status
-service service_name start
-service service_name stop
-service service_name restart
-```
-
-### **Ports & protocols**
+# **Ports & protocols**
 
 All services listen for TCP flow packets on the following ports:
 
@@ -160,72 +103,7 @@ All services listen for TCP flow packets on the following ports:
 - Netflow v9:   TCP/9995
 - IPFIX:        TCP/4739
 
-These ports can be changed by editing /opt/manitonetworks/netflow_options.py and restarting the services shown above.
-
-### **Time Zone**
-
-The Ubuntu Server's timezone is set to UTC during the install, and all events are logged into Elasticsearch with UTC timestamps.
-This is for Elasticsearch purposes, and to ensure that it's possible to correlate flow data from devices across time zones and
-DST implementations.
-
-Kibana corrects for local time automatically.
-
-### **Files**
-
-The master configuration file is **netflow_options.py**, 
-and contains all the configurable options for the system. As part of the initial configuration you 
-must copy netflow_options_example.py to netflow_options.py and make any changes you'd like. 
-
-It already has the basic, typical settings in place, including the ports listed above.
-
-# **Tuning**
-
-### **Elasticsearch Connection**
-
-By default the flow collector services are configured to connect to an Elasticsearch instance running on locahost.
-The setting can be found in /opt/manitonetworks/flow/netflow_options.py, as shown below:
-
-```
-elasticsearch_host = '127.0.0.1'
-```
-
-If you already have an existing Elasticsearch cluster running you can change this setting, using either an IP address or FQDN.
-You will be responsible for creating the Flow index on your own cluster, and the curl command can be found in the 
-[build_index.sh file](Install/build_index.sh).
-
-### **Elasticsearch Bulk Insert**
-
-Depending on the traffic volume you're feeding to Flow Analyzer you may need to tune a couple settings to get the best
-performance.
-
-By default, the software is configured to do a bulk upload of flow data to Elasticsearch every 700 flows. For smaller organizations
-it may take some time to fill up a 700 flow buffer, and so flows won't be observed in a timely fashion. 
-For medium and large organizations it may only take a few moments to fill up a 700 flow buffer, 
-and bulk uploads to Elasticsearch will happen too often to keep up. This setting can be changed in the 
-/opt/manitonetworks/flow/netflow_options.py file by changing the following setting:
-
-```
-bulk_insert_count = 700
-```
-
-The following bulk_insert_count settings have been found to work, but each network is different and tuning is important:
-
-- Small enterprises: 200
-- Medium enterprises and small WISPs: 700
-- Large enterprises and medium WISPs: 1000
-
-For wired ISP's that are able to push more data, and other large enterprises the bulk_insert_count may need to go higher.
-Performance for those larger organizations and ISPs will also depend on the performance of their Elasticsearch cluster.
-
-# **Attributions**
-
-Elasticsearch is a registered trademark of Elasticsearch BV.
-
-Kibana is a registered trademark of Elasticsearch BV.
-
-Elasticsearch and Kibana are distributed under the Apache 2 license by Elasticsearch BV.
-
-Ubuntu is a trademark of Canonical Ltd.
+These ports can be changed by tuning netflow_options.py and restarting collector services.
 
 # **License**
 
@@ -241,3 +119,13 @@ Redistribution and use in source and binary forms, with or without modification,
 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# **Attributions**
+
+Elasticsearch is a registered trademark of Elasticsearch BV.
+
+Kibana is a registered trademark of Elasticsearch BV.
+
+Elasticsearch and Kibana are distributed under the Apache 2 license by Elasticsearch BV.
+
+Ubuntu is a trademark of Canonical Ltd.

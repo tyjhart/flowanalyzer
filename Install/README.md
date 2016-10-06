@@ -116,6 +116,15 @@ Perform the same steps above on the **Bytes Out** field.
 2. In Kibana click Settings > Objects > Import
 3. Browse to the downloaded JSON file
 
+### **Creating Users for Kibana Access**
+
+Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
+Kibana login page via an .htaccess file. Users can be created with the following command:
+
+```
+htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
+```
+
 # **Configure Flows**
 
 See the Flow Analyzer blog at manitonetworks.com for instructions on setting up Cisco, Ubiquiti, Mikrotik, Juniper, and other platforms.
