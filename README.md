@@ -10,7 +10,7 @@ See the [License section](#license) below for licensing details.
 
 # **Project Goals**
 
-Our goal is to provide superior Netflow and IPFIX collection, visualization, and analysis. We'll do that by creating:
+Our goal is to provide superior Netflow and IPFIX collection, visualization, and analysis. We do that by creating:
 
 - Efficient, accessible, and sustainable software
 - Scalable solutions that can evolve
