@@ -120,7 +120,7 @@ Perform the same steps above on the **Bytes Out** field.
 
 ### **Import Kibana Visualizations and Dashboards**
 
-1. Download the Visualization and Dashboard JSON file from ...
+1. Download the [Visualization and Dashboard JSON file](../Kibana/Default.json)
 2. In Kibana click Settings > Objects > Import
 3. Browse to the downloaded JSON file
 
