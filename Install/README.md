@@ -82,9 +82,17 @@ The ubuntu_install.sh script does the following:
 
 # **Kibana**
 
+A few things have to be done first in Kibana before you get to see the Visualizations and Dashboards.
+
+### **Access Kibana**
+
 Browse to Kibana at http://your_server_ip
 
-Log in with the default Squid credentials shown above.
+Log in with the default Squid credentials shown below:
+
+Default Username: **admin**
+
+Default Password: **manitonetworks**
 
 ### **Configure the default index pattern**
 
@@ -129,6 +137,6 @@ htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
 
 See the Flow Analyzer blog at manitonetworks.com for instructions on setting up Cisco, Ubiquiti, Mikrotik, Juniper, and other platforms.
 
-
+#
 **Copyright (c) 2016, Manito Networks, LLC**
 **All rights reserved.**

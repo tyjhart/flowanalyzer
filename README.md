@@ -129,3 +129,7 @@ Kibana is a registered trademark of Elasticsearch BV.
 Elasticsearch and Kibana are distributed under the Apache 2 license by Elasticsearch BV.
 
 Ubuntu is a trademark of Canonical Ltd.
+
+#
+**Copyright (c) 2016, Manito Networks, LLC**
+**All rights reserved.**
