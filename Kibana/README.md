@@ -36,5 +36,6 @@ The [Default JSON file](Default.json) provides a solid foundation with preconfig
   4. Top web traffic destinations
 
 
+# ---
 **Copyright (c) 2016, Manito Networks, LLC**
 **All rights reserved.**

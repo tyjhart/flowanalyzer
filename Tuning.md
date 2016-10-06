@@ -110,3 +110,7 @@ lookup_internal = True
 Correlation of MAC address OUI's to top manufacturer's is done to help graph traffic sources in hetergenous environments. 
 
 Note: This feature is in beta, and the list of OUI's to be built is quite extensive.
+
+# ---
+**Copyright (c) 2016, Manito Networks, LLC**
+**All rights reserved.**
