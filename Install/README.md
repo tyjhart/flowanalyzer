@@ -55,7 +55,7 @@ cd flowanalyzer
 
 The ubuntu_install.sh script handles almost everything, just be sure to run it with sudo privileges:
 
-**Note**: The installation script does reboot at the end to ensure that all the services get a clean register and start.
+**Warning**: The installation script does reboot at the end to ensure that all the services get a clean register and start.
 
 ```
 sudo sh ./Install/ubuntu_install.sh
@@ -82,6 +82,16 @@ The ubuntu_install.sh script does the following:
   - Username: **admin**
   - Password: **manitonetworks**
 - Schedules a weekly auto-update Cron job (/etc/cron/cron.weekly)
+
+### **Build the Index**
+
+The build_index.sh script creates the default index for storing data in Elasticsearch:
+
+```
+sudo sh ./Install/build_index.sh
+```
+
+You should receive an "Acknowledged" message once the index is built.
 
 # **Kibana**
 

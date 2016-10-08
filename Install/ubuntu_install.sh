@@ -59,7 +59,7 @@ echo "ES_HEAP_SIZE=2g" >> /etc/default/elasticsearch
 # Enabling and starting Elasticsearch service
 echo "Enabling and starting Elasticsearch service"
 systemctl enable elasticsearch
-systemctl restart elasticsearch
+#systemctl restart elasticsearch
 
 set +e
 
@@ -127,8 +127,8 @@ echo "Register new services created above"
 systemctl daemon-reload
 
 # Build the Netflow index in Elasticsearch
-echo "Build the Flow index in Elasticsearch"
-sh build_index.sh
+#echo "Build the Flow index in Elasticsearch"
+#sh build_index.sh
 
 # Set the Netflow services to automatically start
 echo "Set the Netflow services to automatically start"
