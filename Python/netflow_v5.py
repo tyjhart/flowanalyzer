@@ -72,9 +72,6 @@ def netflow_v5_server():
 		
 		# Rcvd a Netflow v5 packet, parse it
 		if netflow_version == 5:
-			
-			# Set overall flow counter
-			#flow_num = 0
 
 			# Iterate over flows in packet
 			for flow_num in range(0, flow_count):
@@ -174,7 +171,6 @@ def netflow_v5_server():
 				
 				# Add the parsed flow to flow_dic for bulk insert
 				flow_dic.append(flow_index)
-				#flow_num += 1
 				
 			if len(flow_dic) >= bulk_insert_count:
 				
