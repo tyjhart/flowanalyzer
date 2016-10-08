@@ -3,9 +3,6 @@
 # Last modified 10/1/2016 
 
 # Set up the firewall if needed
-#ufw allow from 192.168.1.0/24 comment "Dev range"
-#ufw allow from 192.168.90.0/24 comment "Dev range"
-#ufw allow from 98.166.240.0/21 comment "Tylers home IP range"
 #ufw allow from xxx.xxx.xxx.xxx/xx to any port 80 proto tcp comment "Kibana interface"
 #ufw allow from xxx.xxx.xxx.xxx/xx to any port 9200 proto tcp comment "Elasticsearch CLI"
 #ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739 proto udp comment "Netflow inbound"
