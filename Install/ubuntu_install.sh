@@ -158,7 +158,7 @@ htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
 
 # Dynamic updating cron script, get updated Python daily if it's available
 echo "Dynamic updating cron script, get updated code weekly"
-echo "cd $(pwd)/flowanalyzer/" >> /etc/cron.weekly/flow-update
+echo "cd $(pwd)" >> /etc/cron.weekly/flow-update
 echo "git fetch https://gitlab.com/thart/flowanalyzer.git" >> /etc/cron.weekly/flow-update
 echo "service netflow_v5 restart" >> /etc/cron.weekly/flow-update
 echo "service netflow_v9 restart" >> /etc/cron.weekly/flow-update
