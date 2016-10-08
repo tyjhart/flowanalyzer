@@ -131,9 +131,9 @@ Click the **Green Star** button to set the Flow index as the default index.
 
 ### **Set special Byte fields**
 
-Sort field names by clicking the **names** heading
+Sort field names by clicking the **name** heading
 
-Click the **Edit** pencil icon to the right of the **Bytes In** field
+Click the **Edit** pencil icon to the far right of the **Bytes In** field
 
 Under the **Format** drop-down choose **Bytes** so Kibana will render this field in human-readable sizes (Kb, Mb, Gb, etc)
 
@@ -155,6 +155,8 @@ Kibana login page via an .htaccess file. Users can be created with the following
 ```
 htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
 ```
+
+For more fine-grained control of data access refer to the [Shield product page](https://www.elastic.co/products/shield) from Elastic.
 
 # **Configure Flows**
 
