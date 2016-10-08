@@ -33,13 +33,7 @@ If you don't have Git installed on your Ubuntu Server machine that's OK, just ru
 sudo apt-get install git
 ```
 
-Navigate to a directory you want to run the collectors from, where you also have full read/write permissions:
-
-```
-cd /your/directory/
-```
-
-Run the command below to clone the Git repository into a new directory:
+Clone the Git repository into a new directory:
 
 ```
 git clone https://gitlab.com/thart/flowanalyzer.git
@@ -55,8 +49,6 @@ cd flowanalyzer
 
 The ubuntu_install.sh script handles almost everything, just be sure to run it with sudo privileges:
 
-**Warning**: The installation script does reboot at the end to ensure that all the services get a clean register and start.
-
 ```
 sudo sh ./Install/ubuntu_install.sh
 ```
@@ -65,17 +57,14 @@ The ubuntu_install.sh script does the following:
 
 - Shifts the Ubuntu Server to UTC time and configures an NTP client so timestamps are accurate
 - Adds software repos for Elasticsearch and Kibana
-- Updates the repos for the install
+- Updates software repos 
 - Installs Elasticsearch pre-reqs (Curl, OpenJDK 8, etc)
 - Installs Elasticsearch and Kibana
-- Creates the following services for Netflow v5/v9 and IPFIX (aka v10):
+- Creates the following collector services for Netflow v5/v9 and IPFIX (aka Netflow v10):
   - netflow_v5
   - netflow_v9
   - ipfix
-- Registers collector services
-- Builds the Flow index in Elasticsearch
-- Sets unknown field defaults in Elasticsearch
-- Installs Curator for Elasticsearch
+- Registers collector services and sets auto-start
 - Installs Head plugin for Elasticsearch
 - Installs and configures Squid
 - Configures a default Squid user:
@@ -83,15 +72,33 @@ The ubuntu_install.sh script does the following:
   - Password: **manitonetworks**
 - Schedules a weekly auto-update Cron job (/etc/cron/cron.weekly)
 
-### **Build the Index**
+### **Build the Elasticsearch Flow Index**
 
 The build_index.sh script creates the default index for storing data in Elasticsearch:
 
 ```
-sudo sh ./Install/build_index.sh
+sh ./Install/build_index.sh
 ```
 
-You should receive an "Acknowledged" message once the index is built.
+### **Firewall (Optional)**
+
+These are examples of commands you may need to use if you're running a firewall on the Ubuntu Server installation:
+
+```
+ufw allow from xxx.xxx.xxx.xxx/xx to any port 80 proto tcp comment "Kibana interface"
+
+ufw allow from xxx.xxx.xxx.xxx/xx to any port 9200 proto tcp comment "Elasticsearch CLI"
+
+ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739 proto udp comment "Netflow inbound"
+```
+
+### **Reboot**
+
+It's important to reboot so that we're sure the services were registered and start correctly:
+
+```
+sudo reboot
+```
 
 # **Kibana**
 
