@@ -157,13 +157,13 @@ echo "Set the default proxy password for Squid"
 htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
 
 # Dynamic updating cron script, get updated Python daily if it's available
-echo "Dynamic updating cron script, get updated code weekly"
-echo "cd $(pwd)" >> /etc/cron.weekly/flow-update
-echo "git fetch https://gitlab.com/thart/flowanalyzer.git" >> /etc/cron.weekly/flow-update
-echo "systemctl restart netflow_v5" >> /etc/cron.weekly/flow-update
-echo "systemctl restart netflow_v9" >> /etc/cron.weekly/flow-update
-echo "systemctl restart ipfix" >> /etc/cron.weekly/flow-update
-chmod +x /etc/cron.weekly/flow-update
+#echo "Dynamic updating cron script, get updated code weekly"
+#echo "cd $(pwd)" >> /etc/cron.weekly/flow-update
+#echo "git fetch https://gitlab.com/thart/flowanalyzer.git" >> /etc/cron.weekly/flow-update
+#echo "systemctl restart netflow_v5" >> /etc/cron.weekly/flow-update
+#echo "systemctl restart netflow_v9" >> /etc/cron.weekly/flow-update
+#echo "systemctl restart ipfix" >> /etc/cron.weekly/flow-update
+#chmod +x /etc/cron.weekly/flow-update
 
 # Prune old indexes
 echo "curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'" >> /etc/cron.daily/index_prune
