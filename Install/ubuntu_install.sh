@@ -12,7 +12,7 @@
 #ufw enable
 
 # Get installation path
-export flow_analyzer_dir=$(dirname $PWD)/Install
+export flow_analyzer_dir=$(pwd)
 
 # Ensure we have the permissions we need to execute scripts
 chmod -R +x ..
@@ -46,7 +46,7 @@ apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2
 echo "Install Python dependencies"
 apt-get install python-pip -y
 pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r $flow_analyzer_dir/requirements.txt
 
 # Set the Elasticsearch cluster details
 echo "Set the Elasticsearch cluster details"
@@ -59,7 +59,7 @@ echo "#discovery.zen.ping.unicast.hosts: ["192.168.1.10","192.168.1.11"]" >> /et
 echo "Set the Elasticsearch heap size to 50% of RAM (must be <= 32GB per documentation)"
 echo "ES_HEAP_SIZE=2g" >> /etc/default/elasticsearch
 
-# Enabling and starting Elasticsearch service
+# Enabling and restarting Elasticsearch service
 echo "Enabling and starting Elasticsearch service"
 systemctl enable elasticsearch
 systemctl restart elasticsearch
