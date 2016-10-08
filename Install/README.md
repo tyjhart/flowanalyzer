@@ -55,6 +55,8 @@ cd flowanalyzer
 
 The ubuntu_install.sh script handles almost everything, just be sure to run it with sudo privileges:
 
+**Note**: The installation script does reboot at the end to ensure that all the services get a clean register and start.
+
 ```
 sudo sh ./Install/ubuntu_install.sh
 ```

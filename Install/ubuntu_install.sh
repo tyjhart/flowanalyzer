@@ -11,6 +11,9 @@
 #ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739 proto udp comment "Netflow inbound"
 #ufw enable
 
+# Ensure we have the permissions we need to execute scripts
+chmod -R +x ..
+
 # Copy example netflow_options_default.py to real netflow_options.py
 echo "Copy example netflow_options_default.py to real netflow_options.py"
 cp ../Python/netflow_options_default.py ../Python/netflow_options.py
