@@ -90,13 +90,13 @@ One of the biggest ways to destroy Elasticsearch performance is to not properly 
 Elasticsearch to use [50% of the available memory](https://www.elastic.co/guide/en/elasticsearch/guide/current/heap-sizing.html#_give_less_than_half_your_memory_to_lucene) 
 on a given server, up to the 32GB limit. The configuration set in the installation script sets Elasticsearch memory to 2GB, assuming a server with at least 4GB of RAM. 
 
-That's done by setting:
+That's done by setting...
 
 ```
 ES_HEAP_SIZE=2g
 ```
 
-in the /etc/default/elasticsearch configuration file.
+...in the **/etc/default/elasticsearch** configuration file.
 
 If you have a server with more RAM then you need to adjust this value and reboot the server (or restart Elasticsearch and then the collector services).
 
