@@ -4,7 +4,7 @@ The installation is orchestrated with Git, Pip, and Bash scripting. The process 
 
 # **Minimum Requirements**
 
-Each instance should be installed on a fresh Ubuntu Server machine with the following **minimum** specs:
+Each instance should be installed on a fresh 64-bit Ubuntu Server machine with the following **minimum** specs:
 
 - 4GB RAM
 - 2 CPU Cores
@@ -12,6 +12,10 @@ Each instance should be installed on a fresh Ubuntu Server machine with the foll
 
 Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure. Having additional
 Elasticsearch nodes will also allow you to retain more days of flow data.
+
+This installation has been tested on the following Ubuntu Server releases:
+
+* Ubuntu Server 16.04 LTS
 
 # **Installation**
 
