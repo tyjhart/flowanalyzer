@@ -175,9 +175,9 @@ git reset --hard origin
 Restart the listener services:
 
 ```
-systemctl netflow_v5 restart
-systemctl netflow_v9 restart
-systemctl ipfix restart
+systemctl restart netflow_v5
+systemctl restart netflow_v9
+systemctl restart ipfix
 ```
 
 # ---
