@@ -16,14 +16,16 @@ Elasticsearch nodes will also allow you to retain more days of flow data.
 # **Installation**
 
 1. Installation
-  1. [Clone the Git repository](#clone-the-git-repository)
+  1. [Clone the Git Repository](#clone-the-git-repository)
   2. [Run the Installation Script](#installation-script)
+  3. [Build Elasticsearch Flow Index](#build-the-elasticsearch-flow-index)
+  4. [Firewall (Optional)](#firewall-optional)
 2. Kibana
   1. [Access Kibana](#access-kibana)
-  2. [Configure the default index pattern](#configure-the-default-index-pattern)
-  3. [Set special Byte fields](#set-special-byte-fields)
+  2. [Configure the Default Index Pattern](#configure-the-default-index-pattern)
+  3. [Set Special Byte Fields](#set-special-byte-fields)
   4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
-3. [Configure Flows](#configure-flows)
+3. [Configure Devices](#configure-flows)
 
 ### **Clone the Git Repository**
 
