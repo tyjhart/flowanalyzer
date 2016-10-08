@@ -278,13 +278,12 @@ def netflow_v9_server():
 										)
 								
 								# Add value to the flow_index and move the data pointer
-								finally:
+								#
+								# Add the friendly Index ID and value (flow_payload) to flow_index
+								flow_index["_source"][v9_fields[template_key]["Index ID"]] = flow_payload
 
-									# Add the friendly Index ID and value (flow_payload) to flow_index
-									flow_index["_source"][v9_fields[template_key]["Index ID"]] = flow_payload
-
-									# Move the byte position the number of bytes in the field we just parsed
-									data_position += field_size
+								# Move the byte position the number of bytes in the field we just parsed
+								data_position += field_size
 								
 								# Tag the flow with Source and Destination FQDN and Domain info (if available)
 								if dns is True:
