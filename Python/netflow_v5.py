@@ -74,10 +74,10 @@ def netflow_v5_server():
 		if netflow_version == 5:
 			
 			# Set overall flow counter
-			flow_num = 0
+			#flow_num = 0
 
 			# Iterate over flows in packet
-			for flow in range(0, flow_count):
+			for flow_num in range(0, flow_count):
 				now = datetime.datetime.utcnow() # Timestamp for flow rcv
 				logger.debug(logging_ops.log_time() + " Flow " + str(flow_num+1) + " of " + str(flow_count))
 				base = packet_header_size + (flow_num * flow_record_size)
@@ -152,6 +152,7 @@ def netflow_v5_server():
 					if "Traffic Category" not in flow_index["_source"]:
 						flow_index["_source"]['Traffic Category'] = "Other"		
 				
+				# Perform DNS lookups if enabled
 				if dns is True:	
 					
 					# Tag the flow with Source FQDN and Domain info (if available)
@@ -173,7 +174,7 @@ def netflow_v5_server():
 				
 				# Add the parsed flow to flow_dic for bulk insert
 				flow_dic.append(flow_index)
-				flow_num += 1
+				#flow_num += 1
 				
 			if len(flow_dic) >= bulk_insert_count:
 				
