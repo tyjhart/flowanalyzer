@@ -160,9 +160,9 @@ htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
 echo "Dynamic updating cron script, get updated code weekly"
 echo "cd $(pwd)" >> /etc/cron.weekly/flow-update
 echo "git fetch https://gitlab.com/thart/flowanalyzer.git" >> /etc/cron.weekly/flow-update
-echo "service netflow_v5 restart" >> /etc/cron.weekly/flow-update
-echo "service netflow_v9 restart" >> /etc/cron.weekly/flow-update
-echo "service ipfix restart" >> /etc/cron.weekly/flow-update
+echo "systemctl restart netflow_v5" >> /etc/cron.weekly/flow-update
+echo "systemctl restart netflow_v9" >> /etc/cron.weekly/flow-update
+echo "systemctl restart ipfix" >> /etc/cron.weekly/flow-update
 chmod +x /etc/cron.weekly/flow-update
 
 # Prune old indexes
