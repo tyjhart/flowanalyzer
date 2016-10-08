@@ -26,6 +26,7 @@ Elasticsearch nodes will also allow you to retain more days of flow data.
   3. [Set Special Byte Fields](#set-special-byte-fields)
   4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
 3. [Configure Devices](#configure-flows)
+4. [Updates](#updates)
 
 ### **Clone the Git Repository**
 
@@ -158,6 +159,26 @@ htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
 # **Configure Flows**
 
 See the Flow Analyzer blog at manitonetworks.com for instructions on setting up Cisco, Ubiquiti, Mikrotik, Juniper, and other platforms.
+
+# **Updates**
+
+To get the latest updates do the following:
+
+Change to the flowanalyzer directory and fetch the latest code via Git:
+
+```
+cd /your/directory/flowanalyzer
+git fetch origin
+git reset --hard origin
+```
+
+Restart the listener services:
+
+```
+systemctl netflow_v5 restart
+systemctl netflow_v9 restart
+systemctl ipfix restart
+```
 
 # ---
 **Copyright (c) 2016, Manito Networks, LLC**
