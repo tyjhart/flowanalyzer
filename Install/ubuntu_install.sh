@@ -11,6 +11,9 @@
 #ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739 proto udp comment "Netflow inbound"
 #ufw enable
 
+# Get installation path
+export flow_analyzer_dir=$(dirname $PWD)/Install
+
 # Ensure we have the permissions we need to execute scripts
 chmod -R +x ..
 
@@ -59,7 +62,7 @@ echo "ES_HEAP_SIZE=2g" >> /etc/default/elasticsearch
 # Enabling and starting Elasticsearch service
 echo "Enabling and starting Elasticsearch service"
 systemctl enable elasticsearch
-#systemctl restart elasticsearch
+systemctl restart elasticsearch
 
 set +e
 
@@ -126,10 +129,6 @@ echo "WantedBy=multi-user.target" >> /etc/systemd/system/ipfix.service
 echo "Register new services created above"
 systemctl daemon-reload
 
-# Build the Netflow index in Elasticsearch
-#echo "Build the Flow index in Elasticsearch"
-#sh build_index.sh
-
 # Set the Netflow services to automatically start
 echo "Set the Netflow services to automatically start"
 systemctl enable netflow_v5
@@ -146,7 +145,7 @@ systemctl enable ntp
 
 # Get the squid.conf file and replace the default squid.conf
 echo "Get the squid.conf file and replace the default squid.conf"
-cp ubuntu_squid.conf /etc/squid/squid.conf
+cp $flow_analyzer_dir/ubuntu_squid.conf /etc/squid/squid.conf
 
 # Set the Squid service to automatically start
 echo "Set the Squid service to automatically start"
@@ -176,6 +175,3 @@ chmod +x /etc/cron.daily/index_prune
 # Install Head plugin for Elasticsearch for troubleshooting
 echo "Install Head plugin for Elasticsearch for troubleshooting"
 sh /usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head
-
-# Reboot the server to support services
-reboot
