@@ -87,8 +87,8 @@ echo "Description=Netflow v5 listener service" >> /etc/systemd/system/netflow_v5
 echo "After=network.target elasticsearch.service kibana.service" >> /etc/systemd/system/netflow_v5.service
 echo "[Service]" >> /etc/systemd/system/netflow_v5.service
 echo "Type=simple" >> /etc/systemd/system/netflow_v5.service
-echo "User=root" >> /etc/systemd/system/netflow_v5.service
-echo "ExecStart=/usr/bin/python $(dirname $PWD)/Python/netflow_v5.py" >> /etc/systemd/system/netflow_v5.service
+#echo "User=root" >> /etc/systemd/system/netflow_v5.service
+echo "ExecStart=/usr/bin/python $(dirname $PWD)/flowanalyzer/Python/netflow_v5.py" >> /etc/systemd/system/netflow_v5.service
 echo "Restart=on-failure" >> /etc/systemd/system/netflow_v5.service
 echo "RestartSec=30" >> /etc/systemd/system/netflow_v5.service
 echo "[Install]" >> /etc/systemd/system/netflow_v5.service
@@ -101,8 +101,8 @@ echo "Description=Netflow v9 listener service" >> /etc/systemd/system/netflow_v9
 echo "After=network.target elasticsearch.service kibana.service" >> /etc/systemd/system/netflow_v9.service
 echo "[Service]" >> /etc/systemd/system/netflow_v9.service
 echo "Type=simple" >> /etc/systemd/system/netflow_v9.service
-echo "User=root" >> /etc/systemd/system/netflow_v9.service
-echo "ExecStart=/usr/bin/python $(dirname $PWD)/Python/netflow_v9.py" >> /etc/systemd/system/netflow_v9.service
+#echo "User=root" >> /etc/systemd/system/netflow_v9.service
+echo "ExecStart=/usr/bin/python $(dirname $PWD)/flowanalyzer/Python/netflow_v9.py" >> /etc/systemd/system/netflow_v9.service
 echo "Restart=on-failure" >> /etc/systemd/system/netflow_v9.service
 echo "RestartSec=30" >> /etc/systemd/system/netflow_v9.service
 echo "[Install]" >> /etc/systemd/system/netflow_v9.service
@@ -115,8 +115,8 @@ echo "Description=IPFIX listener service" >> /etc/systemd/system/ipfix.service
 echo "After=network.target elasticsearch.service kibana.service" >> /etc/systemd/system/ipfix.service
 echo "[Service]" >> /etc/systemd/system/ipfix.service
 echo "Type=simple" >> /etc/systemd/system/ipfix.service
-echo "User=root" >> /etc/systemd/system/ipfix.service
-echo "ExecStart=/usr/bin/python $(dirname $PWD)/Python/ipfix.py" >> /etc/systemd/system/ipfix.service
+#echo "User=root" >> /etc/systemd/system/ipfix.service
+echo "ExecStart=/usr/bin/python $(dirname $PWD)/flowanalyzer/Python/ipfix.py" >> /etc/systemd/system/ipfix.service
 echo "Restart=on-failure" >> /etc/systemd/system/ipfix.service
 echo "RestartSec=30" >> /etc/systemd/system/ipfix.service
 echo "[Install]" >> /etc/systemd/system/ipfix.service
