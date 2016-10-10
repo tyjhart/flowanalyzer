@@ -76,6 +76,33 @@ At least one Ubuntu Server installation with the following **minimum** hardware 
 This will work for a proof of concept installation or for very small networks.
 Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure.
 
+# **Installation**
+
+Install by cloning the latest Git repo, then run the Ubuntu installation script.
+
+See [installation documentation](Install/README.md) for more information.
+
+# **Device Configuration**
+
+Configure your devices to send Netflow and IPFIX data to the Flow Analyzer collector.
+
+See the [Flow Management blog](http://www.manitonetworks.com/flow-management/) for more information on configuring your devices.
+
+* [Ubiquiti IPFIX](http://www.manitonetworks.com/flow-management/2016/7/1/ubiquiti-ipfix-configuration)
+* [Mikrotik Netflow v5](http://www.manitonetworks.com/flow-management/2016/7/1/mikrotik-netflow-configuration)
+* [Mikrotik Netflow v9](http://www.manitonetworks.com/flow-management/2016/10/10/mikrotik-netflow-v9-configuration)
+* [Cisco Netflow v9](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/netflow/configuration/15-mt/nf-15-mt-book/get-start-cfg-nflow.html#GUID-2B7E9519-66FE-4F43-B8D3-00CA38C1FA9A)
+
+# **Ports & protocols**
+
+All services listen for UDP flow packets on the following ports:
+
+- Netflow v5:   UDP/2055
+- Netflow v9:   UDP/9995
+- IPFIX:        UDP/4739
+
+These ports can be changed, see the [tuning documentation](Tuning.md).
+
 # **Access**
 
 Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
@@ -88,22 +115,6 @@ The Kibana portal can be accessed via your favorite modern web browser:
 Default Username: **admin**
 
 Default Password: **manitonetworks**
-
-# **Installation**
-
-Install by cloning the latest Git repo, then run the Ubuntu installation script.
-
-See [installation documentation](Install/README.md) for more information.
-
-# **Ports & protocols**
-
-All services listen for TCP flow packets on the following ports:
-
-- Netflow v5:   TCP/2055
-- Netflow v9:   TCP/9995
-- IPFIX:        TCP/4739
-
-These ports can be changed, see the [tuning documentation](Tuning.md).
 
 # **License**
 
