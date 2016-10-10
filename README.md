@@ -103,7 +103,7 @@ All services listen for TCP flow packets on the following ports:
 - Netflow v9:   TCP/9995
 - IPFIX:        TCP/4739
 
-These ports can be changed by tuning netflow_options.py and restarting collector services.
+These ports can be changed, see the [tuning documentation](Tuning.md).
 
 # **License**
 
