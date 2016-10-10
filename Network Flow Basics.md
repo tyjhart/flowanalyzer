@@ -1,18 +1,25 @@
-# **Network Flow Basics**
+# **Introduction to Network Flow Protocols**
 
-"Network flow data" can mean a few things depending on who you're talking to. In the realm of Netflow and IPFIX, network flow data
+"Network flow data" can mean a few things depending on who you're talking to. For us, network flow data
 is information about the traffic devices are sending on the network. Depening on the flow protocols in use that can include
-source and destination addresses, ports, protocols, packet size, VLAN ID, ICMP type and code, and more.
+source and destination addresses, ports, protocols, packet size, VLAN ID, ICMP type and code, and more. 
+Think of it as metadata about network traffic. 
 
-Think of it as metadata about network traffic. Industry-standard protocols export network flow data from devices like routers 
-and switches. Those exporters send flow data to a collector, that aggregates the information for analysts to take action on.
+To make this all happen we need three things:
 
-The Flow Analyzer aggregates this metadata, applies additional tagging and categorization, then visualizes it for 
-your network analysts and administrators.
+* Exporters (Routers, Switches)
+* Protocols (Netflow, IPFIX)
+* Collectors (Flow Analyzer)
 
-It's important to note that Netflow and IPFIX are **NOT** Deep Packet Inspection (DPI) - they don't look at the actual data
+Exporters include routers and switches, which are operating on the network while also tallying network flow data. Network flow protocols
+like [Netflow](#netflow) and [IPFIX](#ipfix) are used to transport the tallied flow data to the collectors. The flow data collectors listen for flow packets
+and parse their information, then move that data to a database or other storage.
+
+We go a step beyond collecting and storing flow data - we apply additional tags and categorization, then visualize the flow data for you.
+
+It's important to note that Netflow and IPFIX are **NOT** Deep Packet Inspection (DPI) - they don't examine the data
 payloads within packets. IDS, IPS, and Application-layer Firewalls provide the functionality to pick apart the payloads inside a 
-packet and make decisions based on rules and signatures.
+packet and make decisions based on rules and signatures, which is beyond the scope of this project.
 
 # **What Are Netflow And IPFIX?**
 
@@ -57,7 +64,7 @@ platform has quite a few, as do others. While there is nothing in the standard t
 always open about the types of data being sent or how to interpret it. Some non-standard fields are supported by the Flow Analyzer, 
 but that support is unofficial.
 
-## **IPFIX (aka Netflow v10)**
+## **IPFIX**
 
 The IPFIX protocol is commonly referred to as "Netflow v10", even though IPFIX is actually a separate protocol. The two terms are 
 often used interchangeably in the industry, just understand that IPFIX is defined in it's own RFC.
