@@ -81,7 +81,7 @@ Additional Elasticsearch nodes will greatly increase performance and reliability
 Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
 Kibana login page via an .htaccess file. The default login credentials are shown below:
 
-The Kibana portal can be accessed via the following URL:
+The Kibana portal can be accessed via your favorite modern web browser:
 
 **http://your_server_ip**
 
