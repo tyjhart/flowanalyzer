@@ -70,6 +70,7 @@ def netflow_v9_server():
 		# Is it a Netflow v9 packet?
 		if int(netflow_version) == 9:
 		
+			# For debug
 			flow_counter = 0
 		
 			# Cache the raw lines before decoding
