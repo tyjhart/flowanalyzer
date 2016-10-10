@@ -7,9 +7,9 @@ changes, just in case something get set incorrectly, so troubleshooting will be 
 
 The Ubuntu Server's timezone is set to UTC during the install, and all events are logged into Elasticsearch with UTC timestamps.
 This is for Elasticsearch purposes, and to ensure that it's possible to correlate flow data from devices across time zones and
-DST implementations.
+DST implementations. Changing the timezone to something other than UTC isn't supported.
 
-Kibana corrects for local time automatically.
+Kibana adjusts for local time automatically, so you don't have to do anything to see events with usable timestamps.
 
 ### **Files**
 
@@ -29,23 +29,23 @@ Service names correspond to their respective protocols:
 You can view the status of the services listed above and control their operations by running the following:
 
 ```
-service netflow_v5 status
-service netflow_v9 start
-service ipfix stop
-service netflow_v5 restart
+systemctl status netflow_v5
+systemctl start netflow_v9
+systemctl stop ipfix
+systemctl restart netflow_v5
 ```
 
 ### **Elasticsearch Connection**
 
 By default the flow collector services are configured to connect to an Elasticsearch instance running on locahost.
-The setting can be found in /opt/manitonetworks/flow/netflow_options.py, as shown below:
+The setting can be found in **netflow_options.py**, as shown below:
 
 ```
 elasticsearch_host = '127.0.0.1'
 ```
 
 If you already have an existing Elasticsearch cluster running you can change this setting, using either an IP address or FQDN.
-You will be responsible for creating the Flow index on your own cluster, and the curl command can be found in the 
+You will be responsible for creating the Flow index on your own cluster, and the curl command to build the index can be found in the 
 [build_index.sh file](Install/build_index.sh).
 
 ### **Elasticsearch Bulk Insert**
