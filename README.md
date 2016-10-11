@@ -1,8 +1,8 @@
 # **Manito Networks Flow Analyzer**
 
 The Flow Analyzer is a [Netflow and IPFIX](Network%20Flow%20Basics.md) collector and parser, available under the [BSD 3-Clause License](#license), 
-that stores flows in Elasticsearch and visualizes them in Kibana. It is designed to run on Ubuntu Server, either as a single 
-installation or in an Elasticsearch cluster. 
+that stores flows in Elasticsearch and visualizes them in Kibana. It is designed to run on [Ubuntu Server](https://www.ubuntu.com/download/server), either as a single 
+installation or as part of an Elasticsearch cluster. 
 
 Visualizations and Dashboards are provided to support network flow analysis right out of the box.
 
@@ -21,6 +21,10 @@ The learning curve for distributed search systems and dashboarding software can 
 should be able to realize the benefits of meaningful, beautiful data visualization.
 
 # **Features**
+
+### **Quick Installation**
+
+You can go from zero to up-and-running with graphed flow data in less than one hour.
 
 ### **Flow Monitoring Protocols**
 

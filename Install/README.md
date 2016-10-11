@@ -4,18 +4,14 @@ The installation is orchestrated with Git, Pip, and Bash scripting. The process 
 
 # **Minimum Requirements**
 
-Each instance should be installed on a fresh 64-bit Ubuntu Server machine with the following **minimum** specs:
+Each instance should be installed on a fresh 64-bit [Ubuntu Server](https://www.ubuntu.com/download/server) machine with the following **minimum** specs:
 
 - 4GB RAM
 - 2 CPU Cores
 - 20GB+ HDD space
 
-Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure. Having additional
-Elasticsearch nodes will also allow you to retain more days of flow data.
-
-This installation has been tested on the following Ubuntu Server releases:
-
-* Ubuntu Server 16.04 LTS
+Additional Elasticsearch nodes will greatly increase performance and provide failover in case of node failure. Having additional
+Elasticsearch nodes will also allow you to retain more flow data.
 
 # **Installation**
 
@@ -41,7 +37,7 @@ If you don't have Git installed on your Ubuntu Server machine that's OK, just ru
 sudo apt-get install git
 ```
 
-Clone the Git repository into a new directory:
+Clone the Git repository:
 
 ```
 git clone https://gitlab.com/thart/flowanalyzer.git
@@ -65,7 +61,7 @@ The ubuntu_install.sh script does the following:
 
 - Shifts the Ubuntu Server to UTC time and configures an NTP client so timestamps are accurate
 - Adds software repos for Elasticsearch and Kibana
-- Updates software repos 
+- Updates software repos and keys
 - Installs Elasticsearch pre-reqs (Curl, OpenJDK 8, etc)
 - Installs Elasticsearch and Kibana
 - Creates the following collector services for Netflow v5/v9 and IPFIX (aka Netflow v10):
@@ -122,6 +118,20 @@ It's important to reboot so that we're sure the services were registered and sta
 
 ```
 sudo reboot
+```
+
+Once the Ubuntu instance comes back up verify that the services have started:
+
+```
+systemctl status elasticsearch
+
+systemctl status netflow_v5
+
+systemctl status netflow_v9
+
+systemctl status ipfix
+
+systemctl status kibana
 ```
 
 # **Kibana**
