@@ -106,9 +106,7 @@ These are examples of commands you may need to use if you're running a firewall 
 
 ```
 ufw allow from xxx.xxx.xxx.xxx/xx to any port 80 proto tcp comment "Kibana interface"
-
 ufw allow from xxx.xxx.xxx.xxx/xx to any port 9200 proto tcp comment "Elasticsearch CLI"
-
 ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739 proto udp comment "Netflow inbound"
 ```
 
@@ -124,13 +122,9 @@ Once the Ubuntu instance comes back up verify that the services have started:
 
 ```
 systemctl status elasticsearch
-
 systemctl status netflow_v5
-
 systemctl status netflow_v9
-
 systemctl status ipfix
-
 systemctl status kibana
 ```
 
