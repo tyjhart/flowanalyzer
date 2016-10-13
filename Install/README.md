@@ -209,8 +209,7 @@ Change to the flowanalyzer directory and fetch the latest code via Git:
 
 ```
 cd /your/directory/flowanalyzer
-git fetch origin
-git reset --hard origin
+git fetch
 ```
 
 Restart the listener services:
