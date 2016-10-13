@@ -24,7 +24,7 @@ should be able to realize the benefits of meaningful, beautiful data visualizati
 
 ### **Quick Installation**
 
-You can go from zero to up-and-running with graphed flow data in less than one hour.
+You can go from zero to up-and-running with graphed flow data in less than one hour. Check out [the installation documentation](Install/README.md).
 
 ### **Flow Monitoring Protocols**
 
