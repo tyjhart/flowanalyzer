@@ -62,6 +62,7 @@ dns = False
 # Internal DNS Lookups
 # This setting determines whether the appliance will attempt to resolve internal RFC 1918 IP addresses
 # This includes the 10.0.0.0/8, 172.16.0.0/21, and 192.168.0.0/16 ranges
+# If you have an internal DNS server that can do these lookups then set to True, otherwise leave it set to False.
 lookup_internal = False
 
 #### BETA --- MAC OUI Lookups ####
