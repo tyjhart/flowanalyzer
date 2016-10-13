@@ -128,6 +128,24 @@ systemctl status ipfix
 systemctl status kibana
 ```
 
+# **Configure Devices**
+
+Configure your devices to send Netflow and IPFIX data to the Flow Analyzer collector. See the [Flow Management blog](http://www.manitonetworks.com/flow-management/) 
+at manitonetworks.com for instructions on configuring Cisco, Ubiquiti, Mikrotik, and other platforms.
+
+* [Ubiquiti IPFIX](http://www.manitonetworks.com/flow-management/2016/7/1/ubiquiti-ipfix-configuration)
+* [Mikrotik Netflow v5](http://www.manitonetworks.com/flow-management/2016/7/1/mikrotik-netflow-configuration)
+* [Mikrotik Netflow v9](http://www.manitonetworks.com/flow-management/2016/10/10/mikrotik-netflow-v9-configuration)
+* [Cisco Netflow v9](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/netflow/configuration/15-mt/nf-15-mt-book/get-start-cfg-nflow.html#GUID-2B7E9519-66FE-4F43-B8D3-00CA38C1FA9A)
+
+Consult your vendor's documentation for configuring Netflow v5, Netflow v9, and IPFIX. Use the following ports:
+
+- Netflow v5:   UDP/2055
+- Netflow v9:   UDP/9995
+- IPFIX:        UDP/4739
+
+These ports can be changed, see the [tuning documentation](../Tuning.md).
+
 # **Kibana**
 
 A few things have to be done first in Kibana before you get to see the Visualizations and Dashboards.
@@ -182,10 +200,6 @@ htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
 ```
 
 For more fine-grained control of data access refer to the [Shield product page](https://www.elastic.co/products/shield) from Elastic.
-
-# **Configure Flows**
-
-See the Flow Analyzer blog at manitonetworks.com for instructions on setting up Cisco, Ubiquiti, Mikrotik, Juniper, and other platforms.
 
 # **Updates**
 
