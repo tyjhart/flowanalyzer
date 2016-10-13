@@ -8,7 +8,7 @@ chmod -R +x ..
 
 # Copy example netflow_options_default.py to real netflow_options.py
 echo "Copy example netflow_options_default.py to real netflow_options.py"
-cp ../Python/netflow_options_default.py ../Python/netflow_options.py
+cp $(pwd)/Python/netflow_options_default.py $(pwd)/Python/netflow_options.py
 
 # Set the hostname for Squid
 echo "Set the hostname"
