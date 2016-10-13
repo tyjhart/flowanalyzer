@@ -39,7 +39,7 @@ try:
 except ValueError as socket_error:
 	logger.critical(logging_ops.log_time() + ': Could not open or bind a socket on port ' + str(ipfix_port))
 	logger.critical(logging_ops.log_time() + str(socket_error))
-	sys.exit()
+	sys.exit("Unable to bind to IPFIX port")
 
 # Spin up ES instance
 try:
@@ -48,7 +48,7 @@ try:
 except ValueError as elasticsearch_connect_error:
 	logger.critical(logging_ops.log_time() + ': Could not connect to Elasticsearch')
 	logger.critical(logging_ops.log_time() + str(elasticsearch_connect_error))
-	sys.exit()
+	sys.exit("Unable to connect to Elasticsearch")
 	
 # IPFIX server
 def ipfix_server():
@@ -181,7 +181,7 @@ def ipfix_server():
 
 										# IPv4 Source IP
 										if template_key == 8:
-											if flow_payload == "255.255.255.255":
+											if flow_payload == "255.255.255.255": # Ignore broadcast traffic
 												pass
 											else:
 												source_ip = IP(str(flow_payload)+"/32")
@@ -196,7 +196,7 @@ def ipfix_server():
 										
 										# IPv4 Destination IP
 										elif template_key == 12:
-											if flow_payload == "255.255.255.255":
+											if flow_payload == "255.255.255.255": # Ignore broadcast traffic
 												pass
 											else: 
 												destination_ip = IP(str(flow_payload)+"/32")
