@@ -120,6 +120,19 @@ Default Username: **admin**
 
 Default Password: **manitonetworks**
 
+# **Limitations**
+
+The following Netflow protocols or features are NOT supported:
+
+- Cisco Flexible Netflow
+- Cisco ASA Netflow Security Event Logging (NESL)
+- Cisco NAT Event Logging (NEL)
+
+The collection of flows from multiple exporters located behind a single NAT IP address is not supported because of how NAT works.
+
+Netflow protocols do not provide a way to differentiate flows that are sent via NAT from the same IP address without some tweaking, 
+hence the limitation. 
+
 # **License**
 
 Copyright (c) 2016, Manito Networks, LLC
