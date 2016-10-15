@@ -144,11 +144,14 @@ Use the following ports:
 - Netflow v9:   UDP/9995
 - IPFIX:        UDP/4739
 
-These ports can be changed, see the [tuning documentation](../Tuning.md).
+These ports can be changed, see the [tuning documentation](../Tuning.md). Make sure your devices are configured to send flow data
+before moving on to [configuring Kibana](#kibana).
 
 # **Kibana**
 
 A few things have to be done first in Kibana before you get to see the Visualizations and Dashboards.
+Ensure that you've already [configured your devices](#configure-devices) to send flows, so by the time you get to this point there is already some 
+flow data in the index for Kibana to recognize.
 
 ### **Access Kibana**
 
