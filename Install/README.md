@@ -167,7 +167,10 @@ Default Password: **manitonetworks**
 
 The installation script has already created the Elasticsearch index, but we need to point Kibana in the right direction.
 
-In Kibana, under **Index name or pattern** enter " flow* " without the quotes.
+In Kibana, under **Index name or pattern** enter " flow* " without the quotes, and it should automatically parse your input.
+
+**Note**: There is currently an issue in Chrome with form validation that may cause this step not to work.
+If you run into issues use Firefox or Edge to configure the Index Name.
 
 Leave the automatically selected **Time** field under **Time-field name**.
 
