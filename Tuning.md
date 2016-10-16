@@ -72,6 +72,19 @@ The following bulk_insert_count settings have been found to work, but each netwo
 For wired ISP's that are able to push more data, and other large enterprises the bulk_insert_count may need to go higher.
 Performance for those larger organizations and ISPs will also depend on the performance of their Elasticsearch cluster.
 
+### **Elasticsearch Index Age Out**
+
+By default the Flow Analyzer retains 30 days of flow data. Depending on how large your Elasticsearch cluster is, how much storage is
+allocated on each node, and what your data retention needs are this may need to change. [Elastic's Curator](https://www.elastic.co/guide/en/elasticsearch/client/curator/current/about.html) 
+is used to prune the indexes in Elasticsearch to ensure that your storage isn't overwhelmed. The Curator job is fired off by a daily
+Cron job inside **/etc/cron.daily/index_prune** that is created by the installation script as shown below:
+```
+curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'
+```
+If you need more (or less) days of flow retention adjust the value currently set to 30.
+
+If you are using an external Elasticsearch cluster replace the localhost (127.0.0.1) IP address with the address of your cluster.
+
 ### **DNS Reverse Lookups**
 
 A reverse lookup against observed IPs is done if DNS lookups are enabled. Resolved domains are cached for 30 minutes to reduce
