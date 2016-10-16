@@ -26,7 +26,7 @@ dns_base.init()
 
 # Set the logging level per https://docs.python.org/2/library/logging.html#levels
 # Levels include DEBUG, INFO, WARNING, ERROR, CRITICAL (case matters)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 
 # Set packet information variables
 # Do not modify these variables, Netflow v5 packet structure is static
@@ -37,7 +37,7 @@ flow_record_size = 48
 try:
 	netflow_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	netflow_sock.bind(('0.0.0.0', netflow_v5_port))
-	logging.info('Bound to port ' + str(netflow_v5_port))
+	logging.warning('Bound to port ' + str(netflow_v5_port) + ' - OK')
 except ValueError as socket_error:
 	logging.critical(': Could not open or bind a socket on port ' + str(netflow_v9_port))
 	logging.critical(str(socket_error))
@@ -46,7 +46,7 @@ except ValueError as socket_error:
 # Spin up ES instance connection
 try:
 	es = Elasticsearch([elasticsearch_host])
-	logging.info('Connected to Elasticsearch')
+	logging.warning('Connected to Elasticsearch at ' + elasticsearch_host + ' - OK')
 except ValueError as elasticsearch_connect_error:
 	logging.critical('Could not connect to Elasticsearch')
 	logging.critical(str(elasticsearch_connect_error))
