@@ -44,7 +44,7 @@ try:
 	es = Elasticsearch([elasticsearch_host])
 	logging.warning(' Connected to Elasticsearch at ' + elasticsearch_host + ' - OK')
 except ValueError as elasticsearch_connect_error:
-	logging.critical(' Could not connect to Elasticsearch')
+	logging.critical(' Could not connect to Elasticsearch at ' + elasticsearch_host')
 	logging.critical(" " + str(elasticsearch_connect_error))
 	sys.exit()
 	
