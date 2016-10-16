@@ -27,28 +27,26 @@ dns_base.init()
 
 # Set the logging level per https://docs.python.org/2/library/logging.html#levels
 # Levels include DEBUG, INFO, WARNING, ERROR, CRITICAL (case matters)
-#logging.basicConfig(level=logging.WARNING) # For logging to console in DEV
-logging.basicConfig(filename='ipfix.log',level=logging.WARNING) # For logging to a file in PROD
-logger = logging.getLogger('IPFIX')
+logging.basicConfig(level=logging.WARNING)
 
 # Set up socket listener
 try:
 	netflow_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	netflow_sock.bind(('0.0.0.0', ipfix_port))
-	logger.info(logging_ops.log_time() + ' Listening on port ' + str(ipfix_port))
+	logging.warning(' Bound to port ' + str(ipfix_port) + ' - OK')
 except ValueError as socket_error:
-	logger.critical(logging_ops.log_time() + ': Could not open or bind a socket on port ' + str(ipfix_port))
-	logger.critical(logging_ops.log_time() + str(socket_error))
-	sys.exit("Unable to bind to IPFIX port")
+	logging.critical(' Could not open or bind a socket on port ' + str(ipfix_port))
+	logging.critical(str(socket_error))
+	sys.exit()
 
 # Spin up ES instance
 try:
 	es = Elasticsearch([elasticsearch_host])
-	logger.info(logging_ops.log_time() + ' Connected to Elasticsearch')
+	logging.warning(' Connected to Elasticsearch at ' + elasticsearch_host + ' - OK')
 except ValueError as elasticsearch_connect_error:
-	logger.critical(logging_ops.log_time() + ': Could not connect to Elasticsearch')
-	logger.critical(logging_ops.log_time() + str(elasticsearch_connect_error))
-	sys.exit("Unable to connect to Elasticsearch")
+	logging.critical(' Could not connect to Elasticsearch')
+	logging.critical(" " + str(elasticsearch_connect_error))
+	sys.exit()
 	
 # IPFIX server
 def ipfix_server():
@@ -71,7 +69,7 @@ def ipfix_server():
 		
 		# Something went wrong or we're being fuzzed, reset
 		except:
-			logger.critical(logging_ops.log_time() + str(" - Unable to parse Netflow version and bytes"))
+			logging.critical(str(" Unable to parse IPFIX version and bytes"))
 			continue
 				
 		# Is it a IPFIX (Netflow v10) packet?
@@ -83,25 +81,25 @@ def ipfix_server():
 			
 			# Unpack the rest of the packet
 			(packet_attributes["export_time"], packet_attributes["sequence_number"], packet_attributes["observation_id"]) = struct.unpack('!LLL',flow_packet_contents[4:16])
-			logger.debug(logging_ops.log_time() + " Sequence Number: " + str(packet_attributes["sequence_number"]) + ", " + "Observation Domain ID: " + str(packet_attributes["observation_id"]))
+			logging.debug(" Sequence Number: " + str(packet_attributes["sequence_number"]) + ", " + "Observation Domain ID: " + str(packet_attributes["observation_id"]))
 				
 			# Position the byte counter after the standard protocol header
 			byte_position = 16
-			logger.debug(logging_ops.log_time() + " End of header, byte position " + str(byte_position))
+			logging.debug(" End of header, byte position " + str(byte_position))
 			
 			# Iterate through the total flows in the packet overall, could be any length
 			# Can be any combination of templates and data flows
 			while True:
 			
-				logger.debug(logging_ops.log_time() + " Start of flow with " + str(ipfix_flow_bytes) + " total bytes, at position " + str(byte_position)) 
+				logging.debug(" Start of flow with " + str(ipfix_flow_bytes) + " total bytes, at position " + str(byte_position)) 
 				
 				# Unpack the flow set ID and the length, to determine if it's a template set or a data set, and the size
-				logger.debug(logging_ops.log_time() + " Unpacking ID and length at byte position " + str(byte_position))
+				logging.debug(" Unpacking ID and length at byte position " + str(byte_position))
 				try:
 					(flow_set_id, flow_set_length) = struct.unpack('!HH',flow_packet_contents[byte_position:byte_position+4])
-					logger.debug(logging_ops.log_time() + " Found ID " + str(flow_set_id) + ", length " + str(flow_set_length))
+					logging.debug(" Found ID " + str(flow_set_id) + ", length " + str(flow_set_length))
 				except:
-					logger.debug(logging_ops.log_time() + " Out of bytes to unpack, breaking")
+					logging.debug(" Out of bytes to unpack, breaking")
 					break # Done with the packet
 				
 				# Advance past the initial header of ID and length
@@ -109,13 +107,13 @@ def ipfix_server():
 				
 				# Is it an IPFIX template set (ID 2)?
 				if flow_set_id == 2:
-					logger.debug(logging_ops.log_time() + " Unpacking template set at " + str(byte_position))
+					logging.debug(" Unpacking template set at " + str(byte_position))
 					temp_template_cache = {}
 					template_position = byte_position
 					while template_position <= flow_set_length:
 						(template_id, template_id_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
 						if template_id > 255:
-							logger.debug(logging_ops.log_time() + " Rcvd template " + str(template_id) + ", sequence " + str(packet_attributes["sequence_number"]))
+							logging.debug(" Rcvd template " + str(template_id) + ", sequence " + str(packet_attributes["sequence_number"]))
 							
 							# Produce unique hash to identify unique template ID and sensor
 							hashed_id = hash(str(sensor_address[0])+str(template_id)) 
@@ -131,8 +129,8 @@ def ipfix_server():
 						template_position += 4
 					template_list.update(temp_template_cache)	
 					byte_position = (flow_set_length + byte_position)-4
-					logger.debug(logging_ops.log_time() + " Finished template set at " + str(byte_position))
-					logger.debug(logging_ops.log_time() + " Working templates: " + str(template_list))
+					logging.debug(" Finished template set at " + str(byte_position))
+					logging.debug(" Working templates: " + str(template_list))
 					
 				# Is it an IPFIX options template set (ID 3)?
 				elif flow_set_id == 3:
@@ -140,14 +138,14 @@ def ipfix_server():
 
 				# Received an IPFIX flow data set, corresponding with a template that should have already been rcvd
 				elif flow_set_id > 255:
-					logger.debug(logging_ops.log_time() + " Processing data flow " + str(flow_set_id) + " at byte position " + str(byte_position))
+					logging.debug(" Processing data flow " + str(flow_set_id) + " at byte position " + str(byte_position))
 					
 					# Compute the template hash ID
 					hashed_id = hash(str(sensor_address[0])+str(flow_set_id))
 					
 					# Check if there is a template
 					if hashed_id in template_list.keys():
-						logger.debug(logging_ops.log_time() + " Using template hash " + str(hashed_id))
+						logging.debug(" Using template hash " + str(hashed_id))
 						
 						# Get the current UTC time for the flows
 						now = datetime.datetime.utcnow()
@@ -254,7 +252,7 @@ def ipfix_server():
 									elif field_size == 8:
 										flow_payload = struct.unpack('!Q',flow_packet_contents[data_position:(data_position+field_size)])[0]
 									else:
-										logger.warning(logging_ops.log_time() + " Failed to unpack an integer for " + str(ipfix_fields[template_key]["Index ID"]))
+										logging.warning(" Failed to unpack an integer for " + str(ipfix_fields[template_key]["Index ID"]))
 										data_position += field_size
 										continue # Bail out	
 									
@@ -305,8 +303,8 @@ def ipfix_server():
 								
 								# Check if we've been passed a "Vendor Proprietary" field, and if so log it and skip it
 								elif ipfix_fields[template_key]["Type"] == "Vendor Proprietary":
-									logger.info(
-									logging_ops.log_time() + 
+									logging.info(
+									
 									" Rcvd vendor proprietary field, " + 
 									str(template_key) + 
 									", in " + 
@@ -320,8 +318,8 @@ def ipfix_server():
 									try:
 										flow_payload = struct.unpack('!%dc' % field_size,flow_packet_contents[data_position:(data_position+field_size)])
 									except Exception, unpack_error:
-										logger.debug(
-										logging_ops.log_time() + 
+										logging.debug(
+										
 										" Error unpacking generic field number " + 
 										str(ipfix_fields[field_definition]) + 
 										", error messages: " + 
@@ -393,25 +391,25 @@ def ipfix_server():
 							
 							# Append this single flow to the flow_dic[] for bulk upload
 							flow_dic.append(flow_index)
-							logger.debug(logging_ops.log_time() + " " + str(flow_index))
-							logger.debug(logging_ops.log_time() + " Finished flow " + str(flow_set_id) + " at byte position " + str(byte_position))
+							logging.debug(" " + str(flow_index))
+							logging.debug(" Finished flow " + str(flow_set_id) + " at byte position " + str(byte_position))
 						
 					# No template, drop the flow per the standard and advanced the byte position
 					else:
 						byte_position += flow_set_length
-						logger.info("Dropping flow ID " + str(flow_set_id) + " from " + str(sensor_address[0]) + " - No template provided")
+						logging.info("Dropping flow ID " + str(flow_set_id) + " from " + str(sensor_address[0]) + " - No template provided")
 						break
 					
 					# Advance to the end of the flow
 					byte_position = (flow_set_length + byte_position)-4
-					logger.debug(logging_ops.log_time() + " Ending Data set at " + str(byte_position))
+					logging.debug(" Ending Data set at " + str(byte_position))
 					
 				# Rcvd a flow set ID we haven't accounted for
 				else:
-					logger.warning(logging_ops.log_time() + " Unknown flow ID " + str(flow_set_id) + " from " + str(sensor_address[0]))
+					logging.warning(" Unknown flow ID " + str(flow_set_id) + " from " + str(sensor_address[0]))
 					break # Bail out
 			
-			logger.debug(logging_ops.log_time() + " " + str(packet_attributes))
+			logging.debug(" " + str(packet_attributes))
 			
 			# Have enough flows to do a bulk index to Elasticsearch
 			if len(flow_dic) >= bulk_insert_count:
@@ -422,19 +420,19 @@ def ipfix_server():
 				# Perform the bulk upload to the index
 				try:
 					helpers.bulk(es,flow_dic)
-					logger.info(str(flow_dic_length) + " flow(s) uploaded to Elasticsearch")
+					logging.info(str(flow_dic_length) + " flow(s) uploaded to Elasticsearch")
 				except ValueError as bulk_index_error:
-					logger.error(str(flow_dic_length) + " flow(s) DROPPED - Unable to index flows")
-					logger.error(bulk_index_error)
+					logging.error(str(flow_dic_length) + " flow(s) DROPPED - Unable to index flows")
+					logging.error(bulk_index_error)
 					for flow_debug in flow_dic:
-						logger.error(flow_debug)
+						logging.error(flow_debug)
 					
 				# Reset flow_dic
 				flow_dic = []
 				
 		# Not IPFIX packet
 		else:
-			logger.info("Netflow version " + str(int(netflow_version)) + " packet from " + str(sensor_address[0]))
+			logging.info("Netflow version " + str(int(netflow_version)) + " packet from " + str(sensor_address[0]))
 			continue
 	
 	# End of ipfix_server()	

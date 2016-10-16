@@ -37,18 +37,18 @@ flow_record_size = 48
 try:
 	netflow_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	netflow_sock.bind(('0.0.0.0', netflow_v5_port))
-	logging.warning('Bound to port ' + str(netflow_v5_port) + ' - OK')
+	logging.warning(' Bound to port ' + str(netflow_v5_port) + ' - OK')
 except ValueError as socket_error:
-	logging.critical(': Could not open or bind a socket on port ' + str(netflow_v9_port))
+	logging.critical(' Could not open or bind a socket on port ' + str(netflow_v9_port))
 	logging.critical(str(socket_error))
 	sys.exit()
 
 # Spin up ES instance connection
 try:
 	es = Elasticsearch([elasticsearch_host])
-	logging.warning('Connected to Elasticsearch at ' + elasticsearch_host + ' - OK')
+	logging.warning(' Connected to Elasticsearch at ' + elasticsearch_host + ' - OK')
 except ValueError as elasticsearch_connect_error:
-	logging.critical('Could not connect to Elasticsearch')
+	logging.critical(' Could not connect to Elasticsearch')
 	logging.critical(str(elasticsearch_connect_error))
 	sys.exit()
 

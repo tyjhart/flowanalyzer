@@ -27,27 +27,25 @@ dns_base.init()
 
 # Set the logging level per https://docs.python.org/2/library/logging.html#levels
 # Levels include DEBUG, INFO, WARNING, ERROR, CRITICAL (case matters)
-#logging.basicConfig(level=logging.DEBUG) # For logging to a file in PROD
-logging.basicConfig(filename='netflow_v9.log',level=logging.WARNING) # For logging to a file in PROD
-logger = logging.getLogger('Netflow v9')
+logging.basicConfig(level=logging.WARNING)
 
 # Set up socket listener
 try:
 	netflow_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	netflow_sock.bind(('0.0.0.0', netflow_v9_port))
-	logger.info('Bound to port ' + str(netflow_v9_port))
+	logging.warning(' Bound to port ' + str(netflow_v9_port) + ' - OK')
 except ValueError as socket_error:
-	logger.critical(logging_ops.log_time() + ': Could not open or bind a socket on port ' + str(netflow_v9_port))
-	logger.critical(logging_ops.log_time() + str(socket_error))
+	logging.critical(' Could not open or bind a socket on port ' + str(netflow_v9_port))
+	logging.critical(str(socket_error))
 	sys.exit()
 
 # Spin up ES instance
 try:
 	es = Elasticsearch([elasticsearch_host])
-	logger.info('Connected to Elasticsearch')
+	logging.warning(' Connected to Elasticsearch at ' + elasticsearch_host + ' - OK')
 except ValueError as elasticsearch_connect_error:
-	logger.critical(logging_ops.log_time() + ': Could not connect to Elasticsearch')
-	logger.critical(logging_ops.log_time() + " " + str(elasticsearch_connect_error))
+	logging.critical(' Could not connect to Elasticsearch')
+	logging.critical(" " + str(elasticsearch_connect_error))
 	sys.exit()
 	
 # Netflow server
@@ -94,26 +92,26 @@ def netflow_v9_server():
 			while True:
 				
 				# Unpack the flow set ID and the length
-				logger.debug(logging_ops.log_time() + " Unpacking flow header at " + str(byte_position))
+				logging.debug(" Unpacking flow header at " + str(byte_position))
 				try:
 					(flow_set_id, flow_set_length) = struct.unpack('!HH',flow_packet_contents[byte_position:byte_position+4])
-					logger.debug(logging_ops.log_time() + " Found ID " + str(flow_set_id) + ", length " + str(flow_set_length))
+					logging.debug(" Found ID " + str(flow_set_id) + ", length " + str(flow_set_length))
 				except:
-					logger.debug(logging_ops.log_time() + " Out of bytes to unpack, breaking")
+					logging.debug(" Out of bytes to unpack, breaking")
 					break
 				byte_position += 4
-				logger.debug(logging_ops.log_time() + " Finshed unpacking flow header at " + str(byte_position))
+				logging.debug(" Finshed unpacking flow header at " + str(byte_position))
 				
 				# Template data set
 				if flow_set_id == 0:
-					logger.debug(logging_ops.log_time() + " Unpacking template set at " + str(byte_position))
+					logging.debug(" Unpacking template set at " + str(byte_position))
 					temp_template_cache = {}
 					template_position = byte_position
 					while template_position <= flow_set_length:
 						(template_id, template_id_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
 						if template_id > 255:
 							flow_counter += 1
-							logger.debug(logging_ops.log_time() + " Rcvd template " + str(template_id) + ", sequence " + str(packet_attributes["sequence_number"]))
+							logging.debug(" Rcvd template " + str(template_id) + ", sequence " + str(packet_attributes["sequence_number"]))
 							hashed_id = hash(str(sensor_address[0])+str(template_id))
 							temp_template_cache[hashed_id] = {}
 							temp_template_cache[hashed_id]["Sensor"] = str(sensor_address[0])
@@ -129,20 +127,20 @@ def netflow_v9_server():
 						template_position += 4
 					template_list.update(temp_template_cache)	
 					byte_position = (flow_set_length + byte_position)-4
-					logger.debug(logging_ops.log_time() + " Finished template set at " + str(byte_position))
-					logger.debug(logging_ops.log_time() + " Working templates: " + str(template_list))
+					logging.debug(" Finished template set at " + str(byte_position))
+					logging.debug(" Working templates: " + str(template_list))
 										
 				# Options template set
 				elif flow_set_id == 1:
-					logger.debug(logging_ops.log_time() + " Unpacking Options template set at " + str(byte_position))
+					logging.debug(" Unpacking Options template set at " + str(byte_position))
 					flow_counter += 1
 					(options_template_id, options_template_id_length) = struct.unpack('!HH',flow_packet_contents[byte_position:byte_position+4])
 					byte_position = (options_template_id_length + byte_position)-4
-					logger.debug(logging_ops.log_time() + " Ending Options template set at " + str(byte_position))
+					logging.debug(" Ending Options template set at " + str(byte_position))
 				
 				# Flow data set
 				elif flow_set_id > 255:
-					logger.debug(logging_ops.log_time() + " Unpacking Data set at " + str(byte_position))
+					logging.debug(" Unpacking Data set at " + str(byte_position))
 					hashed_id = hash(str(sensor_address[0])+str(flow_set_id))
 					if hashed_id in template_list:
 						data_position = byte_position
@@ -152,7 +150,7 @@ def netflow_v9_server():
 						
 						while data_position+4 <= (flow_set_length + (byte_position-4)):
 							flow_counter += 1
-							logger.debug(logging_ops.log_time() + " Creating data flow number " + str(flow_counter)) 
+							logging.debug(" Creating data flow number " + str(flow_counter)) 
 							
 							# Cache the flow data, to be appended to flow_dic[]						
 							flow_index = {
@@ -171,8 +169,7 @@ def netflow_v9_server():
 								
 								# Check if we've been passed a "Vendor Proprietary" field, and if so skip it
 								if v9_fields[template_key]["Type"] == "Vendor Proprietary":
-									logger.info(
-									logging_ops.log_time() + 
+									logging.info(
 									" Rcvd vendor proprietary field, " + 
 									str(template_key) + 
 									", in " + 
@@ -204,7 +201,7 @@ def netflow_v9_server():
 									elif field_size == 8:
 										flow_payload = struct.unpack('!Q',flow_packet_contents[data_position:(data_position+field_size)])[0]
 									else:
-										logger.warning(logging_ops.log_time() + " Failed to unpack an integer for " + str(v9_fields[template_key]["Index ID"]))
+										logging.warning(" Failed to unpack an integer for " + str(v9_fields[template_key]["Index ID"]))
 										data_position += field_size
 										continue
 										
@@ -270,8 +267,7 @@ def netflow_v9_server():
 										flow_payload = struct.unpack('!%dc' % field_size,flow_packet_contents[data_position:(data_position+field_size)])
 									
 									except Exception, unpack_error:
-										logger.debug(
-										logging_ops.log_time() + 
+										logging.debug(
 										" Error unpacking generic field number " + 
 										str(v9_fields[template_key]) + 
 										", error messages: " + 
@@ -339,12 +335,11 @@ def netflow_v9_server():
 
 							# Append this parsed flow to the flow_dic[] for bulk upload
 							flow_dic.append(flow_index)
-							logger.debug(logging_ops.log_time() + " Flow index: " + str(flow_index))	
+							logging.debug(" Flow index: " + str(flow_index))	
 					
 					# No template, drop the flow per the standard and advanced the byte position
 					else:
-						logger.warning(
-						logging_ops.log_time() + 
+						logging.warning(
 						" Missing template for flow set " + 
 						str(flow_set_id) + 
 						" from " + 
@@ -356,15 +351,15 @@ def netflow_v9_server():
 						
 					# Advance to the end of the flow
 					byte_position = (flow_set_length + byte_position)-4
-					logger.debug(logging_ops.log_time() + " Ending Data set at " + str(byte_position))
+					logging.debug(" Ending Data set at " + str(byte_position))
 				
 				# Rcvd a flow set ID we haven't accounted for
 				else:
-					logger.warning(logging_ops.log_time() + " Unknown flow ID " + str(flow_set_id) + " from " + str(sensor_address[0]))
+					logging.warning(" Unknown flow ID " + str(flow_set_id) + " from " + str(sensor_address[0]))
 					break
 				
 			packet_attributes["Reported Flow Count"] = flow_counter	
-			logger.debug(logging_ops.log_time() + " " + str(packet_attributes))
+			logging.debug(" " + str(packet_attributes))
 			
 			# Have enough flows to do a bulk index to Elasticsearch
 			if len(flow_dic) >= bulk_insert_count:
@@ -372,12 +367,12 @@ def netflow_v9_server():
 				# Perform the bulk upload to the index
 				try:
 					helpers.bulk(es,flow_dic)
-					logger.info(logging_ops.log_time() + " " + str(len(flow_dic)) + " flow(s) uploaded to Elasticsearch")
+					logging.info(str(len(flow_dic)) + " flow(s) uploaded to Elasticsearch")
 				except ValueError as bulk_index_error:
-					logger.error(logging_ops.log_time() + " " + str(len(flow_dic)) + " flow(s) DROPPED - Unable to index flows")
-					logger.error(logging_ops.log_time() + " " + bulk_index_error)
+					logging.error(str(len(flow_dic)) + " flow(s) DROPPED - Unable to index flows")
+					logging.error(bulk_index_error)
 					for flow_debug in flow_dic:
-						logger.error(flow_debug)
+						logging.error(flow_debug)
 					
 				# Reset flow_dic to empty so flow artifacts don't persist
 				flow_dic = []
@@ -387,7 +382,7 @@ def netflow_v9_server():
 				
 		# Not Netflow v9 packet
 		else:
-			logger.warning(logging_ops.log_time() + " Not a Netflow v9 packet from " + str(sensor_address[0]) + ", instead rcvd version " + str(netflow_version) + " - dropping")
+			logging.warning(" Not a Netflow v9 packet from " + str(sensor_address[0]) + ", instead rcvd version " + str(netflow_version) + " - dropping")
 			continue
 	
 	# End of netflow_v9_server()	
