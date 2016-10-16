@@ -26,9 +26,7 @@ dns_base.init()
 
 # Set the logging level per https://docs.python.org/2/library/logging.html#levels
 # Levels include DEBUG, INFO, WARNING, ERROR, CRITICAL (case matters)
-logging.basicConfig(filename='netflow_v5.log',level=logging.WARNING)
-#logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger('Netflow v5')
+logging.basicConfig(level=logging.INFO)
 
 # Set packet information variables
 # Do not modify these variables, Netflow v5 packet structure is static
@@ -39,19 +37,19 @@ flow_record_size = 48
 try:
 	netflow_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	netflow_sock.bind(('0.0.0.0', netflow_v5_port))
-	logger.info('Bound to port ' + str(netflow_v5_port))
+	logging.info('Bound to port ' + str(netflow_v5_port))
 except ValueError as socket_error:
-	logger.critical(': Could not open or bind a socket on port ' + str(netflow_v9_port))
-	logger.critical(str(socket_error))
+	logging.critical(': Could not open or bind a socket on port ' + str(netflow_v9_port))
+	logging.critical(str(socket_error))
 	sys.exit()
 
 # Spin up ES instance connection
 try:
 	es = Elasticsearch([elasticsearch_host])
-	logger.info('Connected to Elasticsearch')
+	logging.info('Connected to Elasticsearch')
 except ValueError as elasticsearch_connect_error:
-	logger.critical('Could not connect to Elasticsearch')
-	logger.critical(str(elasticsearch_connect_error))
+	logging.critical('Could not connect to Elasticsearch')
+	logging.critical(str(elasticsearch_connect_error))
 	sys.exit()
 
 # Netflow server
@@ -65,9 +63,9 @@ def netflow_v5_server():
 			
 		try:
 			(netflow_version, flow_count) = struct.unpack('!HH',flow_packet_contents[0:4]) #Version of NF packet and count of Flows in packet
-			logger.debug("Rcvd " + str(flow_count) + " flow(s) from " + str(sensor_address[0]))
+			logging.debug("Rcvd " + str(flow_count) + " flow(s) from " + str(sensor_address[0]))
 		except:
-			logger.warning(logging_ops.log_time() + " Failed unpacking flow header from " + str(sensor_address[0]))
+			logging.warning(" Failed unpacking flow header from " + str(sensor_address[0]))
 			continue
 		
 		# Rcvd a Netflow v5 packet, parse it
@@ -76,7 +74,7 @@ def netflow_v5_server():
 			# Iterate over flows in packet
 			for flow_num in range(0, flow_count):
 				now = datetime.datetime.utcnow() # Timestamp for flow rcv
-				logger.debug(logging_ops.log_time() + " Flow " + str(flow_num+1) + " of " + str(flow_count))
+				logging.debug(" Flow " + str(flow_num+1) + " of " + str(flow_count))
 				base = packet_header_size + (flow_num * flow_record_size)
 				data = struct.unpack('!IIIIHH',flow_packet_contents[base+16:base+36])
 				protocol_number = ord(flow_packet_contents[base+38]) # For protocol name lookup
@@ -167,7 +165,7 @@ def netflow_v5_server():
 						if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
 							flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
 				
-				logger.debug(logging_ops.log_time() + " Flow data: " + str(flow_index))		
+				logging.debug(" Flow data: " + str(flow_index))		
 				
 				# Add the parsed flow to flow_dic for bulk insert
 				flow_dic.append(flow_index)
@@ -176,11 +174,11 @@ def netflow_v5_server():
 				
 				try:
 					helpers.bulk(es,flow_dic)
-					logger.info(str(len(flow_dic))+" flow(s) uploaded to Elasticsearch")
+					logging.info(str(len(flow_dic))+" flow(s) uploaded to Elasticsearch")
 					flow_dic = []
 				except ValueError as bulk_index_error:
-					logger.warning(logging_ops.log_time() + " " + str(len(flow_dic))+" flow(s) DROPPED, unable to index flows")
-					logger.warning(logging_ops.log_time() + " " + bulk_index_error.message)
+					logging.warning(str(len(flow_dic))+" flow(s) DROPPED, unable to index flows")
+					logging.warning(bulk_index_error.message)
 					flow_dic = []
 					pass
 				
@@ -189,7 +187,7 @@ def netflow_v5_server():
 			
 		# Got something else, drop it
 		else:
-			logger.warning(logging_ops.log_time() + " Rcvd non-Netflow v5 packet from " + str(sensor_address[0]))
+			logging.warning(" Rcvd non-Netflow v5 packet from " + str(sensor_address[0]))
 			continue
 		
 	return
