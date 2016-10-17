@@ -26,7 +26,7 @@ dns_base.init()
 logging.basicConfig(level=logging.WARNING)
 
 # Set packet information variables
-# Do not modify these variables, Netflow v5 packet structure is static
+# DO NOTE modify these variables, Netflow v5 packet structure is STATIC
 packet_header_size = 24
 flow_record_size = 48
 
@@ -59,10 +59,19 @@ def netflow_v5_server():
 		flow_packet_contents, sensor_address = netflow_sock.recvfrom(65565)
 			
 		try:
-			(netflow_version, flow_count) = struct.unpack('!HH',flow_packet_contents[0:4]) #Version of NF packet and count of Flows in packet
+			(netflow_version,
+			flow_count,
+			sys_uptime,
+			unix_secs,
+			unix_nsecs,
+			flow_seq,
+			engine_type,
+			engine_id) = struct.unpack('!HHIIIIBB',flow_packet_contents[0:22]) #Version of NF packet and count of Flows in packet
+			
 			logging.debug("Rcvd " + str(flow_count) + " flow(s) from " + str(sensor_address[0]))
-		except:
-			logging.warning(" Failed unpacking flow header from " + str(sensor_address[0]))
+		
+		except Exception as flow_header_error:
+			logging.warning(" Failed unpacking flow header from " + str(sensor_address[0]) + " - " + str(flow_header_error))
 			continue
 		
 		# Rcvd a Netflow v5 packet, parse it
@@ -72,13 +81,31 @@ def netflow_v5_server():
 			for flow_num in range(0, flow_count):
 				now = datetime.datetime.utcnow() # Timestamp for flow rcv
 				logging.debug(" Flow " + str(flow_num+1) + " of " + str(flow_count))
-				base = packet_header_size + (flow_num * flow_record_size)
-				data = struct.unpack('!IIIIHH',flow_packet_contents[base+16:base+36])
-				protocol_number = ord(flow_packet_contents[base+38]) # For protocol name lookup
+				base = packet_header_size + (flow_num * flow_record_size) # Calculate flow starting point
+				
+				(ip_source,
+				ip_destination,
+				next_hop,
+				input_interface,
+				output_interface,
+				total_packets,
+				total_bytes,
+				sysuptime_start,
+				sysuptime_stop,
+				src_port,
+				dest_port,
+				pad,
+				tcp_flags,
+				protocol_num,
+				type_of_service,
+				source_as,
+				destination_as,
+				source_mask,
+				destination_mask) = struct.unpack('!4s4s4shhIIIIHHcBBBhhBB',flow_packet_contents[base+0:base+46])
 				
 				# Protocol Name
 				try:
-					flow_protocol = protocol_type[protocol_number]["Name"]
+					flow_protocol = protocol_type[protocol_num]["Name"]
 				except:
 					flow_protocol = "Other" # Should never see this unless undefined protocol in use
 		
@@ -90,25 +117,30 @@ def netflow_v5_server():
 				"IP Protocol Version": 4,
 				"Sensor": sensor_address[0],
 				"Time": now.strftime("%Y-%m-%dT%H:%M:%S") + ".%03d" % (now.microsecond / 1000) + "Z",
-				"IPv4 Source": inet_ntoa(flow_packet_contents[base+0:base+4]),
-				"Source Port": data[4],
-				"IPv4 Destination": inet_ntoa(flow_packet_contents[base+4:base+8]),
-				"IPv4 Next Hop": inet_ntoa(flow_packet_contents[base+8:base+12]),
-				"Input Interface": struct.unpack('!h',flow_packet_contents[base+12:base+14])[0],
-				"Output Interface": struct.unpack('!h',flow_packet_contents[base+14:base+16])[0],
-				"Destination Port": data[5],
+				"IPv4 Source": inet_ntoa(ip_source),
+				"Bytes In": total_bytes,
+				"TCP Flags": tcp_flags,
+				"Packets In": total_packets,
+				"Source Port": src_port,
+				"IPv4 Destination": inet_ntoa(ip_destination),
+				"IPv4 Next Hop": inet_ntoa(next_hop),
+				"Input Interface": input_interface,
+				"Output Interface": output_interface,
+				"Destination Port": dest_port,
 				"Protocol": flow_protocol,
-				"Protocol Number": protocol_number,
-				"Type of Service": struct.unpack('!B',flow_packet_contents[base+39])[0],
-				"Source AS": struct.unpack('!h',flow_packet_contents[base+40:base+42])[0],
-				"Destination AS": struct.unpack('!h',flow_packet_contents[base+42:base+44])[0],
-				"Bytes In": data[1]
+				"Protocol Number": protocol_num,
+				"Type of Service": type_of_service,
+				"Source AS": source_as,
+				"Destination AS": destination_as,
+				"Source Mask": source_mask,
+				"Destination Mask": destination_mask,
+				"Engine ID": engine_id
 				}
 				}
 
 				# Protocol Category for protocols not TCP/UDP
-				if "Category" in protocol_type[protocol_number]:
-					flow_index["_source"]['Traffic Category'] = protocol_type[protocol_number]["Category"]
+				if "Category" in protocol_type[protocol_num]:
+					flow_index["_source"]['Traffic Category'] = protocol_type[protocol_num]["Category"]
 				
 				# If the protocol is TCP or UDP try to apply traffic labels
 				if flow_index["_source"]["Protocol Number"] == 6 or flow_index["_source"]["Protocol Number"] == 17:
