@@ -18,9 +18,6 @@ from netflow_options import *
 import dns_base
 import dns_ops
 
-# Logging
-import logging_ops
-
 # Initialize the DNS global
 dns_base.init()
 
