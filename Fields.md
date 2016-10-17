@@ -13,14 +13,14 @@ Here are the commonly used fields supported out-of-the-box:
 - Bytes Out
 - Content (Parsed from Source or Destination Domain)
 - BGP IPv4 Next Hop
-- Destination AS
+- Destination AS<sup>1</sup>
 - Destination Domain (When **dns = True** set in netflow_options.py)
 - Destination FQDN (When **dns = True** set in netflow_options.py)
-- Destination Mask
+- Destination Mask<sup>1</sup>
 - Destination Port
 - Destination Type of Service
 - Destination VLAN
-- Direction
+- Direction<sup>2</sup>
 - Dot-1q Customer VLAN ID
 - Dot-1q VLAN ID
 - First Switched
@@ -63,19 +63,23 @@ Here are the commonly used fields supported out-of-the-box:
 - Protocol Number
 - Sensor (IP address of device sending flow)
 - Sequence
-- Source AS
-- Source Domain (When **dns = True** in netflow_options.py)
-- Source FQDN (When **dns = True** in netflow_options.py)
-- Source Mask
+- Source AS<sup>1</sup>
+- Source Domain (When **dns = True** in netflow_options.py) [See Tuning documentation](Tuning.md)
+- Source FQDN (When **dns = True** in netflow_options.py) [See Tuning documentation](Tuning.md)
+- Source Mask<sup>1</sup>
 - Source Port
 - Source Type of Service
 - Source VLAN
-- TCP Flags
+- [TCP Flags](http://www.manitonetworks.com/flow-management/2016/10/16/decoding-tcp-flags)
 - Time (Automatically formatted timestamp in UTC)
 - Traffic (HTTP, SSH, SMTP, etc parsed for you)
 - Traffic Category (Web, Email, Remote Administration, etc parsed for you)
 - Type of Service
 
+<sup>1</sup> Mikrotik - Exported by Mikrotik as "0", but not supported yet by RouterOS as of Oct. 2016
+<sup>2</sup> Not all platforms support Egress (direction Out) flow reporting, most only support Ingress (direction In) reporting
+
+**Note**: Netflow v5 does not support IPv6.
 
 # ---
 **Copyright (c) 2016, Manito Networks, LLC**
