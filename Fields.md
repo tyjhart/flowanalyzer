@@ -10,7 +10,7 @@ manually unless you're using your own Elasticsearch cluster.
 Here are the commonly used fields supported out-of-the-box:
 
 - Bytes In
-- Bytes Out
+- Bytes Out<sup>2</sup>
 - Content (Parsed from Source or Destination Domain)
 - BGP IPv4 Next Hop
 - Destination AS<sup>1</sup>
@@ -54,7 +54,7 @@ Here are the commonly used fields supported out-of-the-box:
 - Outgoing Source MAC
 - Output Interface (SNMP index)<sup>3</sup>
 - Packets In
-- Packets Out
+- Packets Out<sup>2</sup>
 - Post-NAT Destination IPv4
 - Post-NAT Destination Transport Port
 - Post-NAT Source IPv4
