@@ -26,7 +26,7 @@ dns_base.init()
 logging.basicConfig(level=logging.WARNING)
 
 # Set packet information variables
-# DO NOTE modify these variables, Netflow v5 packet structure is STATIC
+# DO NOT modify these variables, Netflow v5 packet structure is STATIC
 packet_header_size = 24
 flow_record_size = 48
 
