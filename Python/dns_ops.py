@@ -101,6 +101,4 @@ def dns_prune():
 		for pop_records in prune_records:
 			dns_base.dns_cache["Records"].pop(pop_records)
 		dns_base.dns_cache["Prune"] = int(current_time + 1800)	
-		return
-	else:
-		return
+	return
