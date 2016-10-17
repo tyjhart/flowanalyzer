@@ -37,7 +37,7 @@ try:
 except ValueError as socket_error:
 	logging.critical(' Could not open or bind a socket on port ' + str(netflow_v9_port))
 	logging.critical(str(socket_error))
-	sys.exit()
+	sys.exit("Could not open or bind a socket on port " + str(netflow_v9_port))
 
 # Spin up ES instance
 try:
@@ -46,7 +46,7 @@ try:
 except ValueError as elasticsearch_connect_error:
 	logging.critical(' Could not connect to Elasticsearch at ' + elasticsearch_host)
 	logging.critical(" " + str(elasticsearch_connect_error))
-	sys.exit()
+	sys.exit("Could not connect to Elasticsearch at " + elasticsearch_host)
 	
 # Netflow server
 def netflow_v9_server():
@@ -54,7 +54,7 @@ def netflow_v9_server():
 	# Stage the flows for the bulk API index operation
 	flow_dic = []
 	
-	# Cache the Netflow v9 templates, in received order to decode the data flows
+	# Cache the Netflow v9 templates in received order to decode the data flows. ORDER MATTERS FOR TEMPLATES.
 	template_list = {}
 	
 	while True:
@@ -68,7 +68,7 @@ def netflow_v9_server():
 		# Is it a Netflow v9 packet?
 		if int(netflow_version) == 9:
 		
-			# For debug
+			# For debug purposes only
 			flow_counter = 0
 		
 			# Cache the raw lines before decoding
