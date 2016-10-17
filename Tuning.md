@@ -73,6 +73,9 @@ journalctl -u ipfix
 ## **Elasticsearch**
 
 Tuning the Elasticsearch cluster keeps it working optimally and healthy over the long-term so your flow data is always available.
+It's possible to get really phenomenal performance out of an Elasticsearch cluster, but some basic tuning is required. We've attempted
+to use recommended and sane settings for the default configuration, but if you're scaling Elasticsearch up you'll need to adjust some 
+of the values we've set for you.
 
 ### **Connection**
 
@@ -86,6 +89,30 @@ elasticsearch_host = '127.0.0.1'
 If you already have an existing Elasticsearch cluster running you can change this setting, using either an IP address or FQDN.
 You will be responsible for creating the Flow index on your own cluster, and the curl command to build the index can be found in the 
 [build_index.sh file](Install/build_index.sh).
+
+### **/etc/elasticsearch/elasticsearch.yml Configuration File**
+
+The installation script sets a few Elasticsearch options for you in the **/etc/elasticsearch/elasticsearch.yml** configuration file.
+
+**Node Name**
+
+So we don't unintentionally interfere with other Elasticsearch nodes you might have on the network for other projects.
+```
+node.name: Master01
+```
+**Cluster Name**
+
+This prevents the Flow Analyzer Elasticsearch node from joining an Elasticsearch cluster you might already have in production.
+```
+cluster.name: manito_networks
+```
+**Network Host**
+
+This setting determines what network interfaces Elasticsearch will listen on. By default it only listens on the local host, which
+makes it difficult to run queries remotely, or integrate it with other Elasticsearch nodes.
+```
+network.host: [_local_,_site_]
+```
 
 ### **Bulk Insert**
 
