@@ -3,7 +3,7 @@
 The following information and options are here to help you tune the Flow Analyzer to perform in your networks. It's recommended you make incremental
 changes, just in case something get set incorrectly, so troubleshooting will be easier.
 
-### **Time Zone**
+## **Time Zone**
 
 The Ubuntu Server's timezone is set to UTC during the install, and all events are logged into Elasticsearch with UTC timestamps.
 This is for Elasticsearch purposes, and to ensure that it's possible to correlate flow data from devices across time zones and
@@ -11,14 +11,18 @@ DST implementations. Changing the timezone to something other than UTC isn't sup
 
 Kibana adjusts for local time automatically, so you don't have to do anything to see events with usable timestamps.
 
-### **Files**
+## **Files**
 
 The master configuration file is **netflow_options.py**, and contains all the configurable options for the system. 
 As part of the initial configuration it is copied from netflow_options_example.py. 
 
 It already has the basic, typical settings in place, including the ports listed above and the settings that follow.
 
-### **Services**
+## **Services**
+
+Three services run in the background that collect, parse, tag, and upload flows.
+
+### **Service Names**
 
 Service names correspond to their respective protocols:
 
@@ -26,16 +30,42 @@ Service names correspond to their respective protocols:
 - netflow_v9
 - ipfix
 
-You can view the status of the services listed above and control their operations by running the following:
+### **Default Ports**
 
+The following ports are used by default to listen for flow packets:
+
+- Netflow v5:   UDP/2055
+- Netflow v9:   UDP/9995
+- IPFIX:        UDP/4739
+
+These ports can be changed in **netflow_options.py**, then restart the corresponding service to start collecting flows on the new port.
+
+### **Manage Services**
+
+You can view the status of the services listed above and control their operations by running the following:
 ```
 systemctl status netflow_v5
-systemctl start netflow_v9
-systemctl stop ipfix
+systemctl status netflow_v9
+systemctl status ipfix
+```
+Restart services by running the following:
+```
 systemctl restart netflow_v5
+systemctl restart netflow_v9
+systemctl restart ipfix
+```
+View logs for each of the services by using **journalctl**:
+```
+journalctl -u netflow_v5
+journalctl -u netflow_v9
+journalctl -u ipfix
 ```
 
-### **Elasticsearch Connection**
+## **Elasticsearch**
+
+Tuning the Elasticsearch cluster keeps it working optimally and healthy over the long-term so your flow data is always available.
+
+### **Connection**
 
 By default the flow collector services are configured to connect to an Elasticsearch instance running on locahost.
 The setting can be found in **netflow_options.py**, as shown below:
@@ -48,7 +78,7 @@ If you already have an existing Elasticsearch cluster running you can change thi
 You will be responsible for creating the Flow index on your own cluster, and the curl command to build the index can be found in the 
 [build_index.sh file](Install/build_index.sh).
 
-### **Elasticsearch Bulk Insert**
+### **Bulk Insert**
 
 Depending on the traffic volume you're feeding to Flow Analyzer you may need to tune a couple settings to get the best
 performance.
@@ -72,7 +102,7 @@ The following bulk_insert_count settings have been found to work, but each netwo
 For wired ISP's that are able to push more data, and other large enterprises the bulk_insert_count may need to go higher.
 Performance for those larger organizations and ISPs will also depend on the performance of their Elasticsearch cluster.
 
-### **Elasticsearch Index Age Out**
+### **Index Age Out & Data Retention**
 
 By default the Flow Analyzer retains 30 days of flow data. Depending on how large your Elasticsearch cluster is, how much storage is
 allocated on each node, and what your data retention needs are this may need to change. [Elastic's Curator](https://www.elastic.co/guide/en/elasticsearch/client/curator/current/about.html) 
@@ -84,6 +114,10 @@ curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-u
 If you need more (or less) days of flow retention adjust the value currently set to 30.
 
 If you are using an external Elasticsearch cluster replace the localhost (127.0.0.1) IP address with the address of your cluster.
+
+## **Lookups**
+
+The Flow Analyzer can do reverse DNS lookups, as well as MAC address correlation (beta) to help you get more insight out of your flow data.
 
 ### **DNS Reverse Lookups**
 
