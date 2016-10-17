@@ -29,6 +29,7 @@ def dns_add_address(ip):
 		else:
 			pass
 
+	# IPv6 doesn't need this treatment
 	else:
 		pass				
 	
@@ -50,37 +51,45 @@ def dns_add_address(ip):
 			
 			# Parse the FQDN for Domain information
 			if "." in fqdn_lookup:
-				fqdns_exploded = fqdn_lookup.split('.')
-				domain = str(fqdns_exploded[-2]) + "." + str(fqdns_exploded[-1]) 
+				fqdns_exploded = fqdn_lookup.split('.') # Blow it up
+				domain = str(fqdns_exploded[-2]) + "." + str(fqdns_exploded[-1]) # Grab TLD and second-level domain
 				
 				# Check for .co.uk, .com.jp, etc...
 				if domain in dns_base.second_level_domains:
 					domain = str(fqdns_exploded[-3]) + "." + str(fqdns_exploded[-2]) + "." + str(fqdns_exploded[-1]) 
+				
+				# Not a .co.uk or .com.jp type domain
 				else:
 					pass
 				
 				dns_base.dns_cache["Records"][ip]["Domain"] = domain
 						
+				# Tag the domain with a category if possible
 				if domain in site_category.site_categories:
 					dns_base.dns_cache["Records"][ip]["Category"] = site_category.site_categories[domain]
+				
+				# For graph normalization
 				else:
 					dns_base.dns_cache["Records"][ip]["Category"] = "Uncategorized"
 
+			# Internal hostname without a domain
 			else:
 				dns_base.dns_cache["Records"][ip]["Domain"] = "None"
 				dns_base.dns_cache["Records"][ip]["Category"] = "Uncategorized"
 			
+		# No DNS record, lookup returned original IP for the domain
 		else:
 			dns_base.dns_cache["Records"][ip]["FQDN"] = "No record"
 			dns_base.dns_cache["Records"][ip]["Domain"] = "No record"
 			dns_base.dns_cache["Records"][ip]["Category"] = "Uncategorized"
 	
-	# Already have the lookup in the cache
+	# Already have the lookup in the cache and it hasn't been pruned yet
 	else:
 		pass
 		
 	return dns_base.dns_cache["Records"][ip]
-				
+
+# Prune resolved DNS names after 30min so we don't keep using stale domain names for tagging				
 def dns_prune():
 	prune_records = []
 	current_time = time.time()
@@ -92,6 +101,6 @@ def dns_prune():
 		for pop_records in prune_records:
 			dns_base.dns_cache["Records"].pop(pop_records)
 		dns_base.dns_cache["Prune"] = int(current_time + 1800)	
-		return	
+		return
 	else:
 		return
