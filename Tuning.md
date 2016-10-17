@@ -100,12 +100,16 @@ So we don't unintentionally interfere with other Elasticsearch nodes you might h
 ```
 node.name: Master01
 ```
+Changing this won't affect any functionality, but you will have to restart the Elasticsearch service or reboot the server for it to work.
+
 **Cluster Name**
 
 This prevents the Flow Analyzer Elasticsearch node from joining an Elasticsearch cluster you might already have in production.
 ```
 cluster.name: manito_networks
 ```
+If you decide to change the cluster name be sure to restart the Elasticsearch service or reboot the server.
+
 **Network Host**
 
 This setting determines what network interfaces Elasticsearch will listen on. By default it only listens on the local host, which
@@ -113,6 +117,7 @@ makes it difficult to run queries remotely, or integrate it with other Elasticse
 ```
 network.host: [_local_,_site_]
 ```
+Restart the Elasticsearch service or reboot the server if you change the interfaces listed in the network.host setting.
 
 ### **Bulk Insert**
 
