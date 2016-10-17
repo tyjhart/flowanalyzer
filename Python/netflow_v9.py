@@ -71,10 +71,7 @@ def netflow_v9_server():
 			# For debug purposes only
 			flow_counter = 0
 		
-			# Cache the raw lines before decoding
-			raw_cache = {}
-			
-			# Packet attributes
+			# Packet attributes in the header
 			packet_attributes = {}
 			packet_attributes["Observed Flow Count"] = total_flow_count
 			
