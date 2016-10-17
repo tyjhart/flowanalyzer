@@ -16,11 +16,20 @@ Kibana adjusts for local time automatically, so you don't have to do anything to
 The master configuration file is **netflow_options.py**, and contains all the configurable options for the system. 
 As part of the initial configuration it is copied from netflow_options_example.py. 
 
-It already has the basic, typical settings in place, including the ports listed above and the settings that follow.
+It already has the typical settings in place, including the ports and IP addresses listed in this document and the settings that follow.
 
 ## **Services**
 
-Three services run in the background that collect, parse, tag, and upload flows.
+Three services run in the background that collect, parse, tag, and upload flows. The services are orchestrated by **systemd**, and are set 
+to restart on a 30sec interval if they fail for whatever reason.
+
+The service files are located in the following locations:
+
+- Netflow v5:   /etc/systemd/system/netflow_v5.service
+- Netflow v9:   /etc/systemd/system/netflow_v9.service
+- IPFIX:        /etc/systemd/system/ipfix.service
+
+You should not need to edit these files, unless you really know what you're doing and want to tweak their behavior.
 
 ### **Service Names**
 
