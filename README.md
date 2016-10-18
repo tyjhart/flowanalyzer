@@ -13,7 +13,7 @@ See the [License section](#license) below for licensing details.
 Our goal is to provide superior Netflow and IPFIX collection, visualization, and analysis. We do that by creating:
 
 - Efficient, accessible, and sustainable software
-- Scalable solutions that can evolve
+- Scalable solutions that can evolve as you grow
 - Superior documentation from architecture through installation, configuration, tuning, and troubleshooting
 
 One other goal of ours is to make Elasticsearch and Kibana easy to implement and accessible to those who haven't used it before.

@@ -69,6 +69,10 @@ journalctl -u netflow_v5
 journalctl -u netflow_v9
 journalctl -u ipfix
 ```
+The **journalctl** command is really versatile when it comes to displaying logs - check out the **man page** for more information:
+```
+man journalctl
+```
 
 ### **Netflow v9 and IPFIX Templates**
 
