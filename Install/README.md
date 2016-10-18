@@ -1,10 +1,13 @@
 # **Overview**
 
-The installation is orchestrated with Git, Pip, and Bash scripting. The process should require no manual intervention on your part.
+The installation is orchestrated with Git, Pip, and Bash scripting. The process should require no manual intervention on your part, as
+long as you're running the latest stable LTS release of Ubuntu Server.
+
+Right now Ubuntu Server 16.04 LTS is recommended.
 
 # **Minimum Requirements**
 
-Each instance should be installed on a fresh 64-bit [Ubuntu Server](https://www.ubuntu.com/download/server) machine with the following **minimum** specs:
+Each instance should be installed on a fresh 64-bit [Ubuntu Server](https://www.ubuntu.com/download/server) machine with **systemd support** and the following **minimum** specs:
 
 - 4GB RAM
 - 2 CPU Cores
