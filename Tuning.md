@@ -70,6 +70,31 @@ journalctl -u netflow_v9
 journalctl -u ipfix
 ```
 
+### **Netflow v9 and IPFIX Templates**
+
+This isn't something you really have to manage, but be aware that Netflow v9 and IPFIX aren't static like Netflow v5 - they need templates to decode flows.
+Templates are an ordered list of the fields a device is exporting and the sizes of those fields. They are the key to decoding flows, because Netflow v9 and IPFIX
+have hundreds of fields, and not all platforms support them all. Even if they did you probably wouldn't want hundreds of data points per flow, because most of them
+may not apply or you don't want to be overwhelmed by data.
+
+To decode flow data we have to have a template in hand first. Many devices send templates on a regular interval (30min is typical), and on startup. Flows that are received
+before a matching template have been sent get dropped per the standards, because there is no way to decode them. This added complexity is the price of having all 
+those additional fields, and the ability to customize which fields you want to see.
+
+Checking the Netflow v9 log before a template has been received...
+```
+journalctl -u netflow_v9
+```
+...results in a log entry like this:
+```
+WARNING:Netflow v9:2016-10-17 16:34:04.929002  Missing template for flow set 256 from 10.110.0.1, sequence 661 - dropping
+WARNING:Netflow v9:2016-10-17 16:34:04.929193  Missing template for flow set 261 from 10.110.0.1, sequence 661 - dropping
+WARNING:Netflow v9:2016-10-17 16:34:04.929382  Missing template for flow set 256 from 10.110.0.1, sequence 661 - dropping
+WARNING:Netflow v9:2016-10-17 16:34:04.929569  Missing template for flow set 263 from 10.110.0.1, sequence 661 - dropping
+```
+This is normal behavior per the Netflow v9 and IPFIX standards. The only thing to do is wait for a template to be sent, or adjust the template interval lower if your devices
+support that configuration (not all do).
+
 ## **Elasticsearch**
 
 Tuning the Elasticsearch cluster keeps it working optimally and healthy over the long-term so your flow data is always available.
