@@ -31,6 +31,7 @@ Elasticsearch nodes will also allow you to retain more flow data.
   3. [Set Special Byte Fields](#set-special-byte-fields)
   4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
 4. [Updates](#updates)
+5. [Elasticsearch Clustering](#elasticsearch-clustering)
 
 ### **Clone the Git Repository**
 
@@ -227,6 +228,84 @@ Restart the listener services:
 systemctl restart netflow_v5
 systemctl restart netflow_v9
 systemctl restart ipfix
+```
+
+# **Elasticsearch Clustering**
+
+Elasticsearch works best in a cluster, and as your Elasticsearch cluster grows you'll get better performance and more storage. The default installation creates one
+instance of Elasticsearch, which is fine for testing or small organizations, but you'll get the best performance from two or three (or more!) instances of Elasticsearch.
+Fortunately almost everything you need is included in the default installation script, and then Elasticsearch does the rest autonomously.
+
+The steps for adding an Elasticsearch node are shown below. Do these steps for each additional node you're adding to the cluster.
+
+1. [Server Installation](#server-installation)
+2. [Elasticsearch Configuration](#elasticsearch-configuration)
+    1. [Default Instance Configuration](#default-instance-configuration)
+    2. [Additional Instance Configuration](#additional-instance-configuration)
+3. [Restart Elasticsearch](#server-installation)
+
+## Server Installation
+
+On each additional Ubuntu server you want to run as an Elasticsearch node perform the following steps.
+
+Add the Elasticsearch repository:
+```
+sudo wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb https://packages.elastic.co/elasticsearch/2.x/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list
+sudo apt-get update
+```
+Install Elasticsearch and its dependencies:
+```
+sudo apt-get -y install elasticsearch openjdk-8-jre ntp
+```
+
+## Elasticsearch Configuration
+
+A few lines need to be configured in the /etc/elasticsearch/elasticsearch.yml file to point the nodes to each other and make sure
+they all have a unique name in the cluster. It's important to set this correctly and double-check the settings before modifying a
+production cluster.
+
+### Default Instance Configuration
+
+The /etc/elasticsearch/elasticsearch.yml file contains a line that needs **uncommented and modified**:
+```
+#discovery.zen.ping.unicast.hosts: ["192.168.1.10","192.168.1.11"]
+```
+This line tells Elasticsearch to reach out to those IP addresses and establish a connection. 
+By default it's set to be commented out (because we don't know your network), so you need to uncomment it and 
+add your own IP addresses of the other Elasticsearch servers. You'll then set this on every Elasticsearch node, 
+pointing it to other nodes so they can discover each other. 
+
+### Additional Instance Configuration
+
+For example, say your network is 10.25.98.0/24, and you have the original host and two additional Elasticsearch servers:
+
+- [Master01](#master01) 10.25.98.3 (Default installation)
+- [Data01](#data01) 10.25.98.4
+- [Data02](#data02) 10.25.98.5
+
+Here's how your **/etc/elasticsearch/elasticsearch.yml** file will look on the three hosts:
+
+#### Master01
+```
+network.host: [_local_,_site_]
+node.name: Master01
+cluster.name: manito_networks
+discovery.zen.ping.unicast.hosts: **["10.25.98.4","10.25.98.5"]**
+```
+#### Data01
+```
+network.host: [_local_,_site_]
+node.name: **Data01**
+cluster.name: manito_networks
+discovery.zen.ping.unicast.hosts: **["10.25.98.3","10.25.98.5"]**
+```
+#### Data02
+```
+network.host: [_local_,_site_]
+node.name: **Data02**
+cluster.name: manito_networks
+discovery.zen.ping.unicast.hosts: **["10.25.98.3","10.25.98.4"]**
 ```
 
 # ---
