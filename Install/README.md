@@ -238,13 +238,31 @@ Fortunately almost everything you need is included in the default installation s
 
 The steps for adding an Elasticsearch node are shown below. Do these steps for each additional node you're adding to the cluster.
 
-1. [Server Installation](#server-installation)
+1. [Timezone and NTP](#timezone-and-ntp)
 2. [Elasticsearch Configuration](#elasticsearch-configuration)
-    1. [Default Instance Configuration](#default-instance-configuration)
-    2. [Additional Instance Configuration](#additional-instance-configuration)
-3. [Restart Elasticsearch](#server-installation)
+    1. [Server Installation](#server-installation)
+    2. [Default Instance Configuration](#default-instance-configuration)
+    3. [Additional Instance Configuration](#additional-instance-configuration)
+    4. [Set Heap Size](#set-heap-size)
+    5. [Enable Elasticsearch Service](#enable-elasticsearch-service)
+3. [Restart Elasticsearch](#restart-elasticsearch)
 
-## Server Installation
+## Timezone and NTP
+
+It's extremely important for the Elasticsearch cluster that node clocks are accurate and not able to drift too much.
+Also, it's important that timezones are set and remain set at UTC - Kibana takes care of adjusting timestamps for local time.
+First we'll set the server timezone to UTC, then we'll set the server to update its clock via NTP:
+```
+timedatectl set-timezone UTC
+sudo apt-get install ntp
+```
+
+## Elasticsearch Configuration
+
+First we'll install prerequisites and Elasticsearch, then we'll configure node names and discovery IP addresses. Lastly, we'll restart
+the Elasticsearch services on the nodes.
+
+### Server Installation
 
 On each additional Ubuntu server you want to run as an Elasticsearch node perform the following steps.
 
@@ -256,14 +274,10 @@ sudo apt-get update
 ```
 Install Elasticsearch and its dependencies:
 ```
-sudo apt-get -y install elasticsearch openjdk-8-jre ntp
+sudo apt-get -y install elasticsearch openjdk-8-jre
 ```
 
-## Elasticsearch Configuration
-
-A few lines need to be configured in the /etc/elasticsearch/elasticsearch.yml file to point the nodes to each other and make sure
-they all have a unique name in the cluster. It's important to set this correctly and double-check the settings before modifying a
-production cluster.
+It's important to set this up correctly and double-check the settings before modifying a production cluster.
 
 ### Default Instance Configuration
 
@@ -280,9 +294,11 @@ pointing it to other nodes so they can discover each other.
 
 For example, say your network is 10.25.98.0/24, and you have the original host and two additional Elasticsearch servers:
 
-- [Master01](#master01) 10.25.98.3 (Default installation)
-- [Data01](#data01) 10.25.98.4
-- [Data02](#data02) 10.25.98.5
+**Node** | **IP Address** | **Node Type**
+-------- | -------- | -------- |
+[Master01](#master01) | 10.25.98.3 | Existing node |
+[Data01](#data01) | 10.25.98.4 | New node |
+[Data02](#data02) | 10.25.98.5 | New node |
 
 Here's how your **/etc/elasticsearch/elasticsearch.yml** file will look on the three hosts:
 
@@ -291,21 +307,44 @@ Here's how your **/etc/elasticsearch/elasticsearch.yml** file will look on the t
 network.host: [_local_,_site_]
 node.name: Master01
 cluster.name: manito_networks
-discovery.zen.ping.unicast.hosts: **["10.25.98.4","10.25.98.5"]**
+discovery.zen.ping.unicast.hosts: ["10.25.98.4","10.25.98.5"]
 ```
 #### Data01
 ```
 network.host: [_local_,_site_]
-node.name: **Data01**
+node.name: Data01
 cluster.name: manito_networks
-discovery.zen.ping.unicast.hosts: **["10.25.98.3","10.25.98.5"]**
+discovery.zen.ping.unicast.hosts: ["10.25.98.3","10.25.98.5"]
 ```
 #### Data02
 ```
 network.host: [_local_,_site_]
-node.name: **Data02**
+node.name: Data02
 cluster.name: manito_networks
-discovery.zen.ping.unicast.hosts: **["10.25.98.3","10.25.98.4"]**
+discovery.zen.ping.unicast.hosts: ["10.25.98.3","10.25.98.4"]
+```
+
+## Set Heap Size
+It's extremely important to set the heap size properly, so that Elasticsearch has enough memory and can retrieve your data quickly.
+It's recommended that the heap size be set at [50% of the available memory,
+up to 32GB per the vendor's recommendation](https://www.elastic.co/guide/en/elasticsearch/guide/current/heap-sizing.html#_give_less_than_half_your_memory_to_lucene).
+
+For a server with 4GB of RAM, set the heap size to 2GB:
+```
+ES_HEAP_SIZE=2g
+```
+
+## Enable Elasticsearch Service
+Set the Elasticsearch service to start automatically on server startup.
+```
+sudo systemctl enable elasticsearch
+```
+
+## Restart Elasticsearch
+
+After reconfiguring Elasticsearch it's important to restart the service: 
+```
+sudo systemctl restart elasticsearch
 ```
 
 # ---
