@@ -19,17 +19,17 @@ Elasticsearch nodes will also allow you to retain more flow data.
 # **Installation**
 
 1. [Installation](#installation)
-  1. [Clone the Git Repository](#clone-the-git-repository)
-  2. [Run the Installation Script](#installation-script)
-  3. [Build Elasticsearch Flow Index](#build-the-elasticsearch-flow-index)
-  4. [Elasticsearch Tuning](#elasticsearch-tuning)
-  5. [Firewall (Optional)](#firewall-optional)
+    1. [Clone the Git Repository](#clone-the-git-repository)
+    2. [Run the Installation Script](#installation-script)
+    3. [Build Elasticsearch Flow Index](#build-the-elasticsearch-flow-index)
+    4. [Elasticsearch Tuning](#elasticsearch-tuning)
+    5. [Firewall (Optional)](#firewall-optional)
 2. [Configure Devices](#configure-flows)
 3. [Kibana](#kibana)
-  1. [Access Kibana](#access-kibana)
-  2. [Configure the Default Index Pattern](#configure-the-default-index-pattern)
-  3. [Set Special Byte Fields](#set-special-byte-fields)
-  4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
+    1. [Access Kibana](#access-kibana)
+    2. [Configure the Default Index Pattern](#configure-the-default-index-pattern)
+    3. [Set Special Byte Fields](#set-special-byte-fields)
+    4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
 4. [Updates](#updates)
 5. [Elasticsearch Clustering](#elasticsearch-clustering)
 
@@ -163,9 +163,8 @@ Browse to Kibana at http://your_server_ip
 
 Log in with the default Squid credentials shown below:
 
-Default Username: **admin**
-
-Default Password: **manitonetworks**
+- Username: **admin**
+- Password: **manitonetworks**
 
 ### **Configure the default index pattern**
 
