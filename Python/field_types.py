@@ -364,7 +364,7 @@ v9_fields = {
 40:{"Name":"TOTAL_BYTES_EXP",							"Type":"Integer",				"Index ID": "Total Bytes Exported"},
 41:{"Name":"TOTAL_PKTS_EXP",							"Type":"Integer",				"Index ID": "Total Packets Exported"},
 42:{"Name":"TOTAL_FLOWS_EXP",							"Type":"Integer",				"Index ID": "Flows Exported"},
-43:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": ""},
+#43:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": ""},
 44:{"Name":"IPV4_SRC_PREFIX",							"Type":"",						"Index ID": "IPv4 Source Prefix"},
 45:{"Name":"IPV4_DST_PREFIX",							"Type":"",						"Index ID": "IPv4 Destination Prefix"},
 46:{
@@ -393,7 +393,7 @@ v9_fields = {
 	}
 },
 50:{"Name":"FLOW_SAMPLER_RANDOM_INTERVAL",				"Type":"Integer",				"Index ID": "Flow Sampler Random Interval"},
-51:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": ""},
+#51:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": ""},
 52:{"Name":"MIN_TTL",									"Type":"Integer",				"Index ID": "Minimum TTL"},
 53:{"Name":"MAX_TTL",									"Type":"Integer",				"Index ID": "Maximum TTL"},
 54:{"Name":"IPV4_IDENT",								"Type":"",						"Index ID": "IPv4 ID"},
@@ -415,11 +415,11 @@ v9_fields = {
 62:{"Name":"IPV6_NEXT_HOP",								"Type":"IPv6",					"Index ID": "IPv6 Next Hop"},
 63:{"Name":"BPG_IPV6_NEXT_HOP",							"Type":"IPv6",					"Index ID": "BGP IPv6 Next Hop"},
 64:{"Name":"IPV6_OPTION_HEADERS",						"Type":"Integer",				"Index ID": "IPv6 Option Headers"},
-65:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
-66:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
-67:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
-68:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
-69:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#65:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#66:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#67:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#68:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#69:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
 70:{"Name":"MPLS_LABEL_1",								"Type":"MPLS Label",			"Index ID": "MPLS Label 1"},
 71:{"Name":"MPLS_LABEL_2",								"Type":"MPLS Label",			"Index ID": "MPLS Label 2"},
 72:{"Name":"MPLS_LABEL_3",								"Type":"MPLS Label",			"Index ID": "MPLS Label 3"},
@@ -437,7 +437,7 @@ v9_fields = {
 84:{"Name":"SAMPLER_NAME",								"Type":"",						"Index ID": "Sampler Name"},
 85:{"Name":"IN_PERMANENT_BYTES",						"Type":"Integer",				"Index ID": "Permanent Flow Bytes"},
 86:{"Name":"IN_PERMANENT_PKTS",							"Type":"Integer",				"Index ID": "Permanent Flow Packets"},
-87:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": ""},
+#87:{"Name":"Vendor Proprietary",						"Type":"Vendor Proprietary",	"Index ID": ""},
 128:{"Name": "bgpNextAdjacentAsNumber",					"Type": "Integer",				"Index ID": "BGP Next Adjacent AS"},
 129:{"Name": "bgpPrevAdjacentAsNumber",					"Type": "Integer",				"Index ID": "BGP Previous Adjacent AS"},
 130:{"Name": "exporterIPv4Address",						"Type": "IPv4",					"Index ID": "Exporter IPv4 Address"},
@@ -539,7 +539,7 @@ v9_fields = {
 207:{"Name": "ipv4IHL",									"Type": "Integer",				"Index ID": "IPv4 IHL"},
 208:{"Name": "ipv4Options",								"Type": "Integer",				"Index ID": "IPv4 Options"},
 209:{"Name": "tcpOptions",								"Type": "Integer",				"Index ID": "TCP Options"},
-210:{"Name": "paddingOctets",							"Type": "",						"Index ID": "Padding Bytes"}, # REVIEW THIS!!!
+210:{"Name": "paddingOctets",							"Type": "Integer",				"Index ID": "Padding Bytes"}, # REVIEW THIS!!!
 211:{"Name": "collectorIPv4Address",					"Type": "IPv4",					"Index ID": "Collector IPv4 Address"},
 212:{"Name": "collectorIPv6Address",					"Type": "IPv6",					"Index ID": "Collector IPv6 Address"},
 213:{"Name": "exportInterface",							"Type": "Integer",				"Index ID": "Export Interface"},
@@ -624,9 +624,9 @@ v9_fields = {
 253:{"Name": "egressPhysicalInterface",					"Type": "Integer",				"Index ID": "Egress Physical Interface"},
 254:{"Name": "postDot1qVlanId",							"Type": "Integer",				"Index ID": "Post-Dot1q VLAN ID"},
 255:{"Name": "postDot1qCustomerVlanId",					"Type": "Integer",				"Index ID": "Post-Dot1q Customer VLAN ID"},
-256:{"Name": "ethernetType",							"Type": "Integer",				"Index ID": "Ethernet Type"}, # REVIEW THIS
+256:{"Name": "ethernetType",							"Type": "Integer",				"Index ID": "Ethernet Type"},
 257:{"Name": "postIpPrecedence",						"Type": "Integer",				"Index ID": "Post-IP Precedence"},
-258:{"Name": "collectionTimeMilliseconds",				"Type": "Integer",				"Index ID": "Collection Time Milliseconds"}, # REVIEW THIS
+258:{"Name": "collectionTimeMilliseconds",				"Type": "Integer",				"Index ID": "Collection Time Milliseconds"}, 
 259:{"Name": "exportSctpStreamId",						"Type": "Integer",				"Index ID": "Export SCTP Stream ID"},
 260:{"Name": "maxExportSeconds",						"Type": "Integer",				"Index ID": "Max Export Seconds"},
 261:{"Name": "maxFlowEndSeconds",						"Type": "Integer",				"Index ID": "Max Flow End Seconds"},
@@ -860,10 +860,10 @@ v9_fields = {
 413:{"Name": "dot1qServiceInstancePriority",			"Type": "Integer",				"Index ID": "Dot1q Service Instance Priority"},
 414:{"Name": "dot1qCustomerSourceMacAddress",			"Type": "MAC",					"Index ID": "Dot1q Customer Source MAC Address"},
 415:{"Name": "dot1qCustomerDestinationMacAddress",		"Type": "MAC",					"Index ID": "Dot1q Customer Destination MAC Address"},
-416:{"Name": "",										"Type": "Integer",				"Index ID": ""}, # Deprecated per standard
+#416:{"Name": "",										"Type": "Integer",				"Index ID": ""}, # Deprecated per standard
 417:{"Name": "postLayer2OctetDeltaCount",				"Type": "Integer",				"Index ID": "Post-Layer 2 Byte Count"},
 418:{"Name": "postMCastLayer2OctetDeltaCount",			"Type": "Integer",				"Index ID": "Post-Multicast Layer 2 Bytes"},
-419:{"Name": "",										"Type": "Integer",				"Index ID": ""}, # Deprecated per standard
+#419:{"Name": "",										"Type": "Integer",				"Index ID": ""}, # Deprecated per standard
 420:{"Name": "postLayer2Octet Total Count",				"Type": "Integer",				"Index ID": "Post-Layer 2 Total Bytes"},
 421:{"Name": "postMCastLayer2Octet Total Count",		"Type": "Integer",				"Index ID": "Post-Multicast Layer 2 Total Bytes"},
 422:{"Name": "minimumLayer2TotalLength",				"Type": "Integer",				"Index ID": "Minimum Layer 2 Total Length"},
@@ -912,10 +912,10 @@ v9_fields = {
 454:{"Name": "mibModuleName",							"Type": "String",				"Index ID": "MIB ModuleName"},
 455:{"Name": "mobileIMSI",								"Type": "String",				"Index ID": "Mobile IMSI"},
 456:{"Name": "mobileMSISDN",							"Type": "String",				"Index ID": "Mobile MSISDN"},
-33000:{"Name": "INGRESS_ACL_ID",						"Type": "",						"Index ID": "Ingress ACL ID"}, # ASA
-33001:{"Name": "EGRESS_ACL_ID",							"Type": "",						"Index ID": "Egress ACL ID"}, # ASA
-33002:{"Name": "NF_F_FW_EXT_EVENT",						"Type": "Integer",				"Index ID": "Firewall External Event"}, # ASA
-40000:{"Name": "AAA_USERNAME",							"Type": "",						"Index ID": "AAA Username"} # ASA
+#33000:{"Name": "INGRESS_ACL_ID",						"Type": "",						"Index ID": "Ingress ACL ID"}, # ASA (Proprietary)
+#33001:{"Name": "EGRESS_ACL_ID",						"Type": "",						"Index ID": "Egress ACL ID"}, # ASA (Proprietary)
+#33002:{"Name": "NF_F_FW_EXT_EVENT",					"Type": "Integer",				"Index ID": "Firewall External Event"}, # ASA (Proprietary)
+#40000:{"Name": "AAA_USERNAME",							"Type": "",						"Index ID": "AAA Username"} # ASA (Proprietary)
 }
 
 
@@ -1161,7 +1161,7 @@ ipfix_fields = {
 }
 },
 50:{"Name": "samplerRandomInterval",					"Type": "Integer",				"Index ID": "Flow Sampler Random Interval"},
-51:{"Name": "classId",									"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#51:{"Name": "classId",									"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
 52:{"Name": "minimumTTL",								"Type": "Integer",				"Index ID": "Minimum TTL"},
 53:{"Name": "maximumTTL",								"Type": "Integer",				"Index ID": "Maximum TTL"},
 54:{"Name": "fragmentIdentification",					"Type": "Integer",				"Index ID": "Fragment Header Identification Field"},
@@ -1183,11 +1183,11 @@ ipfix_fields = {
 62:{"Name": "ipNextHopIPv6Address",						"Type": "IPv6",					"Index ID": "IPv6 Next Hop"},
 63:{"Name": "bgpNextHopIPv6Address",					"Type": "IPv6",					"Index ID": "BGP IPv6 Next Hop"},
 64:{"Name": "ipv6ExtensionHeaders",						"Type": "Integer",				"Index ID": "IPv6 Option Headers"}, # Parse in code
-65:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
-66:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
-67:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
-68:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
-69:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#65:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#66:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#67:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#68:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#69:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
 70:{"Name": "mplsTopLabelStackSection",					"Type": "MPLS Label",			"Index ID": "MPLS Label 1"},
 71:{"Name": "mplsLabelStackSection2",					"Type": "MPLS Label",			"Index ID": "MPLS Label 2"},
 72:{"Name": "mplsLabelStackSection3",					"Type": "MPLS Label",			"Index ID": "MPLS Label 3"},
@@ -1215,7 +1215,7 @@ ipfix_fields = {
 94:{"Name": "applicationDescription",					"Type": "String",				"Index ID": "Application Description"},
 95:{"Name": "applicationId",							"Type": "String",				"Index ID": "Application ID"},
 96:{"Name": "applicationName",							"Type": "String",				"Index ID": "Application Name"},
-97:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
+#97:{"Name": "Vendor Proprietary",						"Type": "Vendor Proprietary",	"Index ID": "Vendor Proprietary"},
 98:{"Name": "postIpDiffServCodePoint",					"Type": "Integer",				"Index ID": "Differentiated Services Code Point"},
 99:{"Name": "multicastReplicationFactor",				"Type": "Integer",				"Index ID": "Multicast Replication Factor"},
 100:{"Name": "className",								"Type": "String",				"Index ID": "Traffic Class Name"},
