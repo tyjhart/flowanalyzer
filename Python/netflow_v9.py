@@ -96,14 +96,14 @@ def netflow_v9_server():
 				byte_position += 4
 				logging.debug(" Finshed unpacking flow header at " + str(byte_position))
 				
-				# Template data set
-				if flow_set_id == 0:
+				if flow_set_id == 0: # Template data set
 					logging.debug(" Unpacking template set at " + str(byte_position))
 					temp_template_cache = {}
-					template_position = byte_position
-					while template_position <= flow_set_length:
+					
+					for template_position in range(byte_position,flow_set_length,4):
 						(template_id, template_id_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
-						if template_id > 255:
+						
+						if template_id > 255: # Flow data template 
 							flow_counter += 1
 							logging.debug(" Rcvd template " + str(template_id) + ", sequence " + str(packet_attributes["sequence_number"]))
 							hashed_id = hash(str(sensor_address[0])+str(template_id))
@@ -112,15 +112,28 @@ def netflow_v9_server():
 							temp_template_cache[hashed_id]["Template ID"] = template_id
 							temp_template_cache[hashed_id]["Length"] = template_id_length
 							temp_template_cache[hashed_id]["Definitions"] = collections.OrderedDict()
-							template_line_counter = 1
-							while template_line_counter <= template_id_length:
+
+							for _ in range(0,template_id_length): # Iterate through each line in the template
 								template_position += 4
 								(template_element, template_element_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
-								temp_template_cache[hashed_id]["Definitions"][template_element] = template_element_length
-								template_line_counter += 1
-						template_position += 4
-					template_list.update(temp_template_cache)	
-					byte_position = (flow_set_length + byte_position)-4
+								
+								if template_element in v9_fields: # Fields we know about and support
+									temp_template_cache[hashed_id]["Definitions"][template_element] = template_element_length
+								
+								else: # Proprietary or undocumented field
+									logging.warning(
+									" Rcvd unsupported field " + 
+									str(template_element) + 
+									", in template ID " + 
+									str(template_id) + 
+									" from " + 
+									str(sensor_address[0])	
+									)
+						
+						template_list.update(temp_template_cache) # Add the new template to the working template list
+							
+					byte_position = (flow_set_length + byte_position)-4 # Move location for next flow or template
+					
 					logging.debug(" Finished template set at " + str(byte_position))
 					logging.debug(" Working templates: " + str(template_list))
 										
@@ -161,19 +174,8 @@ def netflow_v9_server():
 							# Iterate through lines in the template
 							for template_key, field_size in template_list[hashed_id]["Definitions"].iteritems():
 								
-								# Check if we've been passed a "Vendor Proprietary" field, and if so skip it
-								if v9_fields[template_key]["Type"] == "Vendor Proprietary":
-									logging.info(
-									" Rcvd vendor proprietary field, " + 
-									str(template_key) + 
-									", in " + 
-									str(flow_set_id) + 
-									" from " + 
-									str(sensor_address[0])
-									)
-								
 								# IPv4 Address
-								elif v9_fields[template_key]["Type"] == "IPv4":
+								if v9_fields[template_key]["Type"] == "IPv4":
 									flow_payload = inet_ntoa(flow_packet_contents[data_position:(data_position+field_size)])
 									flow_index["_source"]["IP Protocol Version"] = 4
 									
@@ -195,7 +197,9 @@ def netflow_v9_server():
 									elif field_size == 8:
 										flow_payload = struct.unpack('!Q',flow_packet_contents[data_position:(data_position+field_size)])[0]
 									else:
-										logging.warning(" Failed to unpack an integer for " + str(v9_fields[template_key]["Index ID"]))
+										logging.warning(" Failed to unpack an integer for field " + str(template_key) + ", length " + str(field_size) + " from " + str(sensor_address[0]))
+										
+										# Bail out of this field
 										data_position += field_size
 										continue
 										
@@ -257,16 +261,20 @@ def netflow_v9_server():
 									
 								# Something we haven't accounted for yet						
 								else:
-									try:
-										flow_payload = struct.unpack('!%dc' % field_size,flow_packet_contents[data_position:(data_position+field_size)])
-									
-									except Exception, unpack_error:
-										logging.debug(
-										" Error unpacking generic field number " + 
-										str(v9_fields[template_key]) + 
-										", error messages: " + 
-										str(unpack_error)
-										)
+									logging.debug(
+									" Unsupported field " + 
+									str(template_key) + 
+									", size " + 
+									str(field_size) +
+									", from " +
+									str(sensor_address[0]) +
+									" in sequence " +
+									str(packet_attributes["sequence_number"])
+									)
+
+									# Bail out of this field, don't know what it is
+									data_position += field_size
+									continue
 								
 								# Add value to the flow_index and move the data pointer
 								#
