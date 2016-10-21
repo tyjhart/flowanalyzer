@@ -30,8 +30,9 @@ Elasticsearch nodes will also allow you to retain more flow data.
     2. [Configure the Default Index Pattern](#configure-the-default-index-pattern)
     3. [Set Special Byte Fields](#set-special-byte-fields)
     4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
-4. [Updates](#updates)
-5. [Elasticsearch Clustering](#elasticsearch-clustering)
+4. [Tuning](#tuning)
+5. [Updates](#updates)
+6. [Elasticsearch Clustering](#elasticsearch-clustering)
 
 ### **Clone the Git Repository**
 
@@ -210,11 +211,20 @@ htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
 
 For more fine-grained control of data access refer to the [Shield product page](https://www.elastic.co/products/shield) from Elastic.
 
+# Tuning
+
+There are additional features that you can utilize, but they have to be enabled by you. This includes:
+
+ - [Reverse DNS Lookups](../Tuning.md#lookups) & Content Tagging
+ - MAC Address Prefix Tagging (Beta)
+
+See [the tuning documentation](../Tuning.md) for how to enable these features, and recommendations for baseline settings.
+
 # **Updates**
 
 To get the latest updates do the following:
 
-Change to the flowanalyzer directory and fetch the latest code via Git:
+Change to the flowanalyzer directory and fetch the latest stable code via Git:
 
 ```
 cd /your/directory/flowanalyzer
