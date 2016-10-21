@@ -39,12 +39,28 @@ except ValueError as socket_error:
 # Spin up ES instance
 try:
 	es = Elasticsearch([elasticsearch_host])
-	logging.warning(' Connected to Elasticsearch at ' + elasticsearch_host + ' - OK')
+	logging.warning(' Connected to Elasticsearch at ' + str(elasticsearch_host) + ' - OK')
 except ValueError as elasticsearch_connect_error:
-	logging.critical(' Could not connect to Elasticsearch at ' + elasticsearch_host)
+	logging.critical(' Could not connect to Elasticsearch at ' + str(elasticsearch_host))
 	logging.critical(" " + str(elasticsearch_connect_error))
-	sys.exit("Could not connect to Elasticsearch at " + elasticsearch_host)
+	sys.exit("Could not connect to Elasticsearch at " + str(elasticsearch_host))
+
+def mac_parse(mac):
+	mac_list = []
+	for mac_item in mac:
+		mac_item_formatted = hex(mac_item).replace('0x','')
+		if mac_item_formatted == '0':
+			mac_item_formatted = "00"
+		if len(mac_item_formatted) == 1:
+			mac_item_formatted = str("0" + mac_item_formatted)
+		mac_list.append(mac_item_formatted)
+	flow_payload = (':'.join(mac_list)).upper()
 	
+	if flow_payload == '00:00:00:00:00:00' or flow_payload == 'FF:FF:FF:FF:FF:FF':
+		return False
+	else:
+		return flow_payload
+
 # Netflow server
 def netflow_v9_server():
 	
@@ -243,22 +259,18 @@ def netflow_v9_server():
 									
 									# No "Options" specified for this field type
 									else:
-										pass
+										pass 
 										
 								# MAC Address
 								elif v9_fields[template_key]["Type"] == "MAC":
-									mac_payload = struct.unpack('!%dB' % field_size,flow_packet_contents[data_position:(data_position+field_size)])
-									mac_list = []
-									for mac_item in mac_payload:
-										mac_item_formatted = hex(mac_item).replace('0x','')
-										if mac_item_formatted == '0':
-											mac_item_formatted = "00"
-										mac_list.append(mac_item_formatted)
-									if mac_list == ["00","00","00","00","00","00"]:
-										flow_payload = ""
+									mac_objects = struct.unpack('!%dB' % field_size,flow_packet_contents[data_position:(data_position+field_size)])
+									mac_address = mac_parse(mac_objects)
+									if mac_address is False:
+										data_position += field_size
+										continue
 									else:
-										flow_payload = (':'.join(mac_list)).upper()
-									
+										flow_payload = mac_address
+
 								# Something we haven't accounted for yet						
 								else:
 									logging.debug(
@@ -284,56 +296,50 @@ def netflow_v9_server():
 								# Move the byte position the number of bytes in the field we just parsed
 								data_position += field_size
 								
-								# Tag the flow with Source and Destination FQDN and Domain info (if available)
-								if dns is True:
+							# Tag the flow with Source and Destination FQDN and Domain info (if available)
+							if dns is True:
+
+								if flow_index["_source"]['IP Protocol Version'] == 4: # IPv4 hosts
 
 									# IPv4 Source IP
-									if template_key == 8:
-										source_ip = IP(str(flow_payload)+"/32")
-										if lookup_internal is False and source_ip.iptype() == 'PRIVATE':
+									if "IPv4 Source" in flow_index["_source"]:
+										resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Source"])
+										if resolved_fqdn_dict == False:
 											pass
 										else:
-											resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
 											flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
 											flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-											if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+											if "Content" not in flow_index["_source"] or resolved_fqdn_dict["Category"] == "Uncategorized":
+												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
 									
 									# IPv4 Destination IP
-									elif template_key == 12: 
-										destination_ip = IP(str(flow_payload)+"/32")
-										if lookup_internal is False and destination_ip.iptype() == 'PRIVATE':
+									if "IPv4 Destination" in flow_index["_source"]:
+										resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Destination"])
+										if resolved_fqdn_dict == False:
 											pass
 										else:
-											resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
 											flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
 											flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-											if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
+											if "Content" not in flow_index["_source"] or resolved_fqdn_dict["Category"] == "Uncategorized":
 												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]			
-									
+								
+								if flow_index["_source"]['IP Protocol Version'] == 6: # IPv6 hosts
+
 									# IPv6 Source IP
-									elif template_key == 27:
-										resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+									if "IPv6 Source" in flow_index["_source"]:
+										resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv6 Source"])
 										flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
 										flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
 										if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
 												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
 									
 									# IPv6 Destination IP
-									elif template_key == 28:
-										resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
+									if "IPv6 Destination" in flow_index["_source"]:
+										resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv6 Destination"])
 										flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
 										flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
 										if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
 												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
-
-									# Not a source or destination IP
-									else:
-										pass	
-								
-								# Not doing DNS lookups
-								else:
-									pass
 
 							# Append this parsed flow to the flow_dic[] for bulk upload
 							flow_dic.append(flow_index)
@@ -348,7 +354,7 @@ def netflow_v9_server():
 						str(sensor_address[0]) + 
 						", sequence " + 
 						str(packet_attributes["sequence_number"]) + 
-						" - dropping"
+						" - dropping per v9 standard"
 						)
 						
 					# Advance to the end of the flow
