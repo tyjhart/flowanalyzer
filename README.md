@@ -1,4 +1,4 @@
-# **Manito Networks Flow Analyzer**
+# Manito Networks Flow Analyzer
 
 The Flow Analyzer is a [Netflow and IPFIX](Network%20Flow%20Basics.md) collector and parser, available under the [BSD 3-Clause License](#license), 
 that stores flows in Elasticsearch and visualizes them in Kibana. It is designed to run on [Ubuntu Server](https://www.ubuntu.com/download/server), either as a single 
@@ -8,7 +8,7 @@ Visualizations and Dashboards are provided to support network flow analysis righ
 
 See the [License section](#license) below for licensing details.
 
-# **Project Goals**
+# Project Goals
 
 Our goal is to provide superior Netflow and IPFIX collection, visualization, and analysis. We do that by creating:
 
@@ -20,13 +20,13 @@ One other goal of ours is to make Elasticsearch and Kibana easy to implement and
 The learning curve for distributed search systems and dashboarding software can be steap, but we think that everyone
 should be able to realize the benefits of meaningful, beautiful data visualization.
 
-# **Features**
+# Features
 
-### **Quick Installation**
+### Quick Installation
 
 You can go from zero to up-and-running with graphed flow data in less than one hour. Check out [the installation documentation](Install/README.md).
 
-### **Flow Monitoring Protocols**
+### Flow Monitoring Protocols
 
 The Manito Networks Flow Analyzer supports the following flow data protocols:
 
@@ -38,7 +38,7 @@ If you're not familiar with Netflow or IPFIX that's alright - take a look at [Ne
 
 Our software ingests Netflow and IPFIX data, parses and tags it, then stores it in Elasticsearch for you to query and graph in Kibana.
 
-### **Fields**
+### Fields
 
 The Flow Analyzer supports over 60 pre-configured flow data fields, including the correct field types and analysis settings in 
 Elasticsearch so you don't have to do any guessing. Kibana Visualizations and Dashboards are included, so you can analyze those 60+
@@ -46,7 +46,7 @@ fields right away. We also have dynamic support for other fields defined in the 
 
 Take a look at [the Fields list](Fields.md) for a list of the pre-configured fields. 
 
-### **Tags**
+### Tags
 
 Our custom Netflow and IPFIX collectors ingest and tag flow data. We record not only the basic protocol and port numbers, but we 
 also take it a step further and correlate the following:
@@ -57,19 +57,19 @@ also take it a step further and correlate the following:
 
 This tagging functionality is running by default, and right now there is no functionality to turn it off.
 
-### **DNS Reverse Lookups**
+### DNS Reverse Lookups
 
 A reverse lookup against observed IPs is done if DNS lookups are enabled. Resolved domains are cached for 30 minutes to reduce
 the impact on DNS servers. Popular domains like facebook.com and cnn.com are categorized with content tags like "Social Media" and "News"
 to provide insight into website browsing on the network.
 
-### **MAC Address Lookups**
+### MAC Address Lookups
 
 Correlation of MAC address OUI's to top manufacturer's is done to help graph traffic sources in hetergenous environments. 
 
 Note: This feature is in beta, and the list of OUI's to be built is quite extensive.
 
-# **Requirements**
+# Requirements
 
 At least one Ubuntu Server installation with the following **minimum** hardware specs:
 
@@ -80,13 +80,13 @@ At least one Ubuntu Server installation with the following **minimum** hardware 
 This will work for a proof of concept installation or for very small networks.
 Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure.
 
-# **Installation**
+# Installation
 
 Install by cloning the latest Git repo, then run the Ubuntu installation script.
 
 See [installation documentation](Install/README.md) for more information.
 
-# **Device Configuration**
+# Device Configuration
 
 Configure your devices to send Netflow and IPFIX data to the Flow Analyzer collector.
 
@@ -97,43 +97,48 @@ See the [Flow Management blog](http://www.manitonetworks.com/flow-management/) f
 * [Mikrotik Netflow v9](http://www.manitonetworks.com/flow-management/2016/10/10/mikrotik-netflow-v9-configuration)
 * [Cisco Netflow v9](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/netflow/configuration/15-mt/nf-15-mt-book/get-start-cfg-nflow.html#GUID-2B7E9519-66FE-4F43-B8D3-00CA38C1FA9A)
 
-# **Ports & Protocols**
+# Ports & Protocols
 
 All services listen for UDP flow packets on the following ports:
 
-- Netflow v5:   UDP/2055
-- Netflow v9:   UDP/9995
-- IPFIX:        UDP/4739
+Service | Protocol | Port
+-------- | -------- | -------- |
+Netflow v5 | UDP | 2055 |
+Netflow v9 | UDP | 9995 |
+IPFIX | UDP | 4739 |
 
 These ports can be changed, see the [tuning documentation](Tuning.md).
 
-# **Access**
+# Access
 
 Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
 Kibana login page via an .htaccess file. The default login credentials are shown below:
 
 The Kibana portal can be accessed via your favorite modern web browser:
 
-**http://your_server_ip**
+http://your_server_ip
 
 Default Username: **admin**
 
 Default Password: **manitonetworks**
 
-# **Limitations**
+# Limitations
 
 The following Netflow protocols or features are NOT supported:
 
-- Cisco Flexible Netflow
-- Cisco ASA Netflow Security Event Logging (NESL)
+- Cisco [Flexible Netflow](http://www.cisco.com/c/en/us/products/ios-nx-os-software/flexible-netflow/index.html)
+- Cisco [ASA Netflow Security Event Logging (NESL)](http://www.cisco.com/c/en/us/td/docs/security/asa/asa82/configuration/guide/config/monitor_nsel.html#wp1111174)
 - Cisco NAT Event Logging (NEL)
+
+These technologies may use Netflow as a transport protocol, but there are proprietary fields and codes in use that require additional 
+parsing to handle.
 
 The collection of flows from multiple exporters located behind a single NAT IP address is not supported because of how NAT works.
 
 Netflow protocols do not provide a way to differentiate flows that are sent via NAT from the same IP address without some tweaking, 
 hence the limitation. 
 
-# **License**
+# License
 
 Copyright (c) 2016, Manito Networks, LLC
 All rights reserved.
@@ -148,7 +153,7 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# **Attributions**
+# Attributions
 
 Elasticsearch is a registered trademark of Elasticsearch BV.
 

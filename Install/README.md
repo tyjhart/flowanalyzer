@@ -145,9 +145,11 @@ Also see the [Flow Management blog](http://www.manitonetworks.com/flow-managemen
 
 Use the following ports:
 
-- Netflow v5:   UDP/2055
-- Netflow v9:   UDP/9995
-- IPFIX:        UDP/4739
+Service | Protocol | Port
+-------- | -------- | -------- |
+Netflow v5 | UDP | 2055 |
+Netflow v9 | UDP | 9995 |
+IPFIX | UDP | 4739 |
 
 These ports can be changed, see the [tuning documentation](../Tuning.md). Make sure your devices are configured to send flow data
 before moving on to [configuring Kibana](#kibana).
