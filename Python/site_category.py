@@ -109,6 +109,10 @@ site_categories = {
 'slate.com':'News',
 'vanityfair.com':'News',
 'usatoday.com':'News',
+#
+# Portals
+'msn.com':'Portals',
+'aol.com':'Portals',
 
 # Productivity
 #
