@@ -212,7 +212,7 @@ Access to Kibana is proxied through the Squid service. Putting Squid in front of
 Kibana login page via an .htaccess file. Users can be created with the following command:
 
 ```
-htpasswd -bc /opt/manitonetworks/squid/.htpasswd username password
+sudo htpasswd -bc /etc/squid/.htpasswd username password
 ```
 
 For more fine-grained control of data access refer to the [Shield product page](https://www.elastic.co/products/shield) from Elastic.
