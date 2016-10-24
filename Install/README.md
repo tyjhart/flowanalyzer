@@ -30,6 +30,7 @@ Elasticsearch nodes will also allow you to retain more flow data.
     2. [Configure the Default Index Pattern](#configure-the-default-index-pattern)
     3. [Set Special Byte Fields](#set-special-byte-fields)
     4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
+    5. [Creating Users for Kibana](#creating-users-for-kibana)
 4. [Tuning](#tuning)
 5. [Updates](#updates)
 6. [Elasticsearch Clustering](#elasticsearch-clustering)
@@ -206,7 +207,7 @@ Perform the same steps above on the **Bytes Out** field.
 2. In Kibana click Settings > Objects > Import
 3. Browse to the downloaded JSON file
 
-### Creating Users for Kibana Access
+### Creating Users for Kibana
 
 Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
 Kibana login page via an .htaccess file. Users can be created with the following command:
