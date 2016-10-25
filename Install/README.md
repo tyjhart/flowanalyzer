@@ -24,6 +24,7 @@ Elasticsearch nodes will also allow you to retain more flow data.
     3. [Build Elasticsearch Flow Index](#build-the-elasticsearch-flow-index)
     4. [Elasticsearch Tuning](#elasticsearch-tuning)
     5. [Firewall (Optional)](#firewall-optional)
+    6. [Reboot](#reboot)
 2. [Configure Devices](#configure-devices)
 3. [Kibana](#kibana)
     1. [Access Kibana](#access-kibana)
