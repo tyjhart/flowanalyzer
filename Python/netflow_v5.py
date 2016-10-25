@@ -59,28 +59,24 @@ def netflow_v5_server():
 		flow_packet_contents, sensor_address = netflow_sock.recvfrom(65565)
 			
 		try:
-			(netflow_version,
-			flow_count,
-			sys_uptime,
-			unix_secs,
-			unix_nsecs,
-			flow_seq,
-			engine_type,
-			engine_id) = struct.unpack('!HHIIIIBB',flow_packet_contents[0:22]) #Version of NF packet and count of Flows in packet
-			
-			logging.debug("Rcvd " + str(flow_count) + " flow(s) from " + str(sensor_address[0]))
+			packet_keys = ["netflow_version","flow_count","sys_uptime","unix_secs","unix_nsecs","flow_seq","engine_type","engine_id"] # Netflow v5 packet fields
+			packet_values = struct.unpack('!HHIIIIBB',flow_packet_contents[0:22]) # Version of NF packet and count of Flows in packet
+			packet_contents = dict(zip(packet_keys,packet_values)) # v5 packet fields and values
+
+			logging.debug("Received " + str(packet_contents["flow_count"]) + " flow(s) from " + str(sensor_address[0]))
+			logging.debug("v5 packet header: " + str(packet_contents))
 		
 		except Exception as flow_header_error:
 			logging.warning(" Failed unpacking flow header from " + str(sensor_address[0]) + " - " + str(flow_header_error))
 			continue
 		
 		# Rcvd a Netflow v5 packet, parse it
-		if netflow_version == 5:
+		if packet_contents["netflow_version"] == 5:
 
 			# Iterate over flows in packet
-			for flow_num in range(0, flow_count):
+			for flow_num in range(0, packet_contents["flow_count"]):
 				now = datetime.datetime.utcnow() # Timestamp for flow rcv
-				logging.debug(" Flow " + str(flow_num+1) + " of " + str(flow_count))
+				logging.debug(" Flow " + str(flow_num+1) + " of " + str(packet_contents["flow_count"]))
 				base = packet_header_size + (flow_num * flow_record_size) # Calculate flow starting point
 				
 				(ip_source,
@@ -134,7 +130,7 @@ def netflow_v5_server():
 				"Destination AS": destination_as,
 				"Source Mask": source_mask,
 				"Destination Mask": destination_mask,
-				"Engine ID": engine_id
+				"Engine ID": packet_contents["engine_id"]
 				}
 				}
 
@@ -216,7 +212,7 @@ def netflow_v5_server():
 			
 		# Got something else, drop it
 		else:
-			logging.warning(" Rcvd non-Netflow v5 packet from " + str(sensor_address[0]))
+			logging.warning("Received a non-Netflow v5 packet from " + str(sensor_address[0]))
 			continue
 		
 	return
