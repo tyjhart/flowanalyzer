@@ -155,11 +155,17 @@ def netflow_v9_server():
 										
 				# Options template set
 				elif flow_set_id == 1:
-					logging.debug(" Unpacking Options template set at " + str(byte_position))
+					logging.warning(" Unpacking Options template set at " + str(byte_position))
+					
 					flow_counter += 1
+					
 					(options_template_id, options_template_id_length) = struct.unpack('!HH',flow_packet_contents[byte_position:byte_position+4])
-					byte_position = (options_template_id_length + byte_position)-4
-					logging.debug(" Ending Options template set at " + str(byte_position))
+					
+					logging.warning(" Options Template ID: " + str(options_template_id) + ", length " + str(options_template_id_length)) 
+					
+					byte_position = (options_template_id_length + byte_position)-4 # Move location for next flow or template
+					
+					logging.warning(" Ending Options template set at " + str(byte_position))
 				
 				# Flow data set
 				elif flow_set_id > 255:
