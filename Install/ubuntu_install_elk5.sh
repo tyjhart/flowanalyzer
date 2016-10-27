@@ -149,7 +149,3 @@ htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
 # Prune old indexes
 echo "curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'" >> /etc/cron.daily/index_prune
 chmod +x /etc/cron.daily/index_prune
-
-# Install Head plugin for Elasticsearch for troubleshooting
-echo "Install Head plugin for Elasticsearch for troubleshooting"
-sh /usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head
