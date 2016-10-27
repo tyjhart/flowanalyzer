@@ -44,7 +44,7 @@ echo "#discovery.zen.ping.unicast.hosts: ["192.168.1.10","192.168.1.11"]" >> /et
 
 # Set the Elasticsearch heap size to 50% of RAM (must be <= 32GB per documentation)
 echo "Set the Elasticsearch heap size to 50% of RAM (must be <= 32GB per documentation)"
-echo "ES_HEAP_SIZE=2g" >> /etc/default/elasticsearch
+echo "ES_JAVA_OPTS=\"-Xms1g -Xmx1g\"" >> /etc/default/elasticsearch
 
 # Enabling and restarting Elasticsearch service
 echo "Enabling and starting Elasticsearch service"
