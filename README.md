@@ -8,6 +8,24 @@ Visualizations and Dashboards are provided to support network flow analysis righ
 
 See the [License section](#license) below for licensing details.
 
+1. [Project Goals](#project-goals)
+2. [Features](#features)
+    1. [Quick Installation](#quick-installation)
+    2. [Flow Monitoring Protocols](#flow-monitoring-protocols)
+    3. [Fields](#fields)
+    4. [Tags](#tags)
+    5. [DNS Reverse Lookups](#dns-reverse-lookups)
+    6. [MAC Address Lookups](#mac-address-lookups)
+3. [Requirements](#requirements)
+4. [Installation](#installation)
+5. [Device Configuration](#device-configuration)
+6. [Ports and Protocols](#ports-and-protocols)
+7. [Access](#access)
+8. [Limitations](#limitations)
+9. [Debugging](#debugging)
+10. [License](#license)
+11. [Attributions](#attributions)
+
 # Project Goals
 
 Our goal is to provide superior Netflow and IPFIX collection, visualization, and analysis. We do that by creating:
@@ -97,7 +115,7 @@ See the [Flow Management blog](http://www.manitonetworks.com/flow-management/) f
 * [Mikrotik Netflow v9](http://www.manitonetworks.com/flow-management/2016/10/10/mikrotik-netflow-v9-configuration)
 * [Cisco Netflow v9](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/netflow/configuration/15-mt/nf-15-mt-book/get-start-cfg-nflow.html#GUID-2B7E9519-66FE-4F43-B8D3-00CA38C1FA9A)
 
-# Ports & Protocols
+# Ports and Protocols
 
 All services listen for UDP flow packets on the following ports:
 
@@ -115,9 +133,9 @@ Access to Kibana is proxied through the Squid service. Putting Squid in front of
 Kibana login page via an .htaccess file. The default login credentials are shown below:
 
 The Kibana portal can be accessed via your favorite modern web browser:
-
+```
 http://your_server_ip
-
+```
 Default Username: **admin**
 
 Default Password: **manitonetworks**
@@ -137,6 +155,10 @@ The collection of flows from multiple exporters located behind a single NAT IP a
 
 Netflow protocols do not provide a way to differentiate flows that are sent via NAT from the same IP address without some tweaking, 
 hence the limitation. 
+
+# Debugging
+
+If you run into any issues during or after installation check out the [Debugging page](Debug.md) for helpful commands and debugging options.
 
 # License
 

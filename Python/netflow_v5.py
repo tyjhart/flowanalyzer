@@ -2,7 +2,7 @@
 # All rights reserved.
 
 # Import what we need
-import time, datetime, socket, struct, sys, json, socket, logging, logging.handlers
+import time, datetime, socket, struct, sys, json, socket, logging, logging.handlers, getopt
 from struct import *
 from socket import inet_ntoa
 from elasticsearch import Elasticsearch
@@ -18,12 +18,47 @@ from netflow_options import *
 import dns_base
 import dns_ops
 
-# Initialize the DNS global
-dns_base.init()
+### Get the command line arguments ###
+try:
+	arguments = getopt.getopt(sys.argv[1:],"hl:",["--help","log="])
+	
+	for option_set in arguments:
+		for opt,arg in option_set:
+						
+			if opt in ('-l','--log'): # Log level
+				arg = arg.upper() # Uppercase for matching and logging.basicConfig() format
+				if arg in ["CRITICAL","ERROR","WARNING","INFO","DEBUG"]:
+					log_level = arg # Use what was passed in arguments
+				
+				else:
+					log_level = "WARNING" # Default logging level
 
-# Set the logging level per https://docs.python.org/2/library/logging.html#levels
-# Levels include DEBUG, INFO, WARNING, ERROR, CRITICAL (case matters)
-logging.basicConfig(level=logging.WARNING)
+			elif opt in ('-h','--help'):
+				with open("./help.txt") as help_file:
+					print(help_file.read())
+				sys.exit()
+
+			else:
+				pass
+
+except Exception:
+    sys.exit("Unsupported or badly formed options, see -h for available arguments.") 
+
+# Set the logging level per https://docs.python.org/2/howto/logging.html
+try: 
+	log_level # Check if log level was passed in from command arguments
+except NameError:
+	log_level="WARNING" # Use default logging level
+
+logging.basicConfig(level=str(log_level)) # Set the logging level
+logging.critical('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
+
+# Initialize the DNS global reverse lookup cache
+if dns is True:
+	dns_base.init()
+	logging.warning("Initialized the DNS reverse lookup cache - OK")
+else:
+	logging.warning("DNS reverse lookups disabled - OK")
 
 # Set packet information variables
 # DO NOT modify these variables, Netflow v5 packet structure is STATIC
@@ -34,18 +69,18 @@ flow_record_size = 48
 try:
 	netflow_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	netflow_sock.bind(('0.0.0.0', netflow_v5_port))
-	logging.warning(' Bound to port ' + str(netflow_v5_port) + ' - OK')
-except ValueError as socket_error:
-	logging.critical(' Could not open or bind a socket on port ' + str(netflow_v9_port))
+	logging.critical("Bound to port " + str(netflow_v5_port) + " - OK")
+except Exception as socket_error:
+	logging.critical("Could not open or bind a socket on port " + str(netflow_v9_port))
 	logging.critical(str(socket_error))
 	sys.exit()
 
 # Spin up ES instance connection
 try:
 	es = Elasticsearch([elasticsearch_host])
-	logging.warning(' Connected to Elasticsearch at ' + elasticsearch_host + ' - OK')
-except ValueError as elasticsearch_connect_error:
-	logging.critical(' Could not connect to Elasticsearch at ' + elasticsearch_host)
+	logging.critical("Connected to Elasticsearch at " + elasticsearch_host + " - OK")
+except Exception as elasticsearch_connect_error:
+	logging.critical("Could not connect to Elasticsearch at " + elasticsearch_host)
 	logging.critical(str(elasticsearch_connect_error))
 	sys.exit()
 
@@ -56,18 +91,20 @@ def netflow_v5_server():
 	flow_dic = []
 	
 	while True:
+		
 		flow_packet_contents, sensor_address = netflow_sock.recvfrom(65565)
 			
 		try:
+			logging.debug("Unpacking packet header from " + str(sensor_address[0]))
 			packet_keys = ["netflow_version","flow_count","sys_uptime","unix_secs","unix_nsecs","flow_seq","engine_type","engine_id"] # Netflow v5 packet fields
 			packet_values = struct.unpack('!HHIIIIBB',flow_packet_contents[0:22]) # Version of NF packet and count of Flows in packet
 			packet_contents = dict(zip(packet_keys,packet_values)) # v5 packet fields and values
-
-			logging.debug("Received " + str(packet_contents["flow_count"]) + " flow(s) from " + str(sensor_address[0]))
+			logging.info("Received " + str(packet_contents["flow_count"]) + " flow(s) from " + str(sensor_address[0]))
 			logging.debug("v5 packet header: " + str(packet_contents))
+			logging.debug("Finished unpacking header")
 		
 		except Exception as flow_header_error:
-			logging.warning(" Failed unpacking flow header from " + str(sensor_address[0]) + " - " + str(flow_header_error))
+			logging.warning("Failed unpacking flow header from " + str(sensor_address[0]) + " - " + str(flow_header_error))
 			continue
 		
 		# Rcvd a Netflow v5 packet, parse it
@@ -76,7 +113,7 @@ def netflow_v5_server():
 			# Iterate over flows in packet
 			for flow_num in range(0, packet_contents["flow_count"]):
 				now = datetime.datetime.utcnow() # Timestamp for flow rcv
-				logging.debug(" Flow " + str(flow_num+1) + " of " + str(packet_contents["flow_count"]))
+				logging.info("Parsing flow " + str(flow_num+1))
 				base = packet_header_size + (flow_num * flow_record_size) # Calculate flow starting point
 				
 				(ip_source,
@@ -102,9 +139,11 @@ def netflow_v5_server():
 				# Protocol Name
 				try:
 					flow_protocol = protocol_type[protocol_num]["Name"]
-				except:
+				except Exception as protocol_error:
 					flow_protocol = "Other" # Should never see this unless undefined protocol in use
-		
+					logging.warning("Unknown protocol number - " + str(protocol_num) + ". Please report to the author for inclusion.")
+					logging.warning(str(protocol_error))
+
 				flow_index = {
 				"_index": str("flow-" + now.strftime("%Y-%m-%d")),
 				"_type": "Flow",
@@ -190,7 +229,8 @@ def netflow_v5_server():
 						if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
 							flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
 				
-				logging.debug(" Flow data: " + str(flow_index))		
+				logging.debug("Current flow data: " + str(flow_index))
+				logging.info("Finished flow " + str(flow_num+1) + " of " + str(packet_contents["flow_count"]))		
 				
 				# Add the parsed flow to flow_dic for bulk insert
 				flow_dic.append(flow_index)
@@ -199,13 +239,13 @@ def netflow_v5_server():
 				
 				try:
 					helpers.bulk(es,flow_dic)
-					logging.info(str(len(flow_dic))+" flow(s) uploaded to Elasticsearch")
-					flow_dic = []
+					logging.info(str(len(flow_dic))+" flow(s) uploaded to Elasticsearch - OK")
 				except ValueError as bulk_index_error:
-					logging.warning(str(len(flow_dic))+" flow(s) DROPPED, unable to index flows")
-					logging.warning(bulk_index_error.message)
-					flow_dic = []
-					pass
+					logging.critical(str(len(flow_dic))+" flow(s) DROPPED, unable to index flows - FAIL")
+					logging.critical(bulk_index_error.message)
+
+				# Reset flow_dic
+				flow_dic = []
 				
 				# Check if the DNS records need to be pruned
 				dns_ops.dns_prune()

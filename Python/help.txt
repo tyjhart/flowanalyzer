@@ -1,0 +1,22 @@
+Copyright 2016, Manito Networks, LLC
+
+Collector Usage: 
+    python your-collector-service.py -option argument
+    python your-collector-service.py --option=argument
+
+Logging levels:
+
+-l, --log: Sets the logging level for the collector
+    Examples: -l debug, --log=debug
+    Options: debug, info, warning
+    Default: warning
+    Log Levels:
+        Critical: Any event that kills the collector process.
+        E.g. Failing to bind to a port, connect to Elasticsearch, parse input arguments.
+        
+        Warning: Any event that causes the collector to drop flows or fail to parse flows.
+        E.g. Proprietary fields, wrong Netflow version sent to a port, corrupted flow packets
+
+        Info: All of the above output, plus the beginning / end of template and flow parsing.
+        
+        Debug: All of the above output, plus the contents of templates and flows (tons of output).
