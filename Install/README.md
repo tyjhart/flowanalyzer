@@ -9,12 +9,20 @@ Right now Ubuntu Server 16.04 LTS is recommended.
 
 Each instance should be installed on a fresh 64-bit [Ubuntu Server](https://www.ubuntu.com/download/server) machine with **systemd support** and the following **minimum** specs:
 
+At least one Ubuntu Server installation with the following **minimum** hardware specs:
+
 - 4GB RAM
 - 2 CPU Cores
-- 20GB+ HDD space
+- 90GB HDD space
 
-Additional Elasticsearch nodes will greatly increase performance and provide failover in case of node failure. Having additional
-Elasticsearch nodes will also allow you to retain more flow data.
+The following versions of Ubuntu Server have been tested and verified to work with the [installation](./Install/README.md) script:
+
+- 16.04 LTS
+- 16.10
+
+**Note**: The installation script is incompatible with Ubuntu versions prior to 15.04 due to a move to SystemD.
+
+Additional Elasticsearch nodes will greatly increase performance and provide failover in case of node failure. Having additional Elasticsearch nodes will also allow you to retain more flow data.
 
 # Installation
 

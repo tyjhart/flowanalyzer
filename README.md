@@ -100,6 +100,8 @@ The following versions of Ubuntu Server have been tested and verified to work wi
 - 16.04 LTS
 - 16.10
 
+**Note**: The installation script is incompatible with Ubuntu versions prior to 15.04 due to a move to SystemD.
+
 This will work for a proof of concept installation or for very small networks.
 Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure.
 
