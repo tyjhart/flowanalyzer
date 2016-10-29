@@ -21,6 +21,7 @@ It's recommended you make incremental changes, just in case something get set in
         - [Network Host](#network-host)
     3. [Bulk Insert](#bulk-insert)
     4. [Index Age and Data Retention](#index-age-and-data-retention)
+    5. [Disk Space](#disk-space)
 6. [Lookups](#lookups)
     1. [DNS Reverse Lookups](#dns-reverse-lookups)
     2. [MAC Address Lookups](#mac-address-lookups)
@@ -211,6 +212,17 @@ curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-u
 If you need more (or less) days of flow retention adjust the value currently set to 30.
 
 If you are using an external Elasticsearch cluster replace the localhost (127.0.0.1) IP address with the address of your cluster.
+
+### Disk Space
+
+The amount of disk space you have and the size of your Elasticsearch cluster will determine how many days of flow data you can keep on hand, and how often you can sample flows. Elasticsearch can run fairly well on nodes with minimal RAM if there are a number of nodes to balance across, but it will absolutely crater like any software if you run out of disk space.
+
+It's important to monitor your available disk space to make sure you're not overwhelming the available disk space, and that the index pruning job is pruning often enough.
+
+Use the **df -h** Linux command to see disk usage in an easily readable way:
+```
+df -h
+```
 
 ## Lookups
 
