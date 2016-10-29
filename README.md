@@ -95,6 +95,11 @@ At least one Ubuntu Server installation with the following **minimum** hardware 
 - 2 CPU Cores
 - 90GB HDD space
 
+The following versions of Ubuntu Server have been tested and verified to work with the [installation](./Install/README.md) script:
+
+- 16.04 LTS
+- 16.10
+
 This will work for a proof of concept installation or for very small networks.
 Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure.
 
