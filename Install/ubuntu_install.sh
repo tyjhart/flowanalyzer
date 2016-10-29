@@ -66,11 +66,11 @@ useradd -u 1005 -g 1005 kibana
 set -e
 
 # Set up Kibana
-echo "server.host: \"127.0.0.1\" " >> /opt/kibana/config/kibana.yml
+#echo "server.host: \"127.0.0.1\" " >> /opt/kibana/config/kibana.yml
 
 # Prevent Kibana from blowing up /var/log/messages
-echo "Prevent Kibana from blowing up /var/log/messages"
-echo "logging.quiet: true" >> /opt/kibana/config/kibana.yml
+#echo "Prevent Kibana from blowing up /var/log/messages"
+#echo "logging.quiet: true" >> /opt/kibana/config/kibana.yml
 
 # Setting up the Netflow v5 service
 echo "Setting up the Netflow v5 service"

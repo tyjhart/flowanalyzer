@@ -1,6 +1,9 @@
 # Install Squid
 apt-get install squid -y
 
+# Force Kibana to only listen locally through Squid
+echo "server.host: \"127.0.0.1\" " >> /opt/kibana/config/kibana.yml
+
 # Create the Squid configuration file in /etc/squid/squid.conf
 echo "acl CONNECT method CONNECT" >> /etc/squid/squid.conf
 echo "auth_param basic program /usr/lib/squid3/basic_ncsa_auth /etc/squid/.htpasswd" >> /etc/squid/squid.conf
