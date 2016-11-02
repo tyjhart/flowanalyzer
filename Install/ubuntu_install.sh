@@ -10,10 +10,6 @@ chmod -R +x ..
 echo "Copy example netflow_options_default.py to real netflow_options.py"
 cp $(pwd)/Python/netflow_options_default.py $(pwd)/Python/netflow_options.py
 
-# Set the hostname for Squid
-#echo "Set the hostname"
-#hostnamectl set-hostname Flow00
-
 # Set timezone to UTC
 echo "Set timezone to UTC"
 timedatectl set-timezone UTC
@@ -64,13 +60,6 @@ groupadd -g 1005 kibana
 useradd -u 1005 -g 1005 kibana
 
 set -e
-
-# Set up Kibana
-#echo "server.host: \"127.0.0.1\" " >> /opt/kibana/config/kibana.yml
-
-# Prevent Kibana from blowing up /var/log/messages
-#echo "Prevent Kibana from blowing up /var/log/messages"
-#echo "logging.quiet: true" >> /opt/kibana/config/kibana.yml
 
 # Setting up the Netflow v5 service
 echo "Setting up the Netflow v5 service"
@@ -131,22 +120,6 @@ systemctl enable kibana
 # Set the NTP service to automatically start
 echo "Set the NTP service to automatically start"
 systemctl enable ntp
-
-# Get the squid.conf file and replace the default squid.conf
-#echo "Get the squid.conf file and replace the default squid.conf"
-#cp $flow_analyzer_dir/ubuntu_squid.conf /etc/squid/squid.conf
-
-## Set the Squid service to automatically start
-#echo "Set the Squid service to automatically start"
-#systemctl enable squid
-
-# Add the entry to /etc/hosts that Squid needs
-#echo "Add the entry to /etc/hosts that Squid needs"
-#echo "127.0.0.1    Flow00" >> /etc/hosts
-
-# Set the default proxy password for Squid
-#echo "Set the default proxy password for Squid"
-#htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
 
 # Prune old indexes
 echo "curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'" >> /etc/cron.daily/index_prune
