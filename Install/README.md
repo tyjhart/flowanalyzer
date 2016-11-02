@@ -32,14 +32,14 @@ Additional Elasticsearch nodes will greatly increase performance and provide fai
     3. [Build Elasticsearch Flow Index](#build-the-elasticsearch-flow-index)
     4. [Elasticsearch Tuning](#elasticsearch-tuning)
     5. [Firewall (Optional)](#firewall-optional)
-    6. [Reboot](#reboot)
+    6. [Kibana Authentication (Optional)](#kibana-authentication-optional)
+    7. [Reboot](#reboot)
 2. [Configure Devices](#configure-devices)
 3. [Kibana](#kibana)
     1. [Access Kibana](#access-kibana)
     2. [Configure the Default Index Pattern](#configure-the-default-index-pattern)
     3. [Set Special Byte Fields](#set-special-byte-fields)
     4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
-    5. [Creating Users for Kibana](#creating-users-for-kibana)
 4. [Tuning](#tuning)
 5. [Updates](#updates)
 6. [Elasticsearch Clustering](#elasticsearch-clustering)
@@ -125,6 +125,64 @@ ufw allow from xxx.xxx.xxx.xxx/xx to any port 9200 proto tcp comment "Elasticsea
 ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739 proto udp comment "Netflow inbound"
 ```
 
+### Kibana Authentication (Optional)
+By default Kibana comes with no authentication capabilities. This typically isn't an issue if flow data is not considered confidential, and if the Flow Analyzer server is running in an isolated VLAN or network enclave.
+
+If you need authentication for Kibana access there are two available options:
+
+- Reverse Proxy with NGINX or Squid
+- [Elastic's X-Pack commercial product](https://www.elastic.co/products/x-pack)
+
+Putting a reverse proxy in front of Kibana blocks access to the web interface until the user has authenticated. Once successfully authenticated the user has access to all Searches, Visualizations, and Dashboards. The reverse proxy isn't integrated with Kibana, it simply sits in front of the interface.
+
+Elastic's X-Pack commercial product is an integrated solution that works with Kibana, and provides more granular authentication, permissions, and roles. If you're looking for robust authentication, integration with Active Directory, and granular access permissions then X-Pack is the best solution available.
+
+To use a reverse Squid proxy with Kibana perform the following steps, or run the [ubuntu_squid_install.sh](ubuntu_squid_install.sh) file.
+
+Install Squid:
+```
+sudo apt-get install squid -y
+```
+Ensure you have a hostname entry for 127.0.0.1 in /etc/hosts file:
+```
+sudo echo "127.0.0.1    $(hostname)" >> /etc/hosts
+```
+Configure Kibana to only listen locally on 127.0.0.1 so it can't be accessed except via the reverse proxy:
+```
+sudo echo "server.host: \"127.0.0.1\" " >> /opt/kibana/config/kibana.yml
+```
+Create the Squid configuration file with the right entries for reverse proxy and basic authentication:
+```
+sudo echo "" > /etc/squid/squid.conf
+sudo echo "### Basic Kibana authentication via Squid reverse proxy ###" >> /etc/squid/squid.conf
+sudo echo "acl CONNECT method CONNECT" >> /etc/squid/squid.conf
+sudo echo "auth_param basic program /usr/lib/squid3/basic_ncsa_auth /etc/squid/.htpasswd" >> /etc/squid/squid.conf
+sudo echo "auth_param basic children 5" >> /etc/squid/squid.conf
+sudo echo "auth_param basic realm Manito Networks Flow Analyzer" >> /etc/squid/squid.conf
+sudo echo "auth_param basic credentialsttl 5 minutes" >> /etc/squid/squid.conf
+sudo echo "acl password proxy_auth REQUIRED" >> /etc/squid/squid.conf
+sudo echo "http_access deny !password" >> /etc/squid/squid.conf
+sudo echo "http_access allow password" >> /etc/squid/squid.conf
+sudo echo "http_access deny all" >> /etc/squid/squid.conf
+sudo echo "http_port 80 accel defaultsite=$(hostname) no-vhost" >> /etc/squid/squid.conf
+sudo echo "cache_peer $(hostname) parent 5601 0 no-query originserver" >> /etc/squid/squid.conf
+```
+You can also copy the [ubuntu_squid.conf](ubuntu_squid.conf) file and customize the hostname for your server.
+
+Create the first set of credentials for authentication:
+```
+htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
+```
+Set the Squid process to start automatically on boot, then start it manually the first time:
+```
+systemctl enable squid
+systemctl start squid
+```
+Restart the Kibana process to force it to use the new configuration:
+```
+systemctl restart kibana
+```
+
 ### Reboot
 
 It's important to reboot so that we're sure the services were registered and start correctly:
@@ -169,10 +227,19 @@ before moving on to [configuring Kibana](#kibana).
 # Kibana
 
 A few things have to be done first in Kibana before you get to see the Visualizations and Dashboards.
-Ensure that you've already [configured your devices](#configure-devices) to send flows, so by the time you get to this point there is already some 
-flow data in the index for Kibana to recognize.
+Ensure that you've already [configured your devices](#configure-devices) to send flows, so by the time you get to this point there is already some flow data in the index for Kibana to recognize.
 
-### Access Kibana
+## Access Kibana
+
+There are a couple ways to access Kibana, depending on if you're using the [reverse proxy for authentication](#kibana-authentication-optional) or not.
+
+### No Reverse Proxy (default):
+
+Browse to Kibana at http://your_server_ip:5601
+
+No username or password is required.
+
+### Using a Reverse Proxy
 
 Browse to Kibana at http://your_server_ip
 
@@ -180,6 +247,10 @@ Log in with the default Squid credentials shown below:
 
 - Username: **admin**
 - Password: **manitonetworks**
+
+## Configure Kibana
+
+A few steps are required to point Kibana to the Flow index, import the Visualizations and Dashboards, and set some special Byte fields for better readability in KB, MB, GB, etc.
 
 ### Configure the default index pattern
 
@@ -215,17 +286,6 @@ Perform the same steps above on the **Bytes Out** field.
 1. Download the [Visualization and Dashboard JSON file](../Kibana/Default.json)
 2. In Kibana click Settings > Objects > Import
 3. Browse to the downloaded JSON file
-
-### Creating Users for Kibana
-
-Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
-Kibana login page via an .htaccess file. Users can be created with the following command:
-
-```
-sudo htpasswd -bc /etc/squid/.htpasswd username password
-```
-
-For more fine-grained control of data access refer to the [Shield product page](https://www.elastic.co/products/shield) from Elastic.
 
 # Tuning
 
