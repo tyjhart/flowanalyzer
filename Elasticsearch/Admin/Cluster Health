@@ -1,0 +1,3 @@
+http://your_ip:9200/_cluster/health?pretty&human=true
+
+curl 'localhost:9200/_cluster/health?pretty&human=true'
