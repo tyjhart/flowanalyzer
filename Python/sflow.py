@@ -51,15 +51,22 @@ except NameError:
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.critical('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
 
+# Check if the sFlow port is specified
+try:
+	sflow_port
+except NameError: # Not specified, use default
+	sflow_port = 6343
+	logging.warning("sFlow port not set in netflow_options.py, defaulting to " + str(sflow_port) + " - OK")
+
 # Set up socket listener
 try:
 	netflow_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	netflow_sock.bind(('0.0.0.0', 6343))
-	logging.warning('Bound to UDP port ' + str(6343) + ' - OK')
+	netflow_sock.bind(('0.0.0.0', sflow_port))
+	logging.warning('Bound to UDP port ' + str(sflow_port) + ' - OK')
 except ValueError as socket_error:
-	logging.critical('Could not open or bind a socket on port ' + str(6343))
+	logging.critical('Could not open or bind a socket on port ' + str(sflow_port))
 	logging.critical(str(socket_error))
-	sys.exit("Could not open or bind a socket on port " + str(6343))
+	sys.exit("Could not open or bind a socket on port " + str(sflow_port))
 
 # Spin up ES instance
 #try:
