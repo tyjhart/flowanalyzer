@@ -56,10 +56,10 @@ logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.critical('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
 
 # Initialize the DNS global reverse lookup cache
+dns_base.init()
+logging.warning("Initialized the DNS reverse lookup cache - OK")
+
 if dns is True:
-	dns_base.init()
-	logging.warning("Initialized the DNS reverse lookup cache - OK")
-else:
 	logging.warning("DNS reverse lookups disabled - OK")
 
 # Set up socket listener
