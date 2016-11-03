@@ -23,20 +23,26 @@ bulk_insert_count = 700
 #### Netflow v5 UDP Port ####
 # This is the port that the Netflow v5 listener runs on.
 # By default the port is set to 2055, the typical Netflow v5 port.
-# After changing this port run 'service netflow_v5 restart' from a root-level shell
+# After changing this port run 'sudo systemctl restart netflow_v5' from a root-level shell
 netflow_v5_port = 2055
 
 #### Netflow v9 UDP Port ####
 # This is the port that the Netflow v9 listener runs on.
 # By default the port is set to 9995, the typical Netflow v9 port.
-# After changing this port run 'service netflow_v9 restart' from a root-level shell
+# After changing this port run 'sudo systemctl restart netflow_v9' from a root-level shell
 netflow_v9_port = 9995
 
 #### Netflow v10 (IPFIX) UDP Port ####
 # This is the port that the IPFIX listener runs on.
 # By default the port is set to 4739, the typical IPFIX port.
-# After changing this port run 'service ipfix restart' from a root-level shell
+# After changing this port run 'sudo systemctl restart ipfix' from a root-level shell
 ipfix_port = 4739
+
+#### sFlow UDP Port ####
+# This is the port that the sFlow listener runs on.
+# By default the port is set to 6343, the typical sFlow port.
+# After changing this port run 'sudo systemctl restart sflow' from a root-level shell
+sflow_port = 6343
 
 #### Elasticsearch Host and Port ####
 # The Elasticsearch host and port to send flow data to
