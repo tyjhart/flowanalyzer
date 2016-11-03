@@ -477,6 +477,10 @@ def ipfix_server():
 					logging.critical(bulk_index_error)
 					
 				flow_dic = [] # Reset flow_dic
+
+				# Prune DNS to remove stale records
+				if dns is True:	
+					dns_ops.dns_prune() # Check if the DNS records need to be pruned
 				
 		# Not IPFIX packet
 		else:

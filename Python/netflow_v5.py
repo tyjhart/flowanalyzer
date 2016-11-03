@@ -247,8 +247,9 @@ def netflow_v5_server():
 				# Reset flow_dic
 				flow_dic = []
 				
-				# Check if the DNS records need to be pruned
-				dns_ops.dns_prune()
+				# Prune DNS to remove stale records
+				if dns is True:	
+					dns_ops.dns_prune() # Check if the DNS records need to be pruned
 			
 		# Got something else, drop it
 		else:
