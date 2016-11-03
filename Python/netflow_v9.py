@@ -58,8 +58,15 @@ logging.critical('Log level set to ' + str(log_level) + " - OK") # Show the logg
 dns_base.init()
 logging.warning("Initialized the DNS reverse lookup cache - OK")
 
-if dns is True:
+if dns is False:
 	logging.warning("DNS reverse lookups disabled - OK")
+
+# Check if the Netflow v9 port is specified
+try:
+	netflow_v9_port
+except NameError: # Not specified, use default
+	netflow_v9_port = 9995
+	logging.warning("Netflow v9 port not set in netflow_options.py, defaulting to " + str(netflow_v9_port) + " - OK")
 
 # Set up socket listener
 try:

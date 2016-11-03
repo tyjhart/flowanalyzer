@@ -57,13 +57,20 @@ logging.critical('Log level set to ' + str(log_level) + " - OK") # Show the logg
 dns_base.init()
 logging.warning("Initialized the DNS reverse lookup cache - OK")
 
-if dns is True:
+if dns is False:
 	logging.warning("DNS reverse lookups disabled - OK")
 
 # Set packet information variables
 # DO NOT modify these variables, Netflow v5 packet structure is STATIC
 packet_header_size = 24
 flow_record_size = 48
+
+# Check if the Netflow v5 port is specified
+try:
+	netflow_v5_port
+except NameError: # Not specified, use default
+	netflow_v5_port = 2055
+	logging.warning("Netflow v5 port not set in netflow_options.py, defaulting to " + str(netflow_v5_port) + " - OK")
 
 # Set up the socket listener
 try:

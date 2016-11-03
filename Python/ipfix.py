@@ -59,8 +59,15 @@ logging.critical('Log level set to ' + str(log_level) + " - OK") # Show the logg
 dns_base.init()
 logging.warning("Initialized the DNS reverse lookup cache - OK")
 
-if dns is True:
+if dns is False:
 	logging.warning("DNS reverse lookups disabled - OK")
+
+# Check if the IPFIX port is specified
+try:
+	ipfix_port
+except NameError: # Not specified, use default
+	ipfix_port = 4739
+	logging.warning("IPFIX port not set in netflow_options.py, defaulting to " + str(ipfix_port) + " - OK")
 
 # Set up socket listener
 try:
