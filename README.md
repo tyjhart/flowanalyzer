@@ -109,7 +109,7 @@ Additional Elasticsearch nodes will greatly increase performance and reliability
 
 Install by cloning the latest Git repo, then run the Ubuntu installation script.
 
-See [installation documentation](Install/README.md) for more information.
+See the [installation documentation](Install/README.md) for more information.
 
 # Device Configuration
 
@@ -136,16 +136,11 @@ These ports can be changed, see the [tuning documentation](Tuning.md).
 
 # Access
 
-Access to Kibana is proxied through the Squid service. Putting Squid in front of Kibana allows us to restrict access to the
-Kibana login page via an .htaccess file. The default login credentials are shown below:
+You can access your flow data in a few different ways - graphically via Kibana, through Elasticsearch JSON-formatted queries, and via curl HTTP requests. 
 
-The Kibana portal can be accessed via your favorite modern web browser:
-```
-http://your_server_ip
-```
-Default Username: **admin**
+Access to Kibana can be restricted using Squid via a reverse proxy, and the directions for setting that up are included. Basic authentication is also included as part of Elasticsearch.
 
-Default Password: **manitonetworks**
+See the [installation documentation](Install/README.md) for more information.
 
 # Limitations
 
