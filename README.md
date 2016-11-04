@@ -16,6 +16,7 @@ See the [License section](#license) below for licensing details.
     4. [Tags](#tags)
     5. [DNS Reverse Lookups](#dns-reverse-lookups)
     6. [MAC Address Lookups](#mac-address-lookups)
+    7. [Development Roadmap](#development-roadmap)
 3. [Requirements](#requirements)
 4. [Installation](#installation)
 5. [Device Configuration](#device-configuration)
@@ -23,8 +24,9 @@ See the [License section](#license) below for licensing details.
 7. [Access](#access)
 8. [Limitations](#limitations)
 9. [Debugging](#debugging)
-10. [License](#license)
-11. [Attributions](#attributions)
+10. [Contributing](#contributing)
+11. [License](#license)
+12. [Attributions](#attributions)
 
 # Project Goals
 
@@ -86,6 +88,10 @@ to provide insight into website browsing on the network.
 Correlation of MAC address OUI's to top manufacturer's is done to help graph traffic sources in hetergenous environments. 
 
 Note: This feature is in beta, and the list of OUI's to be built is quite extensive.
+
+### Development Roadmap
+
+See the [Roadmap file](ROADMAP.md) for information on upcoming features and current development efforts.
 
 # Requirements
 
@@ -161,6 +167,10 @@ hence the limitation.
 # Debugging
 
 If you run into any issues during or after installation check out the [Debugging page](Debug.md) for helpful commands and debugging options.
+
+# Contributing
+
+We encourage people who use the Flow Analyzer to contribute to the project if they find a bug or documentation issue, or want to see a feature added. See the [Contributing page](CONTRIBUTING.md) for more information about contributing code to the project.
 
 # License
 
