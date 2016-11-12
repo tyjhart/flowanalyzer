@@ -27,7 +27,7 @@ echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee 
 # Install dependencies
 echo "Install system dependencies"
 apt-get update
-apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2-utils php-curl curl
+apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2-utils php-curl curl apt-https-transport
 
 # Resolving Python dependencies
 echo "Install Python dependencies"
