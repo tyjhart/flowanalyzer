@@ -18,6 +18,10 @@ See the [License section](#license) below for licensing details.
     6. [MAC Address Lookups](#mac-address-lookups)
     7. [Development Roadmap](#development-roadmap)
 3. [Requirements](#requirements)
+    1. [RAM and CPU](#ram-and-cpu)
+    2. [Storage](#storage)
+    3. [Operating System](#operating-system)
+    4. [Elasticsearch Nodes](#elasticsearch-nodes)
 4. [Installation](#installation)
 5. [Device Configuration](#device-configuration)
 6. [Ports and Protocols](#ports-and-protocols)
@@ -94,13 +98,24 @@ Note: This feature is in beta, and the list of OUI's to be built is quite extens
 See the [Roadmap file](ROADMAP.md) for information on upcoming features and current development efforts.
 
 # Requirements
-
 At least one Ubuntu Server installation with the following **minimum** hardware specs:
 
+### RAM and CPU
 - 4GB RAM
 - 2 CPU Cores
-- 90GB HDD space
 
+### Storage
+A **minimum** of 20GB HDD space is recommended for testing the appliance, but long-term storage requirements will vary depending on a number of factors. The following should be considered when provisioning storage space and additional Elasticsearch nodes:
+
+- Flow data retenion (default 30 days)
+- Number of flow exporters (routers, switches, etc)
+- Sampling rate for protocols like Netflow v9 and IPFIX
+- Average network flow volume over time
+- Peak network flow volume and duration
+
+Every network is different, so it's difficult to give a hard-and-fast suggestion on the right amount of storage for your organization over the long-term. It's recommended that you start small with a couple collectors, determine your average daily index size, then scale up from there.
+
+### Operating System
 The following versions of Ubuntu Server have been tested and verified to work with the [installation](./Install/README.md) script:
 
 - 16.04 LTS
@@ -108,17 +123,17 @@ The following versions of Ubuntu Server have been tested and verified to work wi
 
 **Note**: The installation script is incompatible with Ubuntu versions prior to 15.04 due to a move to SystemD.
 
-This will work for a proof of concept installation or for very small networks.
-Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure.
+### Elasticsearch Nodes
+By default the installation script assumes you're using only one node for the collectors, Elasticsearch, and Kibana. The configuration options are included by the installation script for working in a multi-node cluster but they are commented out. This is fine for proof-of-concept or fairly small networks with low retention requirements, but it will not scale beyond a certain point. 
+
+Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure. As your flow volume, data retention, and failover needs increase you can tune the amount of Elasticsearch shards and replicas to meet your needs.
 
 # Installation
-
 Install by cloning the latest Git repo, then run the Ubuntu installation script.
 
 See the [installation documentation](Install/README.md) for more information.
 
 # Device Configuration
-
 Configure your devices to send Netflow and IPFIX data to the Flow Analyzer collector.
 
 See the [Flow Management blog](http://www.manitonetworks.com/flow-management/) for more information on configuring your devices.
