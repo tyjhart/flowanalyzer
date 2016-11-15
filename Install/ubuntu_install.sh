@@ -25,7 +25,7 @@ echo "deb https://packages.elastic.co/kibana/4.6/debian stable main" | sudo tee 
 # Install dependencies
 echo "Install system dependencies"
 apt-get update
-apt-get -y install gcc wget openjdk-8-jre ntp apache2-utils php-curl curl apt-https-transport
+apt-get -y install gcc wget openjdk-8-jre ntp apache2-utils php-curl curl apt-transport-https
 
 # Install Elasticsearch and Kibana
 apt-get -y install elasticsearch kibana

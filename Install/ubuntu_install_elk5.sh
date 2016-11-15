@@ -27,7 +27,7 @@ echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee 
 # Install dependencies
 echo "Install system dependencies"
 apt-get update
-apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2-utils php-curl curl apt-https-transport
+apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2-utils php-curl curl apt-transport-https
 
 # Resolving Python dependencies
 echo "Install Python dependencies"
@@ -135,16 +135,16 @@ echo "Get the squid.conf file and replace the default squid.conf"
 cp $flow_analyzer_dir/ubuntu_squid.conf /etc/squid/squid.conf
 
 # Set the Squid service to automatically start
-echo "Set the Squid service to automatically start"
-systemctl enable squid
+#echo "Set the Squid service to automatically start"
+#systemctl enable squid
 
 # Add the entry to /etc/hosts that Squid needs
-echo "Add the entry to /etc/hosts that Squid needs"
-echo "127.0.0.1    Flow00" >> /etc/hosts
+#echo "Add the entry to /etc/hosts that Squid needs"
+#echo "127.0.0.1    Flow00" >> /etc/hosts
 
 # Set the default proxy password for Squid
-echo "Set the default proxy password for Squid"
-htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
+#echo "Set the default proxy password for Squid"
+#htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
 
 # Prune old indexes
 echo "curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'" >> /etc/cron.daily/index_prune
