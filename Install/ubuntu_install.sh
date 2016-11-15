@@ -25,7 +25,7 @@ echo "deb https://packages.elastic.co/kibana/4.6/debian stable main" | sudo tee 
 # Install dependencies
 echo "Install system dependencies"
 apt-get update
-apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre ntp apache2-utils php-curl curl apt-https-transport #squid 
+apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre ntp apache2-utils php-curl curl apt-https-transport
 
 # Resolving Python dependencies
 echo "Install Python dependencies"
