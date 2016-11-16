@@ -149,10 +149,32 @@ def extended_vlan_tunnel(data):
 def gen_int_counter(data):
 	sample_data = {}
 	sample_data["ifIndex"] = int(data.unpack_uint())
-	sample_data["ifType"] = int(data.unpack_uint())
+	sample_data["ifType"] = iana_interface_type(int(data.unpack_uint()))
 	sample_data["ifSpeed"] = data.unpack_hyper()
-	sample_data["ifDirection"] = int(data.unpack_uint())
-	sample_data["ifStatus"] = int(data.unpack_uint())
+
+	ifDirection = int(data.unpack_uint())
+	if ifDirection == 0:
+		sample_data["ifDirection"] = "unknown"
+	elif ifDirection == 1:
+		sample_data["ifDirection"] = "full-duplex"
+	elif ifDirection == 2:
+		sample_data["ifDirection"] = "half-duplex"
+	elif ifDirection == 3:
+		sample_data["ifDirection"] = "in"
+	elif ifDirection == 4:
+		sample_data["ifDirection"] = "out"
+	else:
+		sample_data["ifDirection"] = "unknown"
+
+	# http://sflow.org/developers/diagrams/sFlowV5CounterData.pdf FIX!
+	ifStatus = int(data.unpack_uint())
+	if ifStatus == 0:
+		sample_data["ifStatus"] = "unknown"
+	elif ifStatus == 1:
+		sample_data["ifStatus"] = "full-duplex"
+	else:
+		sample_data["ifStatus"] = "unknown"
+
 	sample_data["ifInOctets"] = data.unpack_hyper()
 	sample_data["ifInUcastPkts"] = int(data.unpack_uint())
 	sample_data["ifInMulticastPkts"] = int(data.unpack_uint())
