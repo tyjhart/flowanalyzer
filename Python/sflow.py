@@ -16,6 +16,10 @@ from sflow_parsers import * # Functions to parse headers and format numbers
 from sflow_samples import * # Functions to parse samples
 from sflow_records import * # Functions to parse records in samples
 
+# DNS Resolution
+import dns_base
+import dns_ops
+
 ### Get the command line arguments ###
 try:
 	arguments = getopt.getopt(sys.argv[1:],"hl:",["--help","log="])
@@ -27,9 +31,6 @@ try:
 				arg = arg.upper() # Uppercase for matching and logging.basicConfig() format
 				if arg in ["CRITICAL","ERROR","WARNING","INFO","DEBUG"]:
 					log_level = arg # Use what was passed in arguments
-				
-				else:
-					log_level = "WARNING" # Default logging level
 
 			elif opt in ('-h','--help'): # Help file
 				with open("./help.txt") as help_file:
@@ -49,7 +50,21 @@ except NameError:
 	log_level="DEBUG" # Use default logging level
 
 logging.basicConfig(level=str(log_level)) # Set the logging level
-logging.critical('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
+logging.warning('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
+
+# Initialize the DNS global reverse lookup cache
+dns_base.init()
+logging.warning("Initialized the DNS reverse lookup cache - OK")
+
+if dns is False:
+	logging.warning("DNS reverse lookups disabled - DISABLED")
+else:
+	logging.warning("DNS reverse lookups enabled - OK")
+
+if lookup_internal is False:
+	logging.warning("DNS local IP reverse lookups disabled - DISABLED")
+else:
+	logging.warning("DNS local IP reverse lookups enabled - OK")
 
 # Check if the sFlow port is specified
 try:
@@ -86,10 +101,13 @@ def sflow_collector():
 		sflow_packet_contents, sensor_address = netflow_sock.recvfrom(65565)
 		logging.debug("Got something from " + sensor_address[0])
 
+		global sflow_data
 		sflow_data = {}
 
-		record_num = 0 # Record index number for the record cache
+		global record_cache
 		record_cache = {} # Record cache for bulk upload
+
+		record_num = 0 # Record index number for the record cache
 
 		try:
 			logging.info("Starting to unpack an sFlow datagram from " + str(sensor_address[0]))
@@ -129,10 +147,11 @@ def sflow_collector():
 		for sample_num in range(0,sflow_data["Datagram"]["Sample Count"]): # For each sample in the datagram
 
 			### Sample Header Start ###
-			logging.info("Examining sample " + str(sample_num) + " of " + str(sflow_data["Datagram"]["Sample Count"]))
+			logging.info("Examining sample " + str(sample_num+1) + " of " + str(sflow_data["Datagram"]["Sample Count"]))
 			
 			enterprise_format_num = enterprise_format_numbers(unpacked_data.unpack_uint()) # Enterprise number and format
 			sample_length = int(unpacked_data.unpack_uint()) # Sample Length		
+			
 			logging.info("Found sample type " + str(enterprise_format_num) + " length " + str(sample_length))
 
 			logging.info("Unpacking opaque sample data")
@@ -149,14 +168,15 @@ def sflow_collector():
 			flow_sample_cache = sample_picker(enterprise_format_num,unpacked_sample_data) # Get the opaque flow sample cache
 			
 			if flow_sample_cache is False:
-				logging.warning("Unable to parse the sample cache, type " + str(enterprise_format_num) + " from " + str(sflow_data["Datagram"]["Agent IP"]) + " - SKIPPING")
+				logging.warning("Unable to parse the sample cache, type " + str([enterprise_format_num,unpacked_sample_data]) + " from " + str(sflow_data["Datagram"]["Agent IP"]) + " - SKIPPING")
 				continue
 
-			logging.debug("Flow header data: " + str(flow_sample_cache))
+			logging.info("Sample header: " + str(flow_sample_cache))
 			
 			if enterprise_format_num in [[0,1], [0,3]]: # Flow Sample
 
 				for record_counter_num in range(0,flow_sample_cache["Record Count"]): # For each staged sample
+					logging.info("Unpacking flow record " + str(record_counter_num+1) + " of " + str(flow_sample_cache["Record Count"]))
 					
 					record_ent_form_number = enterprise_format_numbers(unpacked_sample_data.unpack_uint()) # [Enterprise, Format] numbers
 					counter_data_length = int(unpacked_sample_data.unpack_uint()) # Length of record
@@ -171,8 +191,6 @@ def sflow_collector():
 					current_position = int(unpacked_sample_data.get_position()) # Current unpack buffer position
 					skip_position = current_position + counter_data_length # Bail out position if unpack fails for skipping
 					logging.info("XDR current position " + str(current_position) + ", skip position " + str(skip_position))
-					
-					logging.info("Unpacking counter record data, number " + str(record_counter_num) + " of " + str(flow_sample_cache["Record Count"]))
 					
 					unpacked_record_data = Unpacker(unpacked_sample_data.unpack_fopaque(counter_data_length)) # Unpack the opaque record
 
@@ -226,7 +244,7 @@ def sflow_collector():
 					
 					else: # Something we don't know about - SKIP it
 						unpacked_sample_data.set_position(skip_position) # Skip the unknown type
-						logging.warning("Received unknown [Enterprise,Format] flow record types: " + str(record_ent_form_number) + " - SKIPPING.")
+						logging.warning("Received unknown [Enterprise,Format] flow record types: " + str(record_ent_form_number) + " - SKIPPING")
 
 					logging.debug("Record data: " + str(record_cache[record_num]))
 					
@@ -236,6 +254,7 @@ def sflow_collector():
 			elif enterprise_format_num in [[0,2], [0,4]]: # Counter Sample
 				
 				for record_counter_num in range(0,flow_sample_cache["Record Count"]):
+					logging.info("Unpacking counter sample " + str(record_counter_num) + " of " + str(flow_sample_cache["Record Count"]))
 					
 					record_ent_form_number = enterprise_format_numbers(unpacked_sample_data.unpack_uint()) # [Enterprise, Format] numbers
 					counter_data_length = int(unpacked_sample_data.unpack_uint()) # Length of record
@@ -249,9 +268,8 @@ def sflow_collector():
 					
 					current_position = int(unpacked_sample_data.get_position()) # Current unpack buffer position
 					skip_position = current_position + counter_data_length # Bail out position if unpack fails for skipping
-					logging.info("XDR current position " + str(current_position) + ", skip position " + str(skip_position))
 					
-					logging.info("Unpacking counter record data, number " + str(record_counter_num) + " of " + str(flow_sample_cache["Record Count"]))
+					logging.info("XDR current position " + str(current_position) + ", skip position " + str(skip_position))
 					
 					unpacked_record_data = Unpacker(unpacked_sample_data.unpack_fopaque(counter_data_length)) # Unpack the opaque record
 					
@@ -274,8 +292,8 @@ def sflow_collector():
 						record_cache[record_num]["Record"] = proc_info(unpacked_record_data)
 					
 					else:
-						logging.warning("Received unknown [Enterprise,Format] counter record types: " + str(record_ent_form_number) + " - SKIPPING")
 						unpacked_sample_data.set_position(skip_position) # Skip the unknown type
+						logging.warning("Received unknown [Enterprise,Format] counter record types: " + str(record_ent_form_number) + " - SKIPPING")
 						
 					logging.debug("Record data: " + str(record_cache[record_num]))
 
@@ -283,7 +301,7 @@ def sflow_collector():
 
 			### Something else ###
 			else:
-				logging.warning("Oops - Received [Enterprise, Format] " + str(enterprise_format_num) + " - exiting.")
+				logging.warning("Oops - Unknown [Enterprise, Format] " + str(enterprise_format_num) + " - exiting.")
 				sys.exit("Unknown enterprise and format number - exiting.")
 			### Sample Parsing Finish ###
 
@@ -292,7 +310,7 @@ def sflow_collector():
 			unpacked_data.done()
 		except:
 			logging.warning("Failed to completely unpack sample data - FAIL")
-			sys.exit("Failed to completely unpack sample data - FAIL")
+			#sys.exit("Failed to completely unpack sample data - FAIL")
 		
 		### sFlow Samples End ###
 		
