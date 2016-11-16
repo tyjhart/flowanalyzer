@@ -4,19 +4,113 @@
 import sys, struct
 from xdrlib import Unpacker
 
+# Parse IANA interface types
+# See https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
+def iana_interface_type(num):
+	if num == 1:
+		return "other"
+	elif num == 2:
+		return "regular1822"
+	elif num == 3:
+		return "hdh1822"
+	elif num == 4:
+		return "ddnX25"
+	elif num == 5:
+		return "rfc877x25"
+	elif num == 6:
+		return "ethernetCsmacd"
+	elif num == 7:
+		return "iso88023Csmacd"
+	elif num == 8:
+		return "iso88024TokenBus"
+	elif num == 9:
+		return "iso88025TokenRing"
+	elif num == 10:
+		return "iso88026Man"
+	elif num == 11:
+		return "starLan"
+	elif num == 12:
+		return "proteon10Mbit"
+	elif num == 13:
+		return "proteon80Mbit"
+	elif num == 14:
+		return "hyperchannel"
+	elif num == 15:
+		return "fddi"
+	elif num == 16:
+		return "lapb"
+	elif num == 17:
+		return "sdlc"
+	elif num == 18:
+		return "ds1"
+	elif num == 19:
+		return "e1"
+	elif num == 20:
+		return "basicISDN"
+	elif num == 21:
+		return "primaryISDN"
+	elif num == 22:
+		return "propPointToPointSerial"
+	elif num == 23:
+		return "ppp"
+	elif num == 24:
+		return "softwareLoopback"
+	elif num == 25:
+		return "eon"
+	elif num == 26:
+		return "ethernet3Mbit"
+	elif num == 27:
+		return "nsip"
+	elif num == 28:
+		return "slip"
+	elif num == 29:
+		return "ultra"
+	elif num == 30:
+		return "ds3"
+	elif num == 31:
+		return "sip"
+	elif num == 32:
+		return "frameRelay"
+	elif num == 33:
+		return "rs232"
+	elif num == 34:
+		return "para"
+	elif num == 35:
+		return "arcnet"
+	elif num == 36:
+		return "arcnetPlus"
+	elif num == 37:
+		return "atm"
+	elif num == 38:
+		return "miox25"
+	elif num == 39:
+		return "sonet"
+	else:
+		return "Other"
+
 # Parse Enterprise and Format numbers
 def enterprise_format_numbers(unparsed_int):
 	sample_type_binary = '{0:032b}'.format(unparsed_int) # Break out the binary
 	enterprise_num = int(sample_type_binary[:20],2) # Enterprise number first 20 bits
 	sample_data_format = int(sample_type_binary[20:32],2) # Format number last 12 bits
-	enterprise_format_num = [enterprise_num,sample_data_format] # Flow or Counter-type sample
-	return enterprise_format_num # Return [enterprise number, format number]
+	return [enterprise_num,sample_data_format] # Return [enterprise number, format number]
 
 # Sample Source Type / Index parser
 def source_type_index_parser(unparsed_int):
 	source_type = unparsed_int >> 24
 	source_index = unparsed_int & 0xfff
-	return [source_type, source_index]
+	return [int_source_id_type(source_type), source_index]
+
+# Source ID type parser
+def int_source_id_type(id):
+	if id == 0:
+		return "ifIndex"
+	elif id == 1:
+		return "smonVlanDataSource"
+	elif id == 2:
+		return "entPhysicalEntry"
+	else:
+		return False
 
 # MAC address parser
 def mac_parse(mac):
