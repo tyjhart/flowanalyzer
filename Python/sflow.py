@@ -12,9 +12,7 @@ from xdrlib import Unpacker
 
 from netflow_options import * # Flow Options
 
-from sflow_parsers import * # Functions to parse headers and format numbers
-from sflow_samples import * # Functions to parse samples
-from sflow_records import * # Functions to parse records in samples
+from sflow import * # Functions to parse headers and format numbers
 
 # DNS Resolution
 import dns_base
@@ -109,36 +107,24 @@ def sflow_collector():
 
 		record_num = 0 # Record index number for the record cache
 
+		### sFlow Datagram Start ###
 		try:
 			logging.info("Starting to unpack an sFlow datagram from " + str(sensor_address[0]))
 			unpacked_data = Unpacker(sflow_packet_contents) # Unpack XDR datagram
 			
-			### sFlow Datagram Start ###
-			sflow_data["Datagram"] = {}
-			sflow_data["Datagram"]["sFlow Version"] = int(unpacked_data.unpack_uint()) # sFlow Version
-
-			if sflow_data["Datagram"]["sFlow Version"] != 5:
-				logging.warning("Not an sFlow v5 datagram - SKIPPING")
-				continue
-
-			sflow_data["Datagram"]["IP Version"] = unpacked_data.unpack_uint() # Agent IP version
-					
-			if sflow_data["Datagram"]["IP Version"] == 1:
-				sflow_data["Datagram"]["Agent IP"] = inet_ntoa(unpacked_data.unpack_fstring(4)) # sFlow Agent IP (IPv4)
-			else:
-				sflow_data["Datagram"]["Agent IP"] = unpacked_data.unpack_fstring(16) # sFlow Agent IP (IPv6)
+			# Unpack the datagram
+			sflow_data["Datagram"] = datagram_parse(unpacked_data)
 			
-			sflow_data["Datagram"]["Sub Agent"] = unpacked_data.unpack_uint() # Sub Agent ID
-			sflow_data["Datagram"]["Datagram Sequence Number"] = int(unpacked_data.unpack_uint()) # Datagram Seq. Number
-			sflow_data["Datagram"]["Switch Uptime ms"] = int(unpacked_data.unpack_uint()) # Switch Uptime (ms)
-			sflow_data["Datagram"]["Sample Count"] = int(unpacked_data.unpack_uint()) # Samples in datagram
-
 			logging.debug(str(sflow_data["Datagram"]))
 			logging.info("Finished unpacking the sFlow datagram from " + str(sensor_address[0]) + " - OK")
 		
 		except Exception as datagram_unpack_error:
 			logging.warning("Unable to unpack the datagram - FAIL")
 			logging.warning(str(datagram_unpack_error))
+			continue
+
+		if sflow_data["Datagram"]["sFlow Version"] != 5:
+			logging.warning("Not an sFlow v5 datagram - SKIPPING")
 			continue
 		### sFlow Datagram End ###
 
@@ -241,12 +227,18 @@ def sflow_collector():
 					
 					elif record_ent_form_number == [0,1012]: # Extended VLAN tunnel data
 						record_cache[record_num]["Record"] = extended_vlan_tunnel(unpacked_record_data)
+
+					elif record_ent_form_number == [0,2100]: # IPv4 Socket
+						record_cache[record_num]["Record"] = ipv4_socket(unpacked_record_data)
+
+					elif record_ent_form_number == [0,2101]: # IPv6 Socket
+						record_cache[record_num]["Record"] = ipv6_socket(unpacked_record_data)
 					
 					else: # Something we don't know about - SKIP it
 						unpacked_sample_data.set_position(skip_position) # Skip the unknown type
 						logging.warning("Received unknown [Enterprise,Format] flow record types: " + str(record_ent_form_number) + " - SKIPPING")
 
-					logging.debug("Record data: " + str(record_cache[record_num]))
+					logging.debug(str(record_cache[record_num]))
 					
 					record_num += 1 # Increment the record counter
 
@@ -290,12 +282,21 @@ def sflow_collector():
 
 					elif record_ent_form_number == [0, 1001]: # Processor info
 						record_cache[record_num]["Record"] = proc_info(unpacked_record_data)
+
+					elif record_ent_form_number == [0, 2000]: # Host Description
+						record_cache[record_num]["Record"] = host_description(unpacked_record_data)
+
+					elif record_ent_form_number == [0, 2002]: # Host Parent
+						record_cache[record_num]["Record"] = host_parent(unpacked_record_data)
+
+					elif record_ent_form_number == [0, 2003]: # Physical Host CPU
+						record_cache[record_num]["Record"] = physical_host_cpu(unpacked_record_data)
 					
 					else:
 						unpacked_sample_data.set_position(skip_position) # Skip the unknown type
 						logging.warning("Received unknown [Enterprise,Format] counter record types: " + str(record_ent_form_number) + " - SKIPPING")
 						
-					logging.debug("Record data: " + str(record_cache[record_num]))
+					logging.debug(str(record_cache[record_num]))
 
 					record_num += 1 # Increment the record counter
 

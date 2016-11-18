@@ -3,12 +3,14 @@
 
 import sys, struct
 from xdrlib import Unpacker
+from socket import inet_ntoa#,inet_ntop
+from protocol_numbers import *
 
 # Parse IANA interface types
 # See https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
 def iana_interface_type(num):
 	if num == 1:
-		return "other"
+		return "Other"
 	elif num == 2:
 		return "regular1822"
 	elif num == 3:
@@ -42,17 +44,17 @@ def iana_interface_type(num):
 	elif num == 17:
 		return "sdlc"
 	elif num == 18:
-		return "ds1"
+		return "DS1"
 	elif num == 19:
-		return "e1"
+		return "E1"
 	elif num == 20:
-		return "basicISDN"
+		return "Basic ISDN"
 	elif num == 21:
-		return "primaryISDN"
+		return "Primary ISDN"
 	elif num == 22:
-		return "propPointToPointSerial"
+		return "Prop Point To Point Serial"
 	elif num == 23:
-		return "ppp"
+		return "PPP"
 	elif num == 24:
 		return "softwareLoopback"
 	elif num == 25:
@@ -62,7 +64,7 @@ def iana_interface_type(num):
 	elif num == 27:
 		return "nsip"
 	elif num == 28:
-		return "slip"
+		return "SLIP"
 	elif num == 29:
 		return "ultra"
 	elif num == 30:
@@ -70,9 +72,9 @@ def iana_interface_type(num):
 	elif num == 31:
 		return "sip"
 	elif num == 32:
-		return "frameRelay"
+		return "Frame Relay"
 	elif num == 33:
-		return "rs232"
+		return "RS232"
 	elif num == 34:
 		return "para"
 	elif num == 35:
@@ -84,7 +86,7 @@ def iana_interface_type(num):
 	elif num == 38:
 		return "miox25"
 	elif num == 39:
-		return "sonet"
+		return "SONET"
 	else:
 		return "Other"
 
@@ -117,8 +119,8 @@ def mac_parse(mac):
 	mac_list = []
 	for mac_item in mac:
 		mac_item_formatted = hex(mac_item).replace('0x','')
-		if mac_item_formatted == '0':
-			mac_item_formatted = "00"
+		#if mac_item_formatted == '0':
+			#mac_item_formatted = "00"
 		if len(mac_item_formatted) == 1:
 			mac_item_formatted = str("0" + mac_item_formatted)
 		mac_list.append(mac_item_formatted)
@@ -128,6 +130,14 @@ def mac_parse(mac):
 		return False
 	else:
 		return flow_payload
+
+# Parse raw Ethernet header
+def parse_eth_header(header_string):
+	ord_dest_mac = [ord(x) for x in [header_string[0],header_string[1],header_string[2],header_string[3],header_string[4],header_string[5]]]
+	dest_mac = mac_parse(ord_dest_mac)
+	ord_src_mac = [ord(x) for x in [header_string[6],header_string[7],header_string[8],header_string[9],header_string[10],header_string[11]]]
+	src_mac = mac_parse(ord_src_mac)
+	return [dest_mac,src_mac]
 
 # Parse header protocol name from protocol number
 def parse_header_prot_name(protocol_int):
@@ -163,3 +173,100 @@ def parse_header_prot_name(protocol_int):
 		protocol_name = "Unknown"
 	
 	return protocol_name
+
+# Parse Operating System name
+def enum_os_name(os_int):
+	if os_int == 0:
+		os_name = "Unknown"
+	elif os_int == 1:
+		os_name = "Other"
+	elif os_int == 2:
+		os_name = "Linux"
+	elif os_int == 3:
+		os_name = "Windows"
+	elif os_int == 4:
+		os_name = "Darwin"
+	elif os_int == 5:
+		os_name = "HP-UX"
+	elif os_int == 6:
+		os_name = "AIX"
+	elif os_int == 7:
+		os_name = "Dragonfly"
+	elif os_int == 8:
+		os_name = "FreeBSD"
+	elif os_int == 9:
+		os_name = "NetBSD"
+	elif os_int == 10:
+		os_name = "OpenBSD"
+	elif os_int == 11:
+		os_name = "OSF"
+	elif os_int == 12:
+		os_name = "Solaris"
+	else:
+		os_name = "Unknown"
+	
+	return os_name
+
+# Parse machine architecture
+def enum_machine_type(os_arch):
+	if os_arch == 0:
+		machine_type = "Unknown"
+	elif os_arch == 1:
+		machine_type = "Other"
+	elif os_arch == 2:
+		machine_type = "x86"
+	elif os_arch == 3:
+		machine_type = "x86_64"
+	elif os_arch == 4:
+		machine_type = "ia64"
+	elif os_arch == 5:
+		machine_type = "SPARC"
+	elif os_arch == 6:
+		machine_type = "Alpha"
+	elif os_arch == 7:
+		machine_type = "PowerPC"
+	elif os_arch == 8:
+		machine_type = "m68k"
+	elif os_arch == 9:
+		machine_type = "MIPS"
+	elif os_arch == 10:
+		machine_type = "ARM"
+	elif os_arch == 11:
+		machine_type = "HPPA"
+	elif os_arch == 12:
+		machine_type = "s390"
+	else:
+		machine_type = "Unknown"
+	
+	return machine_type
+
+# Parse IANA protocol name
+def iana_protocol_name(protocol_int):
+	try:
+		return protocol_type[protocol_int]["Name"]
+	except:
+		return "Undefined"
+
+# Parse IANA protocol name
+def protocol_category(protocol_int):
+	try:
+		return protocol_type[protocol_int]["Category"]
+	except:
+		return "Other"
+
+def datagram_parse(data):
+	datagram = {}
+	datagram["sFlow Version"] = int(data.unpack_uint()) # sFlow Version
+	datagram["IP Version"] = data.unpack_uint() # Agent IP version
+			
+	if datagram["IP Version"] == 1:
+		datagram["Agent IP"] = inet_ntoa(data.unpack_fstring(4)) # sFlow Agent IP (IPv4)
+	else:
+		#datagram["Agent IP"] = inet_ntop(data.unpack_fstring(16)) # sFlow Agent IP (IPv6)
+		pass
+	
+	datagram["Sub Agent"] = data.unpack_uint() # Sub Agent ID
+	datagram["Datagram Sequence Number"] = int(data.unpack_uint()) # Datagram Seq. Number
+	datagram["Switch Uptime ms"] = int(data.unpack_uint()) # Switch Uptime (ms)
+	datagram["Sample Count"] = int(data.unpack_uint()) # Samples in datagram
+	return datagram
