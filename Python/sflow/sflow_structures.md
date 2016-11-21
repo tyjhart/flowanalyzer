@@ -51,7 +51,7 @@ The Expanded Flow Sample does what [Flow Samples](#flow-samples) do, but they al
 
 > The expanded encodings are provided to support the maximum possible values for ifIndex, even though large ifIndex values are not encouraged.
 >
-> -- <cite>[SFLOW-DATAGRAM5](http://sflow.org/SFLOW-DATAGRAM5.txt)</cite>
+> -- <cite>[SFLOW-DATAGRAM5 Documentation File](http://sflow.org/SFLOW-DATAGRAM5.txt)</cite>
 
 ## Expanded Counter Sample
 The Expanded Counter Sample does for [Counter Samples](#counter-samples) what [Expanded Flow Samples](#expanded-flow-samples) do for regular [Flow Samples](#flow-samples). As networks and systems become larger and faster it's important that protocols can handle very large values.
@@ -117,7 +117,7 @@ Flow    | 0 | 2208  | Extended Nav Timing               | In Progress   |
 Flow    | 0 | 2209  | Extended TCP Info                 | Yes           |
 
 # Counter Data
-The default structures for flow data are shown below:
+The default structures for counter data are shown below:
 Type | Enterprise Number | Format Number | Structure Name | Supported |
 --          | - | -     | --                                | --            |
 Counter     | 0 | 1     | Interface Counters                | Yes           |
