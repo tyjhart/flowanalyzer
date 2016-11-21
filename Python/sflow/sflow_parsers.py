@@ -169,6 +169,12 @@ def parse_header_prot_name(protocol_int):
 		protocol_name = "MPLS"
 	elif protocol_int == 14:
 		protocol_name = "POS"
+	elif protocol_int == 15:
+		protocol_name = "802.11 MAC"
+	elif protocol_int == 16:
+		protocol_name = "802.11 AMPDU"
+	elif protocol_int == 17:
+		protocol_name = "802.11 AMSDU Subframe"
 	else:
 		protocol_name = "Unknown"
 	
@@ -254,6 +260,56 @@ def protocol_category(protocol_int):
 	except:
 		return "Other"
 
+# Packet direction
+def packet_direction(direction_int):
+	if direction_int == 0:
+		return "Unknown"
+	elif direction_int == 1:
+		return "Received"
+	elif direction_int == 2:
+		return "Sent"
+	else:
+		return "Unknown"
+
+# URL direction
+def url_direction(direction_int):
+	if direction_int == 1:
+		return "Source"
+	elif direction_int == 2:
+		return "Destination"
+	else:
+		return "Unknown"
+
+# IEEE 802.11 versions
+def wlan_version(version_num):
+	if version_num == 1:
+		return "A"
+	elif version_num == 2:
+		return "B"
+	elif version_num == 3:
+		return "G"
+	elif version_num == 4:
+		return "N"
+	else:
+		return "Other"
+
+# IEEE 802.11 WLAN Transmissions
+def wlan_transmissions(transmission_int):
+	if transmission_int == 0:
+		return "Unknown"
+	elif transmission_int == 1:
+		return "Successfully Transmitted"
+	elif transmission_int > 1:
+		return str(int(transmission_int-1) + " retransmissions")
+	else:
+		return "Unknown"
+
+# IEEE 802.3ad Link Aggregation Port State
+# FIX!
+def agg_port_state(port_state_num):
+		return 
+
+# Parse the sFlow datagram
 def datagram_parse(data):
 	datagram = {}
 	datagram["sFlow Version"] = int(data.unpack_uint()) # sFlow Version
