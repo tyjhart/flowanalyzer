@@ -43,7 +43,7 @@ except:
 try: 
 	log_level # Check if log level was passed in from command arguments
 except NameError:
-	log_level="DEBUG" # Use default logging level
+	log_level="INFO" # Use default logging level
 
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.warning('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
@@ -80,13 +80,13 @@ except ValueError as socket_error:
 	sys.exit("Could not open or bind a socket on port " + str(sflow_port))
 
 # Spin up ES instance
-#try:
-	#es = Elasticsearch([elasticsearch_host])
-	#logging.warning("Connected to Elasticsearch at " + str(elasticsearch_host) + ' - OK')
-#except ValueError as elasticsearch_connect_error:
-	#logging.critical("Could not connect to Elasticsearch at " + str(elasticsearch_host))
-	#logging.critical(str(elasticsearch_connect_error))
-	#sys.exit("Could not connect to Elasticsearch at " + str(elasticsearch_host))
+try:
+	es = Elasticsearch([elasticsearch_host])
+	logging.warning("Connected to Elasticsearch at " + str(elasticsearch_host) + ' - OK')
+except ValueError as elasticsearch_connect_error:
+	logging.critical("Could not connect to Elasticsearch at " + str(elasticsearch_host))
+	logging.critical(str(elasticsearch_connect_error))
+	sys.exit("Could not connect to Elasticsearch at " + str(elasticsearch_host))
 
 # sFlow collector
 if __name__ == "__main__":
@@ -390,6 +390,20 @@ if __name__ == "__main__":
 			unpacked_data.done()
 		except:
 			logging.warning("Failed to completely unpack sample data - FAIL")
-			#sys.exit("Failed to completely unpack sample data - FAIL")
 		
 		### sFlow Samples End ###
+
+		# Have enough flows to do a bulk index to Elasticsearch
+		if len(sflow_data) >= bulk_insert_count:
+							
+			# Perform the bulk upload to the index
+			try:
+				helpers.bulk(es,flow_dic)
+				logging.info(str(len(flow_dic)) + " flow(s) uploaded to Elasticsearch - OK")
+			except ValueError as bulk_index_error:
+				logging.critical(str(len(flow_dic)) + " flow(s) DROPPED, unable to index flows - FAIL")
+				logging.critical(bulk_index_error)
+				sys.exit()
+				
+			# Reset sflow_data
+			sflow_data = []
