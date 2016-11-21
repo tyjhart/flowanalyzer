@@ -7,22 +7,11 @@ Right now Ubuntu Server 16.04 LTS is recommended.
 
 # Minimum Requirements
 
-Each instance should be installed on a fresh 64-bit [Ubuntu Server](https://www.ubuntu.com/download/server) machine with **systemd support** and the following **minimum** specs:
+Each instance should be installed on a fresh 64-bit [Ubuntu Server](https://www.ubuntu.com/download/server) machine with **systemd support**, and at least the minimum required resources as listed in the [main README document Requirements section](../README.md#requirements).
 
-At least one Ubuntu Server installation with the following **minimum** hardware specs:
+The installation script is incompatible with Ubuntu versions prior to 15.04 due to a shift to SystemD by Canonical. Earlier versions of Ubuntu can use SystemD with a fair amount of work, but the installation script isn't supported on non-SystemD platforms with workarounds implemented.
 
-- 4GB RAM
-- 2 CPU Cores
-- 90GB HDD space
-
-The following versions of Ubuntu Server have been tested and verified to work with the [installation](./Install/README.md) script:
-
-- 16.04 LTS
-- 16.10
-
-**Note**: The installation script is incompatible with Ubuntu versions prior to 15.04 due to a move to SystemD.
-
-Additional Elasticsearch nodes will greatly increase performance and provide failover in case of node failure. Having additional Elasticsearch nodes will also allow you to retain more flow data.
+While installing everything on one server is good for proof-of-concept or testing, additional Elasticsearch nodes will greatly increase performance and provide failover. Having additional Elasticsearch nodes will also allow you to retain more flow data, and tune overall performance to your needs.
 
 # Installation
 
@@ -84,12 +73,8 @@ The ubuntu_install.sh script does the following:
   - netflow_v9
   - ipfix
 - Registers collector services and sets auto-start
+- Creates an index pruning job (>30 days old) using Curator in /etc/cron.daily
 - Installs Head plugin for Elasticsearch
-- Installs and configures Squid
-- Configures a default Squid user:
-  - Username: **admin**
-  - Password: **manitonetworks**
-- Schedules a weekly auto-update Cron job (/etc/cron/cron.weekly)
 
 ### Build the Elasticsearch Flow Index
 
