@@ -10,110 +10,110 @@ from sflow_parsers import *  # Functions to parse headers and format numbers
 # Generic Interface (Counter, Enterprise 0, Format 1)
 def gen_int_counter(data):
 	sample_data = {}
-	sample_data["ifIndex"] = int(data.unpack_uint())
-	sample_data["ifType"] = iana_interface_type(int(data.unpack_uint()))
-	sample_data["ifSpeed"] = data.unpack_hyper()
+	sample_data["Interface Index"] = int(data.unpack_uint())
+	sample_data["Interface Type"] = iana_interface_type(int(data.unpack_uint()))
+	sample_data["Interface Speed"] = data.unpack_hyper()
 
 	ifDirection = int(data.unpack_uint())
 	if ifDirection == 0:
-		sample_data["ifDirection"] = "Unknown"
+		sample_data["Interface Direction"] = "Unknown"
 	elif ifDirection == 1:
-		sample_data["ifDirection"] = "Full-duplex"
+		sample_data["Interface Direction"] = "Full-duplex"
 	elif ifDirection == 2:
-		sample_data["ifDirection"] = "Half-duplex"
+		sample_data["Interface Direction"] = "Half-duplex"
 	elif ifDirection == 3:
-		sample_data["ifDirection"] = "Ingress"
+		sample_data["Interface Direction"] = "Ingress"
 	elif ifDirection == 4:
-		sample_data["ifDirection"] = "Egress"
+		sample_data["Interface Direction"] = "Egress"
 	else:
-		sample_data["ifDirection"] = "Unknown"
+		sample_data["Interface Direction"] = "Unknown"
 
-	# http://sflow.org/developers/diagrams/sFlowV5CounterData.pdf FIX!
+	# http://sflow.org/developers/diagrams/sFlowV5CounterData.pdf FIX!!!
 	ifStatus = int(data.unpack_uint())
 	if ifStatus == 0:
-		sample_data["ifStatus"] = "Unknown"
+		sample_data["Interface Status"] = "Unknown"
 	elif ifStatus == 1:
-		sample_data["ifStatus"] = "Full-duplex"
+		sample_data["Interface Status"] = "Full-duplex"
 	else:
-		sample_data["ifStatus"] = "Unknown"
+		sample_data["Interface Status"] = "Unknown"
 
-	sample_data["ifInOctets"] = data.unpack_hyper()
-	sample_data["ifInUcastPkts"] = int(data.unpack_uint())
-	sample_data["ifInMulticastPkts"] = int(data.unpack_uint())
-	sample_data["ifInBroadcastPkts"] = int(data.unpack_uint())
-	sample_data["ifInDiscards"] = int(data.unpack_uint())
-	sample_data["ifInErrors"] = int(data.unpack_uint())
-	sample_data["ifInUnknownProtos"] = int(data.unpack_uint())
-	sample_data["ifOutOctets"] = data.unpack_hyper()
-	sample_data["ifOutUcastPkts"] = int(data.unpack_uint())
-	sample_data["ifOutMulticastPkts"] = int(data.unpack_uint())
-	sample_data["ifOutBroadcastPkts"] = int(data.unpack_uint())
-	sample_data["ifOutDiscards"] = int(data.unpack_uint())
-	sample_data["ifOutErrors"] = int(data.unpack_uint())
-	sample_data["ifPromiscuousMode"] = int(data.unpack_uint())
+	sample_data["Bytes In"] = data.unpack_hyper()
+	sample_data["Unicast Packets In"] = int(data.unpack_uint())
+	sample_data["Multicast Packets In"] = int(data.unpack_uint())
+	sample_data["Broadcast Packets In"] = int(data.unpack_uint())
+	sample_data["Discards In"] = int(data.unpack_uint())
+	sample_data["Errors In"] = int(data.unpack_uint())
+	sample_data["Unknown Protocols In"] = int(data.unpack_uint())
+	sample_data["Bytes Out"] = data.unpack_hyper()
+	sample_data["Unicast Packets Out"] = int(data.unpack_uint())
+	sample_data["Multicast Packets Out"] = int(data.unpack_uint())
+	sample_data["Broadcast Packets Out"] = int(data.unpack_uint())
+	sample_data["Discards Out"] = int(data.unpack_uint())
+	sample_data["Errors Out"] = int(data.unpack_uint())
+	sample_data["Promiscuous Mode"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
 # Ethernet Interface (Counter, Enterprise 0, Format 2)
 def eth_int_counter(data):
 	sample_data = {}
-	sample_data["dot3StatsAlignmentErrors"] = int(data.unpack_uint())
-	sample_data["dot3StatsFCSErrors"] = int(data.unpack_uint())
-	sample_data["dot3StatsSingleCollisionFrames"] = int(data.unpack_uint())
-	sample_data["dot3StatsMultipleCollisionFrames"] = int(data.unpack_uint())
-	sample_data["dot3StatsSQETestErrors"] = int(data.unpack_uint())
-	sample_data["dot3StatsDeferredTransmissions"] = int(data.unpack_uint())
-	sample_data["dot3StatsLateCollisions"] = int(data.unpack_uint())
-	sample_data["dot3StatsExcessiveCollisions"] = int(data.unpack_uint())
-	sample_data["dot3StatsInternalMacTransmitErrors"] = int(data.unpack_uint())
-	sample_data["dot3StatsCarrierSenseErrors"] = int(data.unpack_uint())
-	sample_data["dot3StatsFrameTooLongs"] = int(data.unpack_uint())
-	sample_data["dot3StatsInternalMacReceiveErrors"] = int(data.unpack_uint())
-	sample_data["dot3StatsSymbolErrors"] = int(data.unpack_uint())
+	sample_data["Alignment Errors"] = int(data.unpack_uint())
+	sample_data["FCS Errors"] = int(data.unpack_uint())
+	sample_data["Single Collision Frames"] = int(data.unpack_uint())
+	sample_data["Multiple Collision Frames"] = int(data.unpack_uint())
+	sample_data["SQE Test Errors"] = int(data.unpack_uint())
+	sample_data["Deferred Transmissions"] = int(data.unpack_uint())
+	sample_data["Late Collisions"] = int(data.unpack_uint())
+	sample_data["Excessive Collisions"] = int(data.unpack_uint())
+	sample_data["Internal MAC Transmit Errors"] = int(data.unpack_uint())
+	sample_data["Carrier Sense Errors"] = int(data.unpack_uint())
+	sample_data["Frame Too Longs"] = int(data.unpack_uint())
+	sample_data["Internal MAC Receive Errors"] = int(data.unpack_uint())
+	sample_data["Symbol Errors"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
 # Token Ring (Counter, Enterprise 0, Format 3)
 def token_ring_counter(data):
 	sample_data = {}
-	sample_data["dot5StatsLineErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsACErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsAbortTransErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsInternalErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsLostFrameErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsReceiveCongestions"] = int(data.unpack_uint())
-	sample_data["dot5StatsFrameCopiedErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsTokenErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsSoftErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsHardErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsSignalLoss"] = int(data.unpack_uint())
-	sample_data["dot5StatsTransmitBeacons"] = int(data.unpack_uint())
-	sample_data["dot5StatsRecoverys"] = int(data.unpack_uint())
-	sample_data["dot5StatsLobeWires"] = int(data.unpack_uint())
-	sample_data["dot5StatsBurstErrors"] = int(data.unpack_uint())
-	sample_data["dot5StatsRemoves"] = int(data.unpack_uint())
-	sample_data["dot5StatsSingles"] = int(data.unpack_uint())
-	sample_data["dot5StatsFreqErrors"] = int(data.unpack_uint())
+	sample_data["Line Errors"] = int(data.unpack_uint())
+	sample_data["AC Errors"] = int(data.unpack_uint())
+	sample_data["Abort Trans Errors"] = int(data.unpack_uint())
+	sample_data["Internal Errors"] = int(data.unpack_uint())
+	sample_data["Lost Frame Errors"] = int(data.unpack_uint())
+	sample_data["Receive Congestions"] = int(data.unpack_uint())
+	sample_data["Frame Copied Errors"] = int(data.unpack_uint())
+	sample_data["Token Errors"] = int(data.unpack_uint())
+	sample_data["Soft Errors"] = int(data.unpack_uint())
+	sample_data["Hard Errors"] = int(data.unpack_uint())
+	sample_data["Signal Loss"] = int(data.unpack_uint())
+	sample_data["Transmit Beacons"] = int(data.unpack_uint())
+	sample_data["Recoverys"] = int(data.unpack_uint())
+	sample_data["Lobe Wires"] = int(data.unpack_uint())
+	sample_data["Burst Errors"] = int(data.unpack_uint())
+	sample_data["Removes"] = int(data.unpack_uint())
+	sample_data["Singles"] = int(data.unpack_uint())
+	sample_data["Freq Errors"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
 # 100 BaseVG Interface (Counter, Enterprise 0, Format 4)
 def basevg_int_counter(data):
 	sample_data = {}
-	sample_data["dot12InHighPriorityFrames"] = int(data.unpack_uint())
-	sample_data["dot12InHighPriorityOctets"] = data.unpack_hyper()
-	sample_data["dot12InNormPriorityFrames"] = int(data.unpack_uint())
-	sample_data["dot12InNormPriorityOctets"] = data.unpack_hyper()
-	sample_data["dot12InIPMErrors"] = int(data.unpack_uint())
-	sample_data["dot12InOversizeFrameErrors"] = int(data.unpack_uint())
-	sample_data["dot12InDataErrors"] = int(data.unpack_uint())
-	sample_data["dot12InNullAddressedFrames"] = int(data.unpack_uint())
-	sample_data["dot12OutHighPriorityFrames"] = int(data.unpack_uint())
-	sample_data["dot12OutHighPriorityOctets"] = data.unpack_hyper()
-	sample_data["dot12TransitionIntoTrainings"] = int(data.unpack_uint())
-	sample_data["dot12HCInHighPriorityOctets"] = data.unpack_hyper()
-	sample_data["dot12HCInNormPriorityOctets"] = data.unpack_hyper()
-	sample_data["dot12HCOutHighPriorityOctets"] = data.unpack_hyper()
+	sample_data["InHigh Priority Frames"] = int(data.unpack_uint())
+	sample_data["InHigh Priority Bytes"] = data.unpack_hyper()
+	sample_data["InNorm Priority Frames"] = int(data.unpack_uint())
+	sample_data["InNorm Priority Bytes"] = data.unpack_hyper()
+	sample_data["InIPM Errors"] = int(data.unpack_uint())
+	sample_data["InOversize Frame Errors"] = int(data.unpack_uint())
+	sample_data["InData Errors"] = int(data.unpack_uint())
+	sample_data["InNull Addressed Frames"] = int(data.unpack_uint())
+	sample_data["OutHigh Priority Frames"] = int(data.unpack_uint())
+	sample_data["OutHigh Priority Bytes"] = data.unpack_hyper()
+	sample_data["Transition Into Trainings"] = int(data.unpack_uint())
+	sample_data["HC In High Priority Bytes"] = data.unpack_hyper()
+	sample_data["HC In Norm Priority Bytes"] = data.unpack_hyper()
+	sample_data["HC Out High Priority Bytes"] = data.unpack_hyper()
 	data.done()
 	return sample_data
 
@@ -182,11 +182,11 @@ def sfp_optical_counters(data):
 # Processor Information (Counter, Enterprise 0, Format 1001)
 def proc_info(data):
 	sample_data = {}
-	sample_data["5s cpu percentage"] = int(data.unpack_uint())
-	sample_data["1m cpu percentage"] = int(data.unpack_uint())
-	sample_data["5m cpu percentage"] = int(data.unpack_uint())
-	sample_data["total memory"] = data.unpack_hyper()
-	sample_data["free memory"] = data.unpack_hyper()
+	sample_data["5s CPU Percentage"] = int(data.unpack_uint())
+	sample_data["1m CPU Percentage"] = int(data.unpack_uint())
+	sample_data["5m CPU Percentage"] = int(data.unpack_uint())
+	sample_data["Total Memory"] = data.unpack_hyper()
+	sample_data["Free Memory"] = data.unpack_hyper()
 	data.done()
 	return sample_data
 
@@ -308,8 +308,8 @@ def virtual_domain_cpu_stats(data):
 # Virtual Domain Memory statistics (Counter, Enterprise 0, Format 2102)
 def virtual_domain_mem_stats(data):
 	sample_data = {}
-	sample_data["Used Memory"] = data.unpack_uhyper()
-	sample_data["Total Memory"] = data.unpack_uhyper()
+	sample_data["Memory Used"] = data.unpack_uhyper()
+	sample_data["Memory Total"] = data.unpack_uhyper()
 	data.done()
 	return sample_data
 
@@ -320,9 +320,9 @@ def virtual_domain_disk_stats(data):
 	sample_data["Current Allocation"] = data.unpack_uhyper()
 	sample_data["Total Available"] = data.unpack_uhyper()
 	sample_data["Read Requests"] = int(data.unpack_uint())
-	sample_data["Read Bytes"] = data.unpack_uhyper()
+	sample_data["Bytes Read"] = data.unpack_uhyper()
 	sample_data["Write Requests"] = int(data.unpack_uint())
-	sample_data["Written Bytes"] = data.unpack_uhyper()
+	sample_data["Bytes Written"] = data.unpack_uhyper()
 	sample_data["Errors"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
