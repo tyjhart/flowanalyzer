@@ -150,8 +150,8 @@ if __name__ == "__main__":
 			if flow_sample_cache is False:
 				logging.warning("Unable to parse the sample cache, type " + str([enterprise_format_num,unpacked_sample_data]) + " from " + str(datagram_info["Agent IP"]) + " - SKIPPING")
 				continue
-
-			logging.info("Sample header: " + str(flow_sample_cache))
+			else:
+				logging.info(str(flow_sample_cache))
 			
 			### Flow Sample ###
 			if enterprise_format_num in [[0,1], [0,3]]: # Flow Sample
@@ -161,12 +161,10 @@ if __name__ == "__main__":
 					
 					record_ent_form_number = enterprise_format_numbers(unpacked_sample_data.unpack_uint()) # [Enterprise, Format] numbers
 					counter_data_length = int(unpacked_sample_data.unpack_uint()) # Length of record
-					logging.info("Found record type " + str(record_ent_form_number) + ", length " + str(counter_data_length))
-					
 					current_position = int(unpacked_sample_data.get_position()) # Current unpack buffer position
 					skip_position = current_position + counter_data_length # Bail out position if unpack fails for skipping
 					
-					logging.info("XDR current position " + str(current_position) + ", skip position " + str(skip_position))
+					logging.info("Found record type " + str(record_ent_form_number) + ", length " + str(counter_data_length) + ", XDR position " + str(current_position) + ", skip position " + str(skip_position))
 					
 					# Unpack the opaque flow record
 					unpacked_record_data = Unpacker(unpacked_sample_data.unpack_fopaque(counter_data_length))
@@ -176,7 +174,7 @@ if __name__ == "__main__":
 						now = datetime.datetime.utcnow() # Get the current UTC time
 						
 						flow_index = {
-						"_index": str("flow-" + now.strftime("%Y-%m-%d")),
+						"_index": str("sflow-" + now.strftime("%Y-%m-%d")),
 						"_type": "Flow",
 						"_source": {
 						"Flow Type": "sFlow Flow",
@@ -275,12 +273,10 @@ if __name__ == "__main__":
 					
 					record_ent_form_number = enterprise_format_numbers(unpacked_sample_data.unpack_uint()) # [Enterprise, Format] numbers
 					counter_data_length = int(unpacked_sample_data.unpack_uint()) # Length of record
-					logging.info("Found record type " + str(record_ent_form_number) + ", length " + str(counter_data_length))
-										
 					current_position = int(unpacked_sample_data.get_position()) # Current unpack buffer position
 					skip_position = current_position + counter_data_length # Bail out position if unpack fails for skipping
 					
-					logging.info("XDR current position " + str(current_position) + ", skip position " + str(skip_position))
+					logging.info("Found record type " + str(record_ent_form_number) + ", length " + str(counter_data_length) + ", XDR current position " + str(current_position) + ", skip position " + str(skip_position))
 					
 					# Unpack the opaque counter record
 					unpacked_record_data = Unpacker(unpacked_sample_data.unpack_fopaque(counter_data_length)) 
@@ -290,7 +286,7 @@ if __name__ == "__main__":
 						now = datetime.datetime.utcnow() # Get the current UTC time
 						
 						flow_index = {
-						"_index": str("flow-" + now.strftime("%Y-%m-%d")),
+						"_index": str("sflow-" + now.strftime("%Y-%m-%d")),
 						"_type": "Counter",
 						"_source": {
 						"Flow Type": "sFlow Counter",
@@ -398,12 +394,11 @@ if __name__ == "__main__":
 							
 			# Perform the bulk upload to the index
 			try:
-				helpers.bulk(es,flow_dic)
-				logging.info(str(len(flow_dic)) + " flow(s) uploaded to Elasticsearch - OK")
+				helpers.bulk(es,sflow_data)
+				logging.info(str(len(sflow_data)) + " record(s) uploaded to Elasticsearch - OK")
 			except ValueError as bulk_index_error:
-				logging.critical(str(len(flow_dic)) + " flow(s) DROPPED, unable to index flows - FAIL")
+				logging.critical(str(len(sflow_data)) + " record(s) DROPPED, unable to index flows - FAIL")
 				logging.critical(bulk_index_error)
-				sys.exit()
 				
 			# Reset sflow_data
 			sflow_data = []
