@@ -43,7 +43,7 @@ except:
 try: 
 	log_level # Check if log level was passed in from command arguments
 except NameError:
-	log_level="INFO" # Use default logging level
+	log_level="WARNING" # Use default logging level
 
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.warning('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
@@ -97,27 +97,28 @@ if __name__ == "__main__":
 	
 	global sflow_data
 	sflow_data = [] # For bulk upload to Elasticsearch
+
+	global uuid_cache
+	uuid_cache = {}
 	
 	while True: 
 		
 		# Listen for packets inbound
 		sflow_packet_contents, sensor_address = netflow_sock.recvfrom(65565)
-		logging.debug("Got something from " + sensor_address[0])
+		#logging.debug("Got something from " + sensor_address[0])
 
 		record_num = 0 # Record index number for the record cache
 
 		### sFlow Datagram Start ###
 		try:
-			logging.info("Starting to unpack an sFlow datagram from " + str(sensor_address[0]))
-			
 			unpacked_data = Unpacker(sflow_packet_contents) # Unpack XDR datagram
 			datagram_info = datagram_parse(unpacked_data) # Unpack the datagram
 			
 			logging.debug(str(datagram_info))
-			logging.info("Finished unpacking the sFlow datagram from " + str(sensor_address[0]) + " - OK")
+			logging.info("Unpacked an sFlow datagram from " + str(sensor_address[0]) + " - OK")
 		
 		except Exception as datagram_unpack_error:
-			logging.warning("Unable to unpack the datagram - FAIL")
+			logging.warning("Unable to unpack the sFlow datagram - FAIL")
 			logging.warning(str(datagram_unpack_error))
 			continue
 
@@ -135,12 +136,11 @@ if __name__ == "__main__":
 			
 			logging.info("Sample " + str(sample_num+1) + " of " + str(datagram_info["Sample Count"]) + ", type " + str(enterprise_format_num) + " length " + str(sample_length))
 
-			logging.info("Unpacking opaque sample data")
 			try:
 				unpacked_sample_data = Unpacker(unpacked_data.unpack_fopaque(sample_length)) # Unpack the sample data block	
 				logging.info("Unpacked opaque sample data chunk - OK")
 			except Exception as unpack_error:
-				logging.warning("Failed to unpack the opaque sample data - FAIL")
+				logging.warning("Failed to unpack opaque sample data - FAIL")
 				continue
 			### Sample Header Finish ###
 
@@ -157,14 +157,12 @@ if __name__ == "__main__":
 			if enterprise_format_num in [[0,1], [0,3]]: # Flow Sample
 
 				for record_counter_num in range(0,flow_sample_cache["Record Count"]): # For each staged sample
-					logging.info("Unpacking flow record " + str(record_counter_num+1) + " of " + str(flow_sample_cache["Record Count"]))
-					
 					record_ent_form_number = enterprise_format_numbers(unpacked_sample_data.unpack_uint()) # [Enterprise, Format] numbers
 					counter_data_length = int(unpacked_sample_data.unpack_uint()) # Length of record
 					current_position = int(unpacked_sample_data.get_position()) # Current unpack buffer position
 					skip_position = current_position + counter_data_length # Bail out position if unpack fails for skipping
 					
-					logging.info("Found record type " + str(record_ent_form_number) + ", length " + str(counter_data_length) + ", XDR position " + str(current_position) + ", skip position " + str(skip_position))
+					logging.info("Flow record " + str(record_counter_num+1) + " of " + str(flow_sample_cache["Record Count"]) + ", type " + str(record_ent_form_number) + ", length " + str(counter_data_length) + ", XDR position " + str(current_position) + ", skip position " + str(skip_position))
 					
 					# Unpack the opaque flow record
 					unpacked_record_data = Unpacker(unpacked_sample_data.unpack_fopaque(counter_data_length))
@@ -246,15 +244,23 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0,2209]: # Extended TCP Information
 							flow_index["_source"].update(extended_tcp_info(unpacked_record_data))
 						
+						elif record_ent_form_number == [8800,1]: # Extended Class
+							flow_index["_source"].update(extended_class(unpacked_record_data))
+						
+						elif record_ent_form_number == [8800,2]: # Extended Tag
+							flow_index["_source"].update(extended_tag(unpacked_record_data))
+							print(flow_index["_source"])
+						
 						else: # Something we don't know about - SKIP it
 							unpacked_sample_data.set_position(skip_position) # Skip the unknown type
-							logging.warning("Received unknown [Enterprise,Format] flow record types: " + str(record_ent_form_number) + " - SKIPPING")
+							logging.warning("Received unknown flow record type " + str(record_ent_form_number) + " from " + str(datagram_info["Agent IP"]) + " (sub agent " + str(datagram_info["Sub Agent"]) + ") - SKIPPING")
+							flow_index = False
 
 					except Exception as flow_unpack_error:
 						flow_index = False
 						unpacked_sample_data.set_position(skip_position) # Skip the unknown type
 						logging.warning(str(flow_unpack_error))
-						logging.warning("Failed to unpack flow [Enterprise,Format]: " + str(record_ent_form_number) + " - FAIL")
+						logging.warning("Failed to unpack Flow record " + str(record_ent_form_number) + " - FAIL")
 
 					# Append the record to sflow_data for bulk upload
 					if flow_index is not False:
@@ -269,14 +275,12 @@ if __name__ == "__main__":
 			elif enterprise_format_num in [[0,2], [0,4]]: # Counter Sample
 				
 				for record_counter_num in range(0,flow_sample_cache["Record Count"]):
-					logging.info("Unpacking counter sample " + str(record_counter_num+1) + " of " + str(flow_sample_cache["Record Count"]))
-					
 					record_ent_form_number = enterprise_format_numbers(unpacked_sample_data.unpack_uint()) # [Enterprise, Format] numbers
 					counter_data_length = int(unpacked_sample_data.unpack_uint()) # Length of record
 					current_position = int(unpacked_sample_data.get_position()) # Current unpack buffer position
 					skip_position = current_position + counter_data_length # Bail out position if unpack fails for skipping
 					
-					logging.info("Found record type " + str(record_ent_form_number) + ", length " + str(counter_data_length) + ", XDR current position " + str(current_position) + ", skip position " + str(skip_position))
+					logging.info("Found counter record " + str(record_counter_num+1) + " of " + str(flow_sample_cache["Record Count"]) + ", type " + str(record_ent_form_number) + ", length " + str(counter_data_length) + ", XDR current position " + str(current_position) + ", skip position " + str(skip_position))
 					
 					# Unpack the opaque counter record
 					unpacked_record_data = Unpacker(unpacked_sample_data.unpack_fopaque(counter_data_length)) 
@@ -301,7 +305,6 @@ if __name__ == "__main__":
 						
 						flow_index["_source"].update(flow_sample_cache) # Add sample header info to each record
 
-						
 						if record_ent_form_number == [0, 1]: # Generic interface counter
 							flow_index["_source"].update(gen_int_counter(unpacked_record_data))
 
@@ -324,7 +327,9 @@ if __name__ == "__main__":
 							flow_index["_source"].update(host_description(unpacked_record_data))
 
 						elif record_ent_form_number == [0, 2001]: # Host Adapter
-							flow_index["_source"].update(host_adapter(unpacked_record_data))
+							uuid_cache.update(host_adapter(unpacked_record_data,datagram_info["Agent IP"],datagram_info["Sub Agent"]))
+							print(uuid_cache)
+							continue
 
 						elif record_ent_form_number == [0, 2002]: # Host Parent
 							flow_index["_source"].update(host_parent(unpacked_record_data))
@@ -358,13 +363,14 @@ if __name__ == "__main__":
 
 						else:
 							unpacked_sample_data.set_position(skip_position) # Skip the unknown type
-							logging.warning("Received unknown [Enterprise,Format] counter record types: " + str(record_ent_form_number) + " - SKIPPING")
+							logging.warning("Received unknown counter record type " + str(record_ent_form_number) + " from " + str(datagram_info["Agent IP"]) + " (sub agent " + str(datagram_info["Sub Agent"]) + ") - SKIPPING")
+							flow_index = False
 
 					except Exception as flow_unpack_error:
 						flow_index = False
 						unpacked_sample_data.set_position(skip_position) # Skip the unknown type
 						logging.warning(str(flow_unpack_error))
-						logging.warning("Failed to unpack flow [Enterprise,Format]: " + str(record_ent_form_number) + " - FAIL")
+						logging.warning("Failed to unpack Counter record " + str(record_ent_form_number) + " - FAIL")
 
 					# Append the record to sflow_data for bulk upload
 					if flow_index is not False:
