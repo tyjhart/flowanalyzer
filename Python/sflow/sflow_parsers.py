@@ -66,11 +66,11 @@ def iana_interface_type(num):
 	elif num == 28:
 		return "SLIP"
 	elif num == 29:
-		return "ultra"
+		return "Ultra"
 	elif num == 30:
-		return "ds3"
+		return "DS3"
 	elif num == 31:
-		return "sip"
+		return "SIP"
 	elif num == 32:
 		return "Frame Relay"
 	elif num == 33:
@@ -268,6 +268,30 @@ def packet_direction(direction_int):
 		return "Received"
 	elif direction_int == 2:
 		return "Sent"
+	else:
+		return "Unknown"
+
+# Service direction
+def service_direction(direction_int):
+	if direction_int == 1:
+		return "Client"
+	elif direction_int == 2:
+		return "Server"
+	else:
+		return "Unknown"
+
+# Status Value
+def status_value(status_int):
+	if status_int == 0:
+		return "Succeeded"
+	elif status_int == 1:
+		return "Generic Failure"
+	elif status_int == 2:
+		return "Out of Memory"
+	elif status_int == 3:
+		return "Timeout"
+	elif status_int == 4:
+		return "Not Permitted"
 	else:
 		return "Unknown"
 

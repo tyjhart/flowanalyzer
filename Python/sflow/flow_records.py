@@ -98,6 +98,10 @@ def extended_gateway_data(data):
 # Extended User Data (Flow, Enterprise 0, Format 1004)
 def extended_user_data(data):
 	sample_data = {}
+	sample_data["Source Charset"] = int(data.unpack_uint())
+	sample_data["Source User"] = data.unpack_string()
+	sample_data["Destination Charset"] = int(data.unpack_uint())
+	sample_data["Destination User"] = data.unpack_string()
 	data.done()
 	return sample_data
 
@@ -158,7 +162,8 @@ def extended_mpls_lvp_fec(data):
 # Extended VLAN Tunnel (Flow, Enterprise 0, Format 1012)
 def extended_vlan_tunnel(data):
 	sample_data = {}
-	sample_data["VLAN Stack"] = int(data.unpack_uint())
+	vlan_int = int(data.unpack_uint())
+	sample_data["VLAN Stack"] = data.unpack_array(vlan_int)
 	data.done()
 	return sample_data
 
@@ -203,6 +208,48 @@ def extended_wlan_aggregation(data):
 	data.done()
 	return sample_data
 
+# Generic Transaction Record (Flow, Enterprise 0, Format 2000)
+def generic_transaction_record(data):
+	sample_data = {}
+	sample_data["Service Direction"] = service_direction(int(data.unpack_uint()))
+	sample_data["Wait Time ms"] = int(data.unpack_uint())
+	sample_data["Duration Time ms"] = int(data.unpack_uint())
+	sample_data["Status"] = status_value(int(data.unpack_uint()))
+	sample_data["Bytes In"] = data.unpack_uhyper()
+	sample_data["Bytes Out"] = data.unpack_uhyper()
+	data.done()
+	return sample_data
+
+# Extended NFS Storage Transaction (Flow, Enterprise 0, Format 2001)
+def ext_nfs_storage_trans(data):
+	sample_data = {}
+	sample_data["Path"] = str(data.unpack_opaque())
+	sample_data["Operation"] = int(data.unpack_uint())
+	sample_data["Status"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
+# Extended SCSI Transaction (Flow, Enterprise 0, Format 2002)
+def ext_nfs_storage_trans(data):
+	sample_data = {}
+	sample_data["LUN"] = int(data.unpack_uint())
+	sample_data["Operation"] = int(data.unpack_uint())
+	sample_data["Status"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
+# Extended Web Transaction (Flow, Enterprise 0, Format 2003)
+def extended_web_trans(data):
+	sample_data = {}
+	sample_data["URL"] = data.unpack_string()
+	sample_data["Host"] = data.unpack_string()
+	sample_data["Referer"] = data.unpack_string()
+	sample_data["User Agent"] = data.unpack_string()
+	sample_data["User"] = data.unpack_string()
+	sample_data["Status Code"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
 # IPv4 Socket (Flow, Enterprise 0, Format 2100)
 def ipv4_socket(data):
 	sample_data = {}
@@ -235,16 +282,30 @@ def ipv6_socket(data):
 def extended_tcp_info(data):
 	datagram = {}
 	datagram["Packet Direction"] = packet_direction(data.unpack_uint()) # Parsed packet direction
-	datagram["Cached Effective MSS"] = packet_direction(data.unpack_uint())
-	datagram["Max Received Segment Size"] = packet_direction(data.unpack_uint())
-	datagram["Un-ACKed Packets"] = packet_direction(data.unpack_uint())
-	datagram["Lost Packets"] = packet_direction(data.unpack_uint())
-	datagram["Retransmitted Packets"] = packet_direction(data.unpack_uint())
-	datagram["PMTU"] = packet_direction(data.unpack_uint())
-	datagram["RTT ms"] = packet_direction(data.unpack_uint())
-	datagram["RTT Variance ms"] = packet_direction(data.unpack_uint())
-	datagram["Sending Congestion Window"] = packet_direction(data.unpack_uint())
-	datagram["Reordering"] = packet_direction(data.unpack_uint())
-	datagram["Minimum RTT ms"] = packet_direction(data.unpack_uint())
+	datagram["Cached Effective MSS"] = int(data.unpack_uint())
+	datagram["Max Received Segment Size"] = int(data.unpack_uint())
+	datagram["Un-ACKed Packets"] = int(data.unpack_uint())
+	datagram["Lost Packets"] = int(data.unpack_uint())
+	datagram["Retransmitted Packets"] = int(data.unpack_uint())
+	datagram["PMTU"] = int(data.unpack_uint())
+	datagram["RTT ms"] = int(data.unpack_uint())
+	datagram["RTT Variance ms"] = int(data.unpack_uint())
+	datagram["Sending Congestion Window"] = int(data.unpack_uint())
+	datagram["Reordering"] = int(data.unpack_uint())
+	datagram["Minimum RTT ms"] = int(data.unpack_uint())
+	data.done()
+	return datagram
+
+# Extended Class (Flow, Enterprise 8800, Format 1) for Vyatta, VyOS, Ubiquiti
+def extended_class(data):
+	datagram = {}
+	datagram["Class"] = int(data.unpack_uint())
+	data.done()
+	return datagram
+
+# Extended Tag (Flow, Enterprise 8800, Format 2) for Vyatta, VyOS, Ubiquiti
+def extended_tag(data):
+	datagram = {}
+	datagram["Tag"] = int(data.unpack_uint())
 	data.done()
 	return datagram

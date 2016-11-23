@@ -1,9 +1,9 @@
 # Copyright (c) 2016, Manito Networks, LLC
 # All rights reserved.
 
-import struct
-import sys
+import struct, sys, binascii, uuid
 from xdrlib import Unpacker
+from struct import *
 
 from sflow_parsers import *  # Functions to parse headers and format numbers
 
@@ -193,19 +193,30 @@ def proc_info(data):
 # Host Description (Counter, Enterprise 0, Format 2000)
 def host_description(data):
 	sample_data = {}
-	sample_data["Hostname"] = data.unpack_fstring(64)
-	sample_data["UUID"] = data.unpack_fopaque(16)
+	sample_data["Hostname"] = data.unpack_string()
+	sample_data["UUID"] = str(uuid.UUID(bytes_le=data.unpack_fopaque(16)))
 	sample_data["Machine Type"] = enum_machine_type(int(data.unpack_uint()))
 	sample_data["OS Name"] = enum_os_name(int(data.unpack_uint()))
-	sample_data["OS Release"] = data.unpack_fstring(32)
+	sample_data["OS Release"] = data.unpack_string()
 	data.done()
 	return sample_data
 
 # Host Adapter (Counter, Enterprise 0, Format 2001)
-#def host_adapter(data):
-	#sample_data = {}
-	#data.done()
-	#return sample_data
+def host_adapter(data,agent,subagent):
+	sample_data = {}
+	num_adapters = int(data.unpack_uint())
+	for _ in range(0,num_adapters):
+		interface_index = int(data.unpack_uint())
+		interface_hash = hash(str(agent)+str(subagent)+str(interface_index))
+		sample_data[interface_hash] = {}
+		sample_data[interface_hash]["Index"] = interface_index
+		mac_count = int(data.unpack_uint())
+		for _ in range(0,mac_count):
+			a = data.unpack_fopaque(6)
+			ord_mac = [ord(x) for x in [a[0],a[1],a[2],a[3],a[4],a[5]]]
+			sample_data[interface_hash]["MAC"] = mac_parse(ord_mac)
+	data.done()
+	return sample_data
 
 # Host Parent (Counter, Enterprise 0, Format 2002)
 def host_parent(data):
