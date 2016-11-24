@@ -1,11 +1,19 @@
-# Copyright (c) 2016, Manito Networks, LLC
-# All rights reserved.
+The following Counter Record structures are supported:
 
-import struct, sys, binascii, uuid
-from xdrlib import Unpacker
-from struct import *
-
-from sflow_parsers import *  # Functions to parse headers and format numbers
+## Generic Interface 
+Field | Type | Description |
+--          | - | -     |
+Interface Index     | Interface Counters                | Yes           |
+Interface Type     | String (from parsed num)                | Yes           |
+Interface Speed     | Interface Counters                | Yes           |
+Interface Direction     | Interface Counters                | Yes           |
+Interface Status     | Interface Counters                | Yes           |
+Bytes In     | Interface Counters                | Yes           |
+Interface Index     | Interface Counters                | Yes           |
+Interface Index     | Interface Counters                | Yes           |
+Interface Index     | Interface Counters                | Yes           |
+Interface Index     | Interface Counters                | Yes           |
+Interface Index     | Interface Counters                | Yes           |
 
 # Generic Interface (Counter, Enterprise 0, Format 1)
 def gen_int_counter(data):
@@ -100,16 +108,16 @@ def token_ring_counter(data):
 # 100 BaseVG Interface (Counter, Enterprise 0, Format 4)
 def basevg_int_counter(data):
 	sample_data = {}
-	sample_data["High Priority Frames In"] = int(data.unpack_uint())
-	sample_data["High Priority Bytes In"] = data.unpack_hyper()
-	sample_data["Norm Priority Frames In"] = int(data.unpack_uint())
-	sample_data["Norm Priority Bytes In"] = data.unpack_hyper()
-	sample_data["IPM Errors In"] = int(data.unpack_uint())
-	sample_data["Oversize Frame Errors In"] = int(data.unpack_uint())
-	sample_data["Data Errors In"] = int(data.unpack_uint())
-	sample_data["Null Addressed Frames In"] = int(data.unpack_uint())
-	sample_data["Out High Priority Frames"] = int(data.unpack_uint())
-	sample_data["Out High Priority Bytes"] = data.unpack_hyper()
+	sample_data["InHigh Priority Frames"] = int(data.unpack_uint())
+	sample_data["InHigh Priority Bytes"] = data.unpack_hyper()
+	sample_data["InNorm Priority Frames"] = int(data.unpack_uint())
+	sample_data["InNorm Priority Bytes"] = data.unpack_hyper()
+	sample_data["InIPM Errors"] = int(data.unpack_uint())
+	sample_data["InOversize Frame Errors"] = int(data.unpack_uint())
+	sample_data["InData Errors"] = int(data.unpack_uint())
+	sample_data["InNull Addressed Frames"] = int(data.unpack_uint())
+	sample_data["OutHigh Priority Frames"] = int(data.unpack_uint())
+	sample_data["OutHigh Priority Bytes"] = data.unpack_hyper()
 	sample_data["Transition Into Trainings"] = int(data.unpack_uint())
 	sample_data["HC In High Priority Bytes"] = data.unpack_hyper()
 	sample_data["HC In Norm Priority Bytes"] = data.unpack_hyper()
@@ -187,15 +195,6 @@ def proc_info(data):
 	sample_data["5m CPU Percentage"] = int(data.unpack_uint())
 	sample_data["Total Memory"] = data.unpack_hyper()
 	sample_data["Free Memory"] = data.unpack_hyper()
-	data.done()
-	return sample_data
-
-# 802.11 Radio Utilization (Counter, Enterprise 0, Format 1002)
-def radio_util(data):
-	sample_data = {}
-	sample_data["Elapsed Time Milliseconds"] = int(data.unpack_uint())
-	sample_data["On Channel Time Milliseconds"] = int(data.unpack_uint())
-	sample_data["On Channel Busy Time Milliseconds"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
@@ -310,90 +309,90 @@ def physical_host_netio(data):
 # MIB2 IP Group (Counter, Enterprise 0, Format 2007)
 def mib2_ip_group(data):
 	sample_data = {}
-	sample_data["IP Forwarding"] = int(data.unpack_uint())
-	sample_data["IP Default TTL"] = int(data.unpack_uint())
-	sample_data["IP In Receives"] = int(data.unpack_uint())
-	sample_data["IP In Header Errors"] = int(data.unpack_uint())
-	sample_data["IP In Address Errors"] = int(data.unpack_uint())
-	sample_data["IP Forward Datagrams"] = int(data.unpack_uint())
-	sample_data["IP In Unknown Protos"] = int(data.unpack_uint())
-	sample_data["IP In Discards"] = int(data.unpack_uint())
-	sample_data["IP In Delivers"] = int(data.unpack_uint())
-	sample_data["IP Out Requests"] = int(data.unpack_uint())
-	sample_data["IP Out Discards"] = int(data.unpack_uint())
-	sample_data["IP Out No Routes"] = int(data.unpack_uint())
-	sample_data["IP Reassemble Timeout"] = int(data.unpack_uint())
-	sample_data["IP Reassemble Requireds"] = int(data.unpack_uint())
-	sample_data["IP Reassemble OKs"] = int(data.unpack_uint())
-	sample_data["IP Reassemble Fails"] = int(data.unpack_uint())
-	sample_data["IP Fragment OKs"] = int(data.unpack_uint())
-	sample_data["IP Fragment Fails"] = int(data.unpack_uint())
-	sample_data["IP Fragment Creates"] = int(data.unpack_uint())
+	sample_data["ipForwarding"] = int(data.unpack_uint())
+	sample_data["ipDefaultTTL"] = int(data.unpack_uint())
+	sample_data["ipInReceives"] = int(data.unpack_uint())
+	sample_data["ipInHdrErrors"] = int(data.unpack_uint())
+	sample_data["ipInAddrErrors"] = int(data.unpack_uint())
+	sample_data["ipForwDatagrams"] = int(data.unpack_uint())
+	sample_data["ipInUnknownProtos"] = int(data.unpack_uint())
+	sample_data["ipInDiscards"] = int(data.unpack_uint())
+	sample_data["ipInDelivers"] = int(data.unpack_uint())
+	sample_data["ipOutRequests"] = int(data.unpack_uint())
+	sample_data["ipOutDiscards"] = int(data.unpack_uint())
+	sample_data["ipOutNoRoutes"] = int(data.unpack_uint())
+	sample_data["ipReasmTimeout"] = int(data.unpack_uint())
+	sample_data["ipReasmReqds"] = int(data.unpack_uint())
+	sample_data["ipReasmOKs"] = int(data.unpack_uint())
+	sample_data["ipReasmFails"] = int(data.unpack_uint())
+	sample_data["ipFragOKs"] = int(data.unpack_uint())
+	sample_data["ipFragFails"] = int(data.unpack_uint())
+	sample_data["ipFragCreates"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
 # MIB2 ICMP Group (Counter, Enterprise 0, Format 2008)
 def mib2_icmp_group(data):
 	sample_data = {}
-	sample_data["ICMP In Messages"] = int(data.unpack_uint())
-	sample_data["ICMP In Errors"] = int(data.unpack_uint())
-	sample_data["ICMP In Destination Unreachables"] = int(data.unpack_uint())
-	sample_data["ICMP In Time Exceeded"] = int(data.unpack_uint())
-	sample_data["ICMP In Parameter Problems"] = int(data.unpack_uint())
-	sample_data["ICMP In Source Quenches"] = int(data.unpack_uint())
-	sample_data["ICMP In Redirects"] = int(data.unpack_uint())
-	sample_data["ICMP In Echos"] = int(data.unpack_uint())
-	sample_data["ICMP In Echo Replies"] = int(data.unpack_uint())
-	sample_data["ICMP In Timestamps"] = int(data.unpack_uint())
-	sample_data["ICMP In Address Masks"] = int(data.unpack_uint())
-	sample_data["ICMP In Address Mask Replies"] = int(data.unpack_uint())
-	sample_data["ICMP Out Messages"] = int(data.unpack_uint())
-	sample_data["ICMP Out Errors"] = int(data.unpack_uint())
-	sample_data["ICMP Out Destination Unreachables"] = int(data.unpack_uint())
-	sample_data["ICMP Out Time Exceeded"] = int(data.unpack_uint())
-	sample_data["ICMP Out Parameter Problems"] = int(data.unpack_uint())
-	sample_data["ICMP Out Source Quenches"] = int(data.unpack_uint())
-	sample_data["ICMP Out Redirects"] = int(data.unpack_uint())
-	sample_data["ICMP Out Echos"] = int(data.unpack_uint())
-	sample_data["ICMP Out Echo Replies"] = int(data.unpack_uint())
-	sample_data["ICMP Out Timestamps"] = int(data.unpack_uint())
-	sample_data["ICMP Out Timestamp Replies"] = int(data.unpack_uint())
-	sample_data["ICMP Out Address Masks"] = int(data.unpack_uint())
-	sample_data["ICMP Out Address Mask Replies"] = int(data.unpack_uint())
+	sample_data["icmpInMsgs"] = int(data.unpack_uint())
+	sample_data["icmpInErrors"] = int(data.unpack_uint())
+	sample_data["icmpInDestUnreachs"] = int(data.unpack_uint())
+	sample_data["icmpInTimeExcds"] = int(data.unpack_uint())
+	sample_data["icmpInParamProbs"] = int(data.unpack_uint())
+	sample_data["icmpInSrcQuenchs"] = int(data.unpack_uint())
+	sample_data["icmpInRedirects"] = int(data.unpack_uint())
+	sample_data["icmpInEchos"] = int(data.unpack_uint())
+	sample_data["icmpInEchoReps"] = int(data.unpack_uint())
+	sample_data["icmpInTimestamps"] = int(data.unpack_uint())
+	sample_data["icmpInAddrMasks"] = int(data.unpack_uint())
+	sample_data["icmpInAddrMaskReps"] = int(data.unpack_uint())
+	sample_data["icmpOutMsgs"] = int(data.unpack_uint())
+	sample_data["icmpOutErrors"] = int(data.unpack_uint())
+	sample_data["icmpOutDestUnreachs"] = int(data.unpack_uint())
+	sample_data["icmpOutTimeExcds"] = int(data.unpack_uint())
+	sample_data["icmpOutParamProbs"] = int(data.unpack_uint())
+	sample_data["icmpOutSrcQuenchs"] = int(data.unpack_uint())
+	sample_data["icmpOutRedirects"] = int(data.unpack_uint())
+	sample_data["icmpOutEchos"] = int(data.unpack_uint())
+	sample_data["icmpOutEchoReps"] = int(data.unpack_uint())
+	sample_data["icmpOutTimestamps"] = int(data.unpack_uint())
+	sample_data["icmpOutTimestampReps"] = int(data.unpack_uint())
+	sample_data["icmpOutAddrMasks"] = int(data.unpack_uint())
+	sample_data["icmpOutAddrMaskReps"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
 # MIB2 TCP Group (Counter, Enterprise 0, Format 2009)
 def mib2_tcp_group(data):
 	sample_data = {}
-	sample_data["TCP Retrasmission Timeout Algorithm"] = int(data.unpack_uint())
-	sample_data["TCP Retrasmission Timeout Min"] = int(data.unpack_uint())
-	sample_data["TCP Retrasmission Timeout Max"] = int(data.unpack_uint())
-	sample_data["TCP Max Connections"] = int(data.unpack_uint())
-	sample_data["TCP Active Opens"] = int(data.unpack_uint())
-	sample_data["TCP Passive Opens"] = int(data.unpack_uint())
-	sample_data["TCP Attempt Fails"] = int(data.unpack_uint())
-	sample_data["TCP Established Resets"] = int(data.unpack_uint())
-	sample_data["TCP Current Established"] = int(data.unpack_uint())
-	sample_data["TCP In Segments"] = int(data.unpack_uint())
-	sample_data["TCP Out Segments"] = int(data.unpack_uint())
-	sample_data["TCP Retransmit Segments"] = int(data.unpack_uint())
-	sample_data["TCP In Errors"] = int(data.unpack_uint())
-	sample_data["TCP Out Resets"] = int(data.unpack_uint())
-	sample_data["TCP In Checksum Errors"] = int(data.unpack_uint())
+	sample_data["tcpRtoAlgorithm"] = int(data.unpack_uint())
+	sample_data["tcpRtoMin"] = int(data.unpack_uint())
+	sample_data["tcpRtoMax"] = int(data.unpack_uint())
+	sample_data["tcpMaxConn"] = int(data.unpack_uint())
+	sample_data["tcpActiveOpens"] = int(data.unpack_uint())
+	sample_data["tcpPassiveOpens"] = int(data.unpack_uint())
+	sample_data["tcpAttemptFails"] = int(data.unpack_uint())
+	sample_data["tcpEstabResets"] = int(data.unpack_uint())
+	sample_data["tcpCurrEstab"] = int(data.unpack_uint())
+	sample_data["tcpInSegs"] = int(data.unpack_uint())
+	sample_data["tcpOutSegs"] = int(data.unpack_uint())
+	sample_data["tcpRetransSegs"] = int(data.unpack_uint())
+	sample_data["tcpInErrs"] = int(data.unpack_uint())
+	sample_data["tcpOutRsts"] = int(data.unpack_uint())
+	sample_data["tcpInCsumErrs"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
 # MIB2 UDP Group (Counter, Enterprise 0, Format 2010)
 def mib2_udp_group(data):
 	sample_data = {}
-	sample_data["UDP In Datagrams"] = int(data.unpack_uint())
-	sample_data["UDP No Ports"] = int(data.unpack_uint())
-	sample_data["UDP In Errors"] = int(data.unpack_uint())
-	sample_data["UDP Out Datagrams"] = int(data.unpack_uint())
-	sample_data["UDP Receive Buffer Errors"] = int(data.unpack_uint())
-	sample_data["UDP Send Buffer Errors"] = int(data.unpack_uint())
-	sample_data["UDP In Checksum Errors"] = int(data.unpack_uint())
+	sample_data["udpInDatagrams"] = int(data.unpack_uint())
+	sample_data["udpNoPorts"] = int(data.unpack_uint())
+	sample_data["udpInErrors"] = int(data.unpack_uint())
+	sample_data["udpOutDatagrams"] = int(data.unpack_uint())
+	sample_data["udpRcvbufErrors"] = int(data.unpack_uint())
+	sample_data["udpSndbufErrors"] = int(data.unpack_uint())
+	sample_data["udpInCsumErrors"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
@@ -462,7 +461,7 @@ def asic_hardware_tab_util(data):
 	sample_data["IPv4 Entries"] = int(data.unpack_uint())
 	sample_data["IPv4 Entries Max"] = int(data.unpack_uint())
 	sample_data["IPv6 Entries"] = int(data.unpack_uint())
-	sample_data["IPv6 Entries Max"] = int(data.unpack_uint())
+	sample_data["ipv6 Entries Max"] = int(data.unpack_uint())
 	sample_data["IPv4 IPv6 Entries"] = int(data.unpack_uint())
 	sample_data["IPv6 IPv6 Entries Max"] = int(data.unpack_uint())
 	sample_data["Long IPv6 Entries"] = int(data.unpack_uint())
@@ -493,21 +492,5 @@ def asic_hardware_tab_util(data):
 	sample_data["ACL Egress Meters Max"] = int(data.unpack_uint())
 	sample_data["ACL Egress Slices"] = int(data.unpack_uint())
 	sample_data["ACL Egress Slices Max"] = int(data.unpack_uint())
-	data.done()
-	return sample_data
-
-# NVIDIA GPU statistics (Counter, Enterprise 5703, Format 1)
-def nvidia_gpu_stats(data):
-	sample_data = {}
-	sample_data["Device Count"] = int(data.unpack_uint())
-	sample_data["Processes"] = int(data.unpack_uint())
-	sample_data["GPU Time"] = int(data.unpack_uint())
-	sample_data["Memory Time ms"] = int(data.unpack_uint())
-	sample_data["Total Memory"] = data.unpack_uhyper()
-	sample_data["Free Memory"] = data.unpack_uhyper()
-	sample_data["ECC Errors"] = int(data.unpack_uint())
-	sample_data["Energy mJ"] = int(data.unpack_uint())
-	sample_data["Temperature"] = int(data.unpack_uint())
-	sample_data["Fan Speed"] = int(data.unpack_uint())
 	data.done()
 	return sample_data

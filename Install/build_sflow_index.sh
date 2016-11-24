@@ -10,7 +10,7 @@ curl -XPOST localhost:9200/_template/sflow_template -d '
 
 "mapping": {
 "nested_fields": {
-"limit": "300"
+"limit": "600"
 }
 },
 
@@ -23,11 +23,13 @@ curl -XPOST localhost:9200/_template/sflow_template -d '
 "properties": {
 
 "BGP IPv4 Next Hop":                    {"type":"ip"},
+"Broadcast Packets In":                 {"type":"long"},
+"Broadcast Packets Out":                {"type":"long"},
 "Bytes In":                             {"type":"long"},
 "Bytes Out":                            {"type":"long"},
 "Bytes Read":                           {"type":"long"},
 "Bytes Written":                        {"type":"long"},
-"Content":                              {"type":"string","index":"not_analyzed"},
+"Content":                              {"type":"string","index":"not_analyzed","null_value":"Other"},
 "Context Switch Count":                 {"type":"long"},
 "CPU Count":                            {"type":"integer"},
 "CPU Idle Time":                        {"type":"long"},
@@ -56,6 +58,7 @@ curl -XPOST localhost:9200/_template/sflow_template -d '
 "Drops":                                {"type":"long"},
 "Drops In":                             {"type":"long"},
 "Drops Out":                            {"type":"long"},
+"Elapsed Time Milliseconds":            {"type":"long"},
 "Enterprise, Format":                   {"type":"string","index":"not_analyzed"},
 "Errors In":                            {"type":"long"},
 "Errors Out":                           {"type":"long"},
@@ -71,16 +74,33 @@ curl -XPOST localhost:9200/_template/sflow_template -d '
 "Header Protocol":                      {"type":"string","index":"not_analyzed"},
 "Header Protocol Number":               {"type":"integer"},
 "Header Size":                          {"type":"integer"},
+"Hostname":                             {"type":"string","index":"not_analyzed","null_value":"Unknown"},
 "ICMP Code":                            {"type":"integer"},
+"ICMP In Address Mask Replies":         {"type":"long"},
+"ICMP In Address Masks":                {"type":"long"},
+"ICMP In Echo Replies":                 {"type":"long"},
+"ICMP In Echos":                        {"type":"long"},
+"ICMP In Errors":                       {"type":"long"},
+"ICMP In Messages":                     {"type":"long"},
+"ICMP In Redirects":                    {"type":"long"},
+"ICMP Out Echos":                       {"type":"long"},
+"ICMP Out Errors":                      {"type":"long"},
+"ICMP Out Messages":                    {"type":"long"},
+"ICMP Out Timestamps":                  {"type":"long"},
 "ICMP Type":                            {"type":"integer"},
 "Incoming Destination MAC":             {"type":"string","index":"not_analyzed"},
 "Incoming Source MAC":                  {"type":"string","index":"not_analyzed"},
 "Input Interface":                      {"type":"integer"},
+"Input SNMP Index":                     {"type":"integer"},
 "Interface Direction":                  {"type":"string","index":"not_analyzed"},
+"Interface Index":                      {"type":"integer"},
 "Interface Status":                     {"type":"string","index":"not_analyzed"},
 "Interface Speed":                      {"type":"long"},
 "Interface Type":                       {"type":"string","index":"not_analyzed"},
 "Interrupts":                           {"type":"long"},
+"IP Default TTL":                       {"type":"integer"},
+"IP Forward Datagrams":                 {"type":"long"},
+"IP Forwarding":                        {"type":"long"},
 "IP Protocol Version":                  {"type":"integer"},
 "IPv4 Destination":                     {"type":"ip"},
 "IPv4 ICMP Type":                       {"type":"integer"},
@@ -92,17 +112,31 @@ curl -XPOST localhost:9200/_template/sflow_template -d '
 "IPv6 Source":                          {"type":"string","index":"not_analyzed"},
 "IPv6 Source Mask":                     {"type":"integer"},
 "Last Switched":                        {"type":"long"},
+"Machine Type":                         {"type":"string","index":"not_analyzed","null_value":"Unknown"},
 "Maximum TTL":                          {"type":"integer"},
+"Memory Buffers":                       {"type":"long"},
+"Memory Cached":                        {"type":"long"},
+"Memory Free":                          {"type":"long"},
+"Memory Shared":                        {"type":"long"},
+"Memory Total":                         {"type":"long"},
 "Minimum TTL":                          {"type":"integer"},
-"Multicast Packets In":                 {"type":"integer"},
-"Multicast Packets Out":                {"type":"integer"},
+"Multicast Packets In":                 {"type":"long"},
+"Multicast Packets Out":                {"type":"long"},
 "MPLS Label Stack Length":              {"type":"integer"},
 "Observation Domain":                   {"type":"integer"},
+"On Channel Busy Time Milliseconds":    {"type":"long"},
+"On Channel Time Milliseconds":         {"type":"long"},
+"OS Name":                              {"type":"string","index":"not_analyzed","null_value":"Unknown"},
+"OS Release":                           {"type":"string","index":"not_analyzed","null_value":"Unknown"},
+"OS Type":                              {"type":"string","index":"not_analyzed","null_value":"Unknown"},
 "Outgoing Destination MAC":             {"type":"string","index":"not_analyzed"},
 "Outgoing Source MAC":                  {"type":"string","index":"not_analyzed"},
 "Output Interface":                     {"type":"integer"},
-"Packets In":                           {"type":"integer"},
-"Packets Out":                          {"type":"integer"},
+"Output SNMP Index":                    {"type":"integer"},
+"Packets In":                           {"type":"long"},
+"Packets Out":                          {"type":"long"},
+"Page In":                              {"type":"long"},
+"Page Out":                             {"type":"long"},
 "Post-NAT Destination IPv4":            {"type":"ip"},
 "Post-NAT Destination Transport Port":  {"type":"integer"},
 "Post-NAT Source IPv4":                 {"type":"ip"},
@@ -117,7 +151,7 @@ curl -XPOST localhost:9200/_template/sflow_template -d '
 "Source AS":                            {"type":"integer"},
 "Source Domain":                        {"type":"string","index":"not_analyzed"},
 "Source FQDN":                          {"type":"string","index":"not_analyzed"},
-"Source ID Type":                          {"type":"string","index":"not_analyzed"},
+"Source ID Type":                       {"type":"string","index":"not_analyzed"},
 "Source MAC":                           {"type":"string","index":"not_analyzed"},
 "Source Mask":                          {"type":"integer"},
 "Source Port":                          {"type":"integer"},
@@ -126,42 +160,49 @@ curl -XPOST localhost:9200/_template/sflow_template -d '
 "Source VLAN":                          {"type":"integer"},
 "Stripped":                             {"type":"integer"},
 "Sub Agent":                            {"type":"integer"},
+"Swap Free":                            {"type":"long"},
+"Swap In":                              {"type":"long"},
+"Swap Out":                             {"type":"long"},
+"Swap Total":                           {"type":"long"},
+"TCP Active Opens":                     {"type":"long"},
+"TCP Attempt Fails":                    {"type":"long"},
+"TCPCurrent Established":               {"type":"long"},
+"TCP Established Resets":               {"type":"long"},
 "TCP Flags":                            {"type":"integer"},
+"TCP In Checksum Errors":               {"type":"long"},
+"TCP In Errors":                        {"type":"long"},
+"TCP In Segments":                      {"type":"long"},
+"TCP Max Connections":                  {"type":"long"},
+"TCP Out Resets":                       {"type":"long"},
+"TCP Out Segments":                     {"type":"long"},
+"TCP Passive Opens":                    {"type":"long"},
+"TCP Retransmit Segments":              {"type":"long"},
 "Time":                                 {"type":"date"},
+"Total Processes":                      {"type":"integer"},
 "Traffic":                              {"type":"string","index":"not_analyzed","null_value":"Other"},
 "Traffic Category":                     {"type":"string","index":"not_analyzed","null_value":"Other"},
-"Type of Service":                      {"type":"integer"}
+"Type of Service":                      {"type":"integer"},
+"UDP In Checksum Errors":               {"type":"long"},
+"UDP In Datagrams":                     {"type":"long"},
+"UDP In Errors":                        {"type":"long"},
+"UDP No Ports":                         {"type":"long"},
+"UDP Out Datagrams":                    {"type":"long"},
+"UDP Receive Buffer Errors":            {"type":"long"},
+"UDP Send Buffer Errors":               {"type":"long"},
+"Unicast Packets In":                   {"type":"long"},
+"Unicast Packets Out":                  {"type":"long"},
+"Uptime":                               {"type":"long"},
+"UUID":                                 {"type":"string","index":"not_analyzed","null_value":"Unknown"},
+"Write Time":                           {"type":"long"},
+"Writes":                               {"type":"long"}
 },
 
 "dynamic_templates": [
-{
-"integers": {"match_mapping_type": "integer","mapping": {"type": "integer"}}
-},
-{
-"strings": {
-"match_mapping_type": "string",
-"mapping": {
-"type": "string",
-"index":"not_analyzed"
-}
-}
-},
-{
-"strings": {
-"match_mapping_type": "ip",
-"mapping": {
-"type": "ip"
-}
-}
-},
-{
-"strings": {
-"match_mapping_type": "boolean",
-"mapping": {
-"type": "boolean"
-}
-}
-}
+{"integers": {"match_mapping_type": "integer", "mapping": {"type": "integer"}}},
+{"integers": {"match_mapping_type": "long", "mapping": {"type": "long"}}},
+{"strings": {"match_mapping_type": "string", "mapping": {"type": "string","index": "not_analyzed"}}},
+{"strings": {"match_mapping_type": "ip", "mapping": {"type": "ip"}}},
+{"strings": {"match_mapping_type": "boolean", "mapping": {"type": "boolean"}}}
 ]
 }
 }

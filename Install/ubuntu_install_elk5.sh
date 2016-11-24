@@ -27,7 +27,10 @@ echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee 
 # Install dependencies
 echo "Install system dependencies"
 apt-get update
-apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2-utils php-curl curl
+apt-get -y install gcc wget openjdk-8-jre ntp apache2-utils php-curl curl apt-transport-https
+
+# Install Elasticsearch and Kibana
+apt-get -y install elasticsearch kibana
 
 # Resolving Python dependencies
 echo "Install Python dependencies"
@@ -56,19 +59,7 @@ set +e
 # Sleep 10s so Elasticsearch service can restart before building index
 sleep 10s
 
-# Adding Kibana credentials
-echo "Adding Kibana credentials"
-groupadd -g 1005 kibana
-useradd -u 1005 -g 1005 kibana
-
 set -e
-
-# Set up Kibana
-echo "server.host: \"127.0.0.1\" " >> /opt/kibana/config/kibana.yml
-
-# Prevent Kibana from blowing up /var/log/messages
-echo "Prevent Kibana from blowing up /var/log/messages"
-echo "logging.quiet: true" >> /opt/kibana/config/kibana.yml
 
 # Setting up the Netflow v5 service
 echo "Setting up the Netflow v5 service"
@@ -112,6 +103,20 @@ echo "StandardOutput=journal+console" >> /etc/systemd/system/ipfix.service
 echo "[Install]" >> /etc/systemd/system/ipfix.service
 echo "WantedBy=multi-user.target" >> /etc/systemd/system/ipfix.service
 
+# Setting up the sFlow service
+echo "Setting up the sFlow service"
+echo "[Unit]" >> /etc/systemd/system/sflow.service
+echo "Description=sFlow listener service" >> /etc/systemd/system/sflow.service
+echo "After=network.target elasticsearch.service kibana.service" >> /etc/systemd/system/sflow.service
+echo "[Service]" >> /etc/systemd/system/sflow.service
+echo "Type=simple" >> /etc/systemd/system/sflow.service
+echo "ExecStart=/usr/bin/python $(dirname $PWD)/flowanalyzer/Python/sflow.py" >> /etc/systemd/system/sflow.service
+echo "Restart=on-failure" >> /etc/systemd/system/sflow.service
+echo "RestartSec=30" >> /etc/systemd/system/sflow.service
+echo "StandardOutput=journal+console" >> /etc/systemd/system/sflow.service
+echo "[Install]" >> /etc/systemd/system/sflow.service
+echo "WantedBy=multi-user.target" >> /etc/systemd/system/sflow.service
+
 # Register new services created above
 echo "Register new services created above"
 systemctl daemon-reload
@@ -121,6 +126,7 @@ echo "Set the Netflow services to automatically start"
 systemctl enable netflow_v5
 systemctl enable netflow_v9
 systemctl enable ipfix
+systemctl enable sflow
 
 # Set the Kibana service to automatically start
 echo "Set the Kibana service to automatically start"
@@ -129,22 +135,6 @@ systemctl enable kibana
 # Set the NTP service to automatically start
 echo "Set the NTP service to automatically start"
 systemctl enable ntp
-
-# Get the squid.conf file and replace the default squid.conf
-echo "Get the squid.conf file and replace the default squid.conf"
-cp $flow_analyzer_dir/ubuntu_squid.conf /etc/squid/squid.conf
-
-# Set the Squid service to automatically start
-echo "Set the Squid service to automatically start"
-systemctl enable squid
-
-# Add the entry to /etc/hosts that Squid needs
-echo "Add the entry to /etc/hosts that Squid needs"
-echo "127.0.0.1    Flow00" >> /etc/hosts
-
-# Set the default proxy password for Squid
-echo "Set the default proxy password for Squid"
-htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
 
 # Prune old indexes
 echo "curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'" >> /etc/cron.daily/index_prune
