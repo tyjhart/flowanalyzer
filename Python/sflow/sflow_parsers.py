@@ -119,8 +119,6 @@ def mac_parse(mac):
 	mac_list = []
 	for mac_item in mac:
 		mac_item_formatted = hex(mac_item).replace('0x','')
-		#if mac_item_formatted == '0':
-			#mac_item_formatted = "00"
 		if len(mac_item_formatted) == 1:
 			mac_item_formatted = str("0" + mac_item_formatted)
 		mac_list.append(mac_item_formatted)

@@ -43,7 +43,7 @@ except:
 try: 
 	log_level # Check if log level was passed in from command arguments
 except NameError:
-	log_level="WARNING" # Use default logging level
+	log_level="INFO" # Use default logging level
 
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.warning('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
@@ -244,16 +244,15 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0,2209]: # Extended TCP Information
 							flow_index["_source"].update(extended_tcp_info(unpacked_record_data))
 						
-						elif record_ent_form_number == [8800,1]: # Extended Class
-							flow_index["_source"].update(extended_class(unpacked_record_data))
+						#elif record_ent_form_number == [8800,1]: # Extended Class
+							#flow_index["_source"].update(extended_class(unpacked_record_data))
 						
-						elif record_ent_form_number == [8800,2]: # Extended Tag
-							flow_index["_source"].update(extended_tag(unpacked_record_data))
-							print(flow_index["_source"])
+						#elif record_ent_form_number == [8800,2]: # Extended Tag
+							#flow_index["_source"].update(extended_tag(unpacked_record_data))
 						
 						else: # Something we don't know about - SKIP it
 							unpacked_sample_data.set_position(skip_position) # Skip the unknown type
-							logging.warning("Received unknown flow record type " + str(record_ent_form_number) + " from " + str(datagram_info["Agent IP"]) + " (sub agent " + str(datagram_info["Sub Agent"]) + ") - SKIPPING")
+							logging.info("Received unknown flow record type " + str(record_ent_form_number) + " from " + str(datagram_info["Agent IP"]) + " (sub agent " + str(datagram_info["Sub Agent"]) + ") - SKIPPING")
 							flow_index = False
 
 					except Exception as flow_unpack_error:
@@ -327,9 +326,10 @@ if __name__ == "__main__":
 							flow_index["_source"].update(host_description(unpacked_record_data))
 
 						elif record_ent_form_number == [0, 2001]: # Host Adapter
-							uuid_cache.update(host_adapter(unpacked_record_data,datagram_info["Agent IP"],datagram_info["Sub Agent"]))
-							print(uuid_cache)
-							continue
+							mac_cache = host_adapter(unpacked_record_data,datagram_info["Agent IP"],datagram_info["Sub Agent"])
+							uuid_cache.update(mac_cache)
+							logging.info("Updated MAC cache: " + str(mac_cache))
+							flow_index = False
 
 						elif record_ent_form_number == [0, 2002]: # Host Parent
 							flow_index["_source"].update(host_parent(unpacked_record_data))
@@ -346,6 +346,18 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0, 2006]: # Physical Host Network I/O
 							flow_index["_source"].update(physical_host_netio(unpacked_record_data))
 
+						elif record_ent_form_number == [0, 2007]: # MIB2 IP Group
+							flow_index["_source"].update(mib2_ip_group(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 2008]: # MIB2 ICMP Group
+							flow_index["_source"].update(mib2_icmp_group(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 2009]: # MIB2 TCP Group
+							flow_index["_source"].update(mib2_tcp_group(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 2010]: # MIB2 UDP Group
+							flow_index["_source"].update(mib2_udp_group(unpacked_record_data))
+
 						elif record_ent_form_number == [0, 2100]: # Virtual Node Statistics
 							flow_index["_source"].update(virtual_node_stats(unpacked_record_data))
 
@@ -361,9 +373,12 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0, 2104]: # Virtual Node Network Statistics
 							flow_index["_source"].update(virtual_domain_net_stats(unpacked_record_data))
 
+						elif record_ent_form_number == [4413, 3]: # ASIC Hardware Table Utilizations
+							flow_index["_source"].update(asic_hardware_tab_util(unpacked_record_data))
+
 						else:
 							unpacked_sample_data.set_position(skip_position) # Skip the unknown type
-							logging.warning("Received unknown counter record type " + str(record_ent_form_number) + " from " + str(datagram_info["Agent IP"]) + " (sub agent " + str(datagram_info["Sub Agent"]) + ") - SKIPPING")
+							logging.info("Received unknown counter record type " + str(record_ent_form_number) + " from " + str(datagram_info["Agent IP"]) + " (sub agent " + str(datagram_info["Sub Agent"]) + ") - SKIPPING")
 							flow_index = False
 
 					except Exception as flow_unpack_error:
