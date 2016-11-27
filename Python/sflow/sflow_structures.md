@@ -137,16 +137,16 @@ Counter     | 0     | 1003  | Queue Length                      | In Progress   
 Counter     | 0     | 1004  | OpenFlow Port                     | In Progress   | [sFlow OpenFlow Structures](http://www.sflow.org/sflow_openflow.txt) |
 Counter     | 0     | 1005  | OpenFlow Port Name                | In Progress   | [sFlow OpenFlow Structures](http://www.sflow.org/sflow_openflow.txt) |
 Counter     | 0     | 2000  | Host Description                  | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2001  | Host Adapters                     | In Progress   | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2001  | Host Adapters                     | Yes   | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2002  | Host Parent                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2003  | Host CPU                          | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2004  | Host Memory                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2005  | Host Disk I/O                     | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2006  | Host Network I/O                  | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2007  | MIB2 IP Group                     | In Progress   | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
-Counter     | 0     | 2008  | MIB2 ICMP Group                   | In Progress   | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
-Counter     | 0     | 2009  | MIB2 TCP Group                    | In Progress   | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
-Counter     | 0     | 2010  | MIB2 UDP Group                    | In Progress   | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
+Counter     | 0     | 2007  | MIB2 IP Group                     | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
+Counter     | 0     | 2008  | MIB2 ICMP Group                   | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
+Counter     | 0     | 2009  | MIB2 TCP Group                    | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
+Counter     | 0     | 2010  | MIB2 UDP Group                    | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
 Counter     | 0     | 2100  | Virtual Node                      | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2101  | Virtual CPU                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2102  | Virtual Memory                    | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
