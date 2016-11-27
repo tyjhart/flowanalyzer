@@ -105,14 +105,13 @@ if __name__ == "__main__":
 		
 		# Listen for packets inbound
 		sflow_packet_contents, sensor_address = netflow_sock.recvfrom(65565)
-		#logging.debug("Got something from " + sensor_address[0])
-
+		
 		record_num = 0 # Record index number for the record cache
 
 		### sFlow Datagram Start ###
 		try:
 			unpacked_data = Unpacker(sflow_packet_contents) # Unpack XDR datagram
-			datagram_info = datagram_parse(unpacked_data) # Unpack the datagram
+			datagram_info = datagram_parse(unpacked_data) # Parse the datagram
 			
 			logging.debug(str(datagram_info))
 			logging.info("Unpacked an sFlow datagram from " + str(sensor_address[0]) + " - OK")
