@@ -137,7 +137,7 @@ Counter     | 0     | 1003  | Queue Length                      | In Progress   
 Counter     | 0     | 1004  | OpenFlow Port                     | In Progress   | [sFlow OpenFlow Structures](http://www.sflow.org/sflow_openflow.txt) |
 Counter     | 0     | 1005  | OpenFlow Port Name                | In Progress   | [sFlow OpenFlow Structures](http://www.sflow.org/sflow_openflow.txt) |
 Counter     | 0     | 2000  | Host Description                  | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2001  | Host Adapters                     | Yes   | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2001  | Host Adapters                     | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2002  | Host Parent                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2003  | Host CPU                          | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Counter     | 0     | 2004  | Host Memory                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
