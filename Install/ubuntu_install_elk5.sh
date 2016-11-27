@@ -28,13 +28,19 @@ echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee 
 echo "Install system dependencies"
 apt-get update
 <<<<<<< HEAD
+<<<<<<< HEAD
 apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2-utils php-curl curl apt-transport-https
 =======
+=======
+>>>>>>> 68cc7165cf98840612dfb5868fbd9dfcba9fd81c
 apt-get -y install gcc wget openjdk-8-jre ntp apache2-utils php-curl curl apt-transport-https
 
 # Install Elasticsearch and Kibana
 apt-get -y install elasticsearch kibana
+<<<<<<< HEAD
 >>>>>>> sFlow initial dev and documentation
+=======
+>>>>>>> 68cc7165cf98840612dfb5868fbd9dfcba9fd81c
 
 # Resolving Python dependencies
 echo "Install Python dependencies"
@@ -147,6 +153,7 @@ echo "Set the NTP service to automatically start"
 systemctl enable ntp
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Get the squid.conf file and replace the default squid.conf
 echo "Get the squid.conf file and replace the default squid.conf"
 cp $flow_analyzer_dir/ubuntu_squid.conf /etc/squid/squid.conf
@@ -165,6 +172,8 @@ cp $flow_analyzer_dir/ubuntu_squid.conf /etc/squid/squid.conf
 
 =======
 >>>>>>> sFlow initial dev and documentation
+=======
+>>>>>>> 68cc7165cf98840612dfb5868fbd9dfcba9fd81c
 # Prune old indexes
 echo "curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'" >> /etc/cron.daily/index_prune
 chmod +x /etc/cron.daily/index_prune
