@@ -36,19 +36,16 @@ While installing everything on one server is good for proof-of-concept or testin
 ### Clone the Git Repository
 
 If you don't have Git installed on your Ubuntu Server machine that's OK, just run the following:
-
 ```
 sudo apt-get install git
 ```
 
 Clone the Git repository:
-
 ```
 git clone https://gitlab.com/thart/flowanalyzer.git
 ```
 
 The download should only take a moment. Move into the repo directory:
-
 ```
 cd flowanalyzer
 ```
@@ -56,7 +53,6 @@ cd flowanalyzer
 ### Installation Script
 
 The ubuntu_install.sh script handles almost everything, just be sure to run it with sudo privileges:
-
 ```
 sudo sh ./Install/ubuntu_install.sh
 ```
@@ -68,20 +64,27 @@ The ubuntu_install.sh script does the following:
 - Updates software repos and keys
 - Installs Elasticsearch pre-reqs (Curl, OpenJDK 8, etc)
 - Installs Elasticsearch and Kibana
-- Creates the following collector services for Netflow v5/v9 and IPFIX (aka Netflow v10):
+- Creates the following collector services for Netflow v5/v9, IPFIX (aka Netflow v10), and sFlow:
   - netflow_v5
   - netflow_v9
   - ipfix
+  - sflow
 - Registers collector services and sets auto-start
 - Creates an index pruning job (>30 days old) using Curator in /etc/cron.daily
 - Installs Head plugin for Elasticsearch
 
 ### Build the Elasticsearch Flow Index
 
-The build_index.sh script creates the default index for storing data in Elasticsearch:
-
+The build_index.sh script creates the default index for storing Netflow and IPFIX flow data in Elasticsearch:
 ```
 sh ./Install/build_index.sh
+```
+
+The build_sflow_index.sh script creates the default index for storing sFlow data in Elasticsearch. A separate script and index are used because sFlow data can be very different from network flow data depending on what sFlow counter records are being exported.
+
+Run the sFlow index script:
+```
+sh ./Install/build_sflow_index.sh
 ```
 
 ### Elasticsearch Tuning
@@ -91,7 +94,6 @@ Elasticsearch to use [50% of the available memory](https://www.elastic.co/guide/
 on a given server, up to the 32GB limit. The configuration set in the installation script sets Elasticsearch memory to 2GB, assuming a server with at least 4GB of RAM. 
 
 That's done by setting...
-
 ```
 ES_HEAP_SIZE=2g
 ```
@@ -103,11 +105,10 @@ If you have a server with more RAM then you need to adjust this value and reboot
 ### Firewall (Optional)
 
 These are examples of commands you may need to use if you're running a firewall on the Ubuntu Server installation:
-
 ```
 ufw allow from xxx.xxx.xxx.xxx/xx to any port 80 proto tcp comment "Kibana interface"
 ufw allow from xxx.xxx.xxx.xxx/xx to any port 9200 proto tcp comment "Elasticsearch CLI"
-ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739 proto udp comment "Netflow inbound"
+ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739,6343 proto udp comment "Flow data in"
 ```
 
 ### Kibana Authentication (Optional)
@@ -171,24 +172,22 @@ systemctl restart kibana
 ### Reboot
 
 It's important to reboot so that we're sure the services were registered and start correctly:
-
 ```
 sudo reboot
 ```
 
 Once the Ubuntu instance comes back up verify that the services have started:
-
 ```
 systemctl status elasticsearch
 systemctl status netflow_v5
 systemctl status netflow_v9
 systemctl status ipfix
+systemctl status sflow
 systemctl status kibana
 ```
 
 # Configure Devices
-
-Configure your devices to send Netflow and IPFIX data to the Flow Analyzer collector. Consult your vendor's documentation for configuring Netflow v5, Netflow v9, and IPFIX.
+Configure your devices to send Netflow, IPFIX, and sFlow data to the Flow Analyzer collector. Consult your vendor's documentation for configuring Netflow v5, Netflow v9, and IPFIX.
 Also see the [Flow Management blog](http://www.manitonetworks.com/flow-management/) at manitonetworks.com for instructions on configuring Cisco, Ubiquiti, Mikrotik, and other platforms.
 
 * [Ubiquiti IPFIX](http://www.manitonetworks.com/flow-management/2016/7/1/ubiquiti-ipfix-configuration)
@@ -198,34 +197,31 @@ Also see the [Flow Management blog](http://www.manitonetworks.com/flow-managemen
 
 Use the following ports:
 
-Service | Protocol | Port
--------- | -------- | -------- |
-Netflow v5 | UDP | 2055 |
-Netflow v9 | UDP | 9995 |
-IPFIX | UDP | 4739 |
+Service     | Protocol  | Port |
+--------    | --------  | -------- |
+Netflow v5  | UDP       | 2055 |
+Netflow v9  | UDP       | 9995 |
+IPFIX       | UDP       | 4739 |
+sFlow       | UDP       | 6343 |     
 
 These ports can be changed, see the [tuning documentation](../Tuning.md). Make sure your devices are configured to send flow data
 before moving on to [configuring Kibana](#kibana).
 
-**Note**: Configuring devices and receiving a flow before moving onto the next step will make adding the default index in Kibana much easier.
+**Note**: Configuring devices and receiving flows **before** moving onto the next step will make adding the default index in Kibana much easier.
 
 # Kibana
-
 A few things have to be done first in Kibana before you get to see the Visualizations and Dashboards.
 Ensure that you've already [configured your devices](#configure-devices) to send flows, so by the time you get to this point there is already some flow data in the index for Kibana to recognize.
 
 ## Access Kibana
-
 There are a couple ways to access Kibana, depending on if you're using the [reverse proxy for authentication](#kibana-authentication-optional) or not.
 
 ### No Reverse Proxy (default):
-
 Browse to Kibana at http://your_server_ip:5601
 
 No username or password is required.
 
 ### Using a Reverse Proxy
-
 Browse to Kibana at http://your_server_ip
 
 Log in with the default Squid credentials shown below:
@@ -234,11 +230,9 @@ Log in with the default Squid credentials shown below:
 - Password: **manitonetworks**
 
 ## Configure Kibana
-
 A few steps are required to point Kibana to the Flow index, import the Visualizations and Dashboards, and set some special Byte fields for better readability in KB, MB, GB, etc.
 
 ### Configure the default index pattern
-
 The installation script has already created the Elasticsearch index, but we need to point Kibana in the right direction.
 
 In Kibana, under **Index name or pattern** enter " flow* " without the quotes, and it should automatically parse your input.
@@ -255,7 +249,6 @@ Click the **Create** button.
 Click the **Green Star** button to set the Flow index as the default index.
 
 ### Set special Byte fields
-
 Sort field names by clicking the **name** heading
 
 Click the **Edit** pencil icon to the far right of the **Bytes In** field
@@ -267,13 +260,11 @@ Click **Update Field**
 Perform the same steps above on the **Bytes Out** field.
 
 ### Import Kibana Visualizations and Dashboards
-
 1. Download the [Visualization and Dashboard JSON file](../Kibana/Default.json)
 2. In Kibana click Settings > Objects > Import
 3. Browse to the downloaded JSON file
 
 # Tuning
-
 There are additional features that you can utilize, but they have to be enabled by you. This includes:
 
  - [Reverse DNS Lookups](../Tuning.md#lookups) & Content Tagging
@@ -282,7 +273,6 @@ There are additional features that you can utilize, but they have to be enabled 
 See [the tuning documentation](../Tuning.md) for how to enable these features, and recommendations for baseline settings.
 
 # Updates
-
 To get the latest updates do the following:
 
 Change to the flowanalyzer directory and fetch the latest stable code via Git:
@@ -301,7 +291,6 @@ systemctl restart ipfix
 ```
 
 # Elasticsearch Clustering
-
 Elasticsearch works best in a cluster, and as your Elasticsearch cluster grows you'll get better performance and more storage. The default installation creates one
 instance of Elasticsearch, which is fine for testing or small organizations, but you'll get the best performance from two or three (or more!) instances of Elasticsearch.
 Fortunately almost everything you need is included in the default installation script, and then Elasticsearch does the rest autonomously.
@@ -318,7 +307,6 @@ The steps for adding an Elasticsearch node are shown below. Do these steps for e
 3. [Restart Elasticsearch](#restart-elasticsearch)
 
 ## Timezone and NTP
-
 It's extremely important for the Elasticsearch cluster that node clocks are accurate and not able to drift too much.
 Also, it's important that timezones are set and remain set at UTC - Kibana takes care of adjusting timestamps for local time.
 First we'll set the server timezone to UTC, then we'll set the server to update its clock via NTP:
@@ -328,12 +316,10 @@ sudo apt-get install ntp
 ```
 
 ## Elasticsearch Configuration
-
 First we'll install prerequisites and Elasticsearch, then we'll configure node names and discovery IP addresses. Lastly, we'll restart
 the Elasticsearch services on the nodes.
 
 ### Server Installation
-
 On each additional Ubuntu server you want to run as an Elasticsearch node perform the following steps.
 
 Add the Elasticsearch repository: 
@@ -350,7 +336,6 @@ sudo apt-get -y install elasticsearch openjdk-8-jre
 It's important to set this up correctly and double-check the settings before modifying a production cluster.
 
 ### Default Instance Configuration
-
 The /etc/elasticsearch/elasticsearch.yml file contains a line that needs **uncommented and modified**:
 ```
 #discovery.zen.ping.unicast.hosts: ["192.168.1.10","192.168.1.11"]
@@ -361,7 +346,6 @@ add your own IP addresses of the other Elasticsearch servers. You'll then set th
 pointing it to other nodes so they can discover each other. 
 
 ### Additional Instance Configuration
-
 For example, say your network is 10.25.98.0/24, and you have the original host and two additional Elasticsearch servers:
 
 **Node** | **IP Address** | **Node Type**
@@ -411,7 +395,6 @@ sudo systemctl enable elasticsearch
 ```
 
 ## Restart Elasticsearch
-
 After reconfiguring Elasticsearch it's important to restart the service: 
 ```
 sudo systemctl restart elasticsearch
