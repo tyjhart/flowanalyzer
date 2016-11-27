@@ -27,20 +27,10 @@ echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee 
 # Install dependencies
 echo "Install system dependencies"
 apt-get update
-<<<<<<< HEAD
-<<<<<<< HEAD
-apt-get -y install gcc wget elasticsearch kibana openjdk-8-jre squid ntp apache2-utils php-curl curl apt-transport-https
-=======
-=======
->>>>>>> 68cc7165cf98840612dfb5868fbd9dfcba9fd81c
 apt-get -y install gcc wget openjdk-8-jre ntp apache2-utils php-curl curl apt-transport-https
 
 # Install Elasticsearch and Kibana
 apt-get -y install elasticsearch kibana
-<<<<<<< HEAD
->>>>>>> sFlow initial dev and documentation
-=======
->>>>>>> 68cc7165cf98840612dfb5868fbd9dfcba9fd81c
 
 # Resolving Python dependencies
 echo "Install Python dependencies"
@@ -67,7 +57,7 @@ systemctl restart elasticsearch
 set +e
 
 # Sleep 10s so Elasticsearch service can restart before building index
-sleep 10s
+sleep 15s
 
 set -e
 
@@ -152,28 +142,6 @@ echo "server.name: \"Manito Networks Flow Analyzer\"" >> /etc/kibana/kibana.yml
 echo "Set the NTP service to automatically start"
 systemctl enable ntp
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-# Get the squid.conf file and replace the default squid.conf
-echo "Get the squid.conf file and replace the default squid.conf"
-cp $flow_analyzer_dir/ubuntu_squid.conf /etc/squid/squid.conf
-
-# Set the Squid service to automatically start
-#echo "Set the Squid service to automatically start"
-#systemctl enable squid
-
-# Add the entry to /etc/hosts that Squid needs
-#echo "Add the entry to /etc/hosts that Squid needs"
-#echo "127.0.0.1    Flow00" >> /etc/hosts
-
-# Set the default proxy password for Squid
-#echo "Set the default proxy password for Squid"
-#htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
-
-=======
->>>>>>> sFlow initial dev and documentation
-=======
->>>>>>> 68cc7165cf98840612dfb5868fbd9dfcba9fd81c
 # Prune old indexes
 echo "curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'" >> /etc/cron.daily/index_prune
 chmod +x /etc/cron.daily/index_prune
