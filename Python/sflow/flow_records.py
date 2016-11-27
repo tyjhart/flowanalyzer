@@ -230,7 +230,7 @@ def ext_nfs_storage_trans(data):
 	return sample_data
 
 # Extended SCSI Transaction (Flow, Enterprise 0, Format 2002)
-def ext_nfs_storage_trans(data):
+def ext_scsi_storage_trans(data):
 	sample_data = {}
 	sample_data["LUN"] = int(data.unpack_uint())
 	sample_data["Operation"] = int(data.unpack_uint())
