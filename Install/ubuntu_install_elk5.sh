@@ -136,6 +136,12 @@ systemctl enable sflow
 echo "Set the Kibana service to automatically start"
 systemctl enable kibana
 
+# Allow Kibana to listen on all interfaces
+chmod -R 775 /etc/kibana/kibana.yml
+echo "logging.quiet: true" >> /etc/kibana/kibana.yml
+echo "server.host: \"0.0.0.0\"" >> /etc/kibana/kibana.yml
+echo "server.name: \"Manito Networks Flow Analyzer\"" >> /etc/kibana/kibana.yml
+
 # Set the NTP service to automatically start
 echo "Set the NTP service to automatically start"
 systemctl enable ntp
