@@ -38,11 +38,11 @@ def iana_interface_type(num):
 	elif num == 14:
 		return "hyperchannel"
 	elif num == 15:
-		return "fddi"
+		return "FDDI"
 	elif num == 16:
 		return "lapb"
 	elif num == 17:
-		return "sdlc"
+		return "SDLC"
 	elif num == 18:
 		return "DS1"
 	elif num == 19:
@@ -56,13 +56,13 @@ def iana_interface_type(num):
 	elif num == 23:
 		return "PPP"
 	elif num == 24:
-		return "softwareLoopback"
+		return "Software Loopback"
 	elif num == 25:
 		return "eon"
 	elif num == 26:
-		return "ethernet3Mbit"
+		return "Ethernet 3Mbit"
 	elif num == 27:
-		return "nsip"
+		return "NSIP"
 	elif num == 28:
 		return "SLIP"
 	elif num == 29:
@@ -82,7 +82,7 @@ def iana_interface_type(num):
 	elif num == 36:
 		return "arcnetPlus"
 	elif num == 37:
-		return "atm"
+		return "ATM"
 	elif num == 38:
 		return "miox25"
 	elif num == 39:
@@ -173,6 +173,8 @@ def parse_header_prot_name(protocol_int):
 		protocol_name = "802.11 AMPDU"
 	elif protocol_int == 17:
 		protocol_name = "802.11 AMSDU Subframe"
+	elif protocol_int == 18:
+		protocol_name = "InfiniBand"
 	else:
 		protocol_name = "Unknown"
 	
@@ -206,6 +208,8 @@ def enum_os_name(os_int):
 		os_name = "OSF"
 	elif os_int == 12:
 		os_name = "Solaris"
+	elif os_int == 13:
+		os_name = "Java"
 	else:
 		os_name = "Unknown"
 	
