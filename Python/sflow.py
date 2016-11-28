@@ -234,6 +234,39 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0,1012]: # Extended VLAN tunnel data
 							flow_index["_source"].update(extended_vlan_tunnel(unpacked_record_data))
 
+						#elif record_ent_form_number == [0,1013]: # Extended 802.11 Payload
+							#flow_index["_source"].update(extended_vlan_tunnel(unpacked_record_data))
+
+						elif record_ent_form_number == [0,1014]: # Extended 802.11 RX
+							flow_index["_source"].update(extended_wlan_rx(unpacked_record_data))
+
+						elif record_ent_form_number == [0,1015]: # Extended 802.11 TX
+							flow_index["_source"].update(extended_wlan_tx(unpacked_record_data))
+
+						#elif record_ent_form_number == [0,1016]: # Extended 802.11 Aggregation
+							#flow_index["_source"].update(extended_wlan_aggregation(unpacked_record_data))
+
+						elif record_ent_form_number == [0,1020]: # Slow Packet Data Path
+							flow_index["_source"].update(slow_packet_data_path(unpacked_record_data))
+
+						elif record_ent_form_number == [0,1031]: # Extended InfiniBand Local Routing Header
+							flow_index["_source"].update(extended_ib_lrh(unpacked_record_data))
+
+						elif record_ent_form_number == [0,1033]: # Extended InfiniBand Base Transport Header
+							flow_index["_source"].update(extended_ib_brh(unpacked_record_data))
+						
+						elif record_ent_form_number == [0,2000]: # Generic Transaction Record
+							flow_index["_source"].update(generic_transaction_record(unpacked_record_data))
+
+						elif record_ent_form_number == [0,2001]: # Extended NFS Storage Transaction
+							flow_index["_source"].update(ext_nfs_stroage_trans(unpacked_record_data))
+
+						elif record_ent_form_number == [0,2002]: # Extended SCSI Storage Transaction
+							flow_index["_source"].update(ext_scsi_stroage_trans(unpacked_record_data))
+
+						elif record_ent_form_number == [0,2003]: # Extended Web Transaction
+							flow_index["_source"].update(extended_web_trans(unpacked_record_data))
+						
 						elif record_ent_form_number == [0,2100]: # IPv4 Socket
 							flow_index["_source"].update(ipv4_socket(unpacked_record_data))
 
@@ -242,6 +275,9 @@ if __name__ == "__main__":
 
 						elif record_ent_form_number == [0,2209]: # Extended TCP Information
 							flow_index["_source"].update(extended_tcp_info(unpacked_record_data))
+
+						elif record_ent_form_number == [4413, 1]: # Broadcom selected egress queue
+							flow_index["_source"].update(broad_sel_egress_queue(unpacked_record_data))
 						
 						#elif record_ent_form_number == [8800,1]: # Extended Class
 							#flow_index["_source"].update(extended_class(unpacked_record_data))
@@ -315,11 +351,32 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0, 4]: # BaseVG interface counter
 							flow_index["_source"].update(basevg_int_counter(unpacked_record_data))
 
-						elif record_ent_form_number == [0, 5]: # VLAN counter
+						elif record_ent_form_number == [0, 5]: # VLAN Counters
 							flow_index["_source"].update(vlan_counter(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 6]: # 802.11 Counters
+							flow_index["_source"].update(wlan_counters(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 7]: # 802.3ad LAG Port Statistics
+							flow_index["_source"].update(lag_port_stats(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 8]: # Slow Path Counts
+							flow_index["_source"].update(slow_path_stats(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 9]: # InfiniBand Counters
+							flow_index["_source"].update(infiniband_counters(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 10]: # SFP Optical Interface Counters
+							flow_index["_source"].update(sfp_optical_counters(unpacked_record_data))
 
 						elif record_ent_form_number == [0, 1001]: # Processor info
 							flow_index["_source"].update(proc_info(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 1002]: # 802.11 Radio Utilization
+							flow_index["_source"].update(radio_util(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 1003]: # Queue Length Histogram Counters
+							flow_index["_source"].update(queue_len_histogram_counters(unpacked_record_data))
 
 						elif record_ent_form_number == [0, 2000]: # Host Description
 							flow_index["_source"].update(host_description(unpacked_record_data))
@@ -372,8 +429,23 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0, 2104]: # Virtual Node Network Statistics
 							flow_index["_source"].update(virtual_domain_net_stats(unpacked_record_data))
 
-						elif record_ent_form_number == [4413, 3]: # ASIC Hardware Table Utilizations
+						elif record_ent_form_number == [0, 2105]: # JVM Runtime Attributes 
+							flow_index["_source"].update(jvm_runtime_attr(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 2106]: # JVM Statistics 
+							flow_index["_source"].update(jvm_stats(unpacked_record_data))
+							
+						elif record_ent_form_number == [4413, 1]: # Broadcom Switch Device Buffer Utilization
+							flow_index["_source"].update(broad_switch_dev_buffer_util(unpacked_record_data))
+
+						elif record_ent_form_number == [4413, 2]: # Broadcom Switch Port Level Buffer Utilization
+							flow_index["_source"].update(broad_switch_port_buff_util(unpacked_record_data))
+						
+						elif record_ent_form_number == [4413, 3]: # Broadcom Switch ASIC Hardware Table Utilization
 							flow_index["_source"].update(asic_hardware_tab_util(unpacked_record_data))
+
+						elif record_ent_form_number == [5703, 1]: # NVIDIA GPU Statistics
+							flow_index["_source"].update(nvidia_gpu_stats(unpacked_record_data))
 
 						else:
 							unpacked_sample_data.set_position(skip_position) # Skip the unknown type
