@@ -208,6 +208,55 @@ def extended_wlan_aggregation(data):
 	data.done()
 	return sample_data
 
+# Slow Packet Data Path (Flow, Enterprise 0, Format 1020)
+def slow_packet_data_path(data):
+	sample_data = {}
+
+	def slow_path_reason(reason_int):
+		if reason_int == 0:
+			return "Unknown"
+		elif reason_int == 1:
+			return "Other"
+		elif reason_int == 2:
+			return "CAM Miss"
+		elif reason_int == 3:
+			return "CAM Full"
+		elif reason_int == 4:
+			return "No Hardware Support"
+		elif reason_int == 5:
+			return "CNTRL"
+		else:
+			return "Unknown"
+
+	sample_data["Slow Path Reason"] = slow_path_reason(int(data.unpack_uint()))
+	data.done()
+	return sample_data
+
+# Extended InfiniBand Local Routing Header (Flow, Enterprise 0, Format 1031)
+def extended_ib_lrh(data):
+	sample_data = {}
+	sample_data["Source Virtual Lane"] = int(data.unpack_uint())
+	sample_data["Source Service Level"] = int(data.unpack_uint())
+	sample_data["Source Destination-Local-ID"] = int(data.unpack_uint())
+	sample_data["Source Source-Local-ID"] = int(data.unpack_uint())
+	sample_data["Source Link Next Header"] = int(data.unpack_uint())
+	sample_data["Destination Virtual Lane"] = int(data.unpack_uint())
+	sample_data["Destination Service Level"] = int(data.unpack_uint())
+	sample_data["Destination Destination-Local-ID"] = int(data.unpack_uint())
+	sample_data["Destination Source-Local-ID"] = int(data.unpack_uint())
+	sample_data["Destination Link Next Header"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
+# Extended InfiniBand Base Transport Header (Flow, Enterprise 0, Format 1033)
+def extended_ib_brh(data):
+	sample_data = {}
+	sample_data["Partition Key"] = int(data.unpack_uint())
+	sample_data["Destination Queue Pair"] = int(data.unpack_uint())
+	sample_data["IBA Packet Type"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
 # Generic Transaction Record (Flow, Enterprise 0, Format 2000)
 def generic_transaction_record(data):
 	sample_data = {}
@@ -293,6 +342,13 @@ def extended_tcp_info(data):
 	datagram["Sending Congestion Window"] = int(data.unpack_uint())
 	datagram["Reordering"] = int(data.unpack_uint())
 	datagram["Minimum RTT ms"] = int(data.unpack_uint())
+	data.done()
+	return datagram
+
+# Broadcom Selected Egress Queue (Flow, Enterprise 4413, Format 1)
+def broad_sel_egress_queue(data):
+	datagram = {}
+	datagram["Queue"] = packet_direction(data.unpack_uint())
 	data.done()
 	return datagram
 
