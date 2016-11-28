@@ -68,7 +68,7 @@ Flow    | 0 | 4     | Packet IPv6 Data                  | Yes           | [sFlow
 Flow    | 0 | 1001  | Extended Switch                   | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
 Flow    | 0 | 1002  | Extended Router                   | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
 Flow    | 0 | 1003  | Extended Gateway                  | In Progress   | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
-Flow    | 0 | 1004  | Extended User                     | In Progress   | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
+Flow    | 0 | 1004  | Extended User                     | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
 Flow    | 0 | 1005  | Extended URL (deprecated)         | N/A           | N/A |
 Flow    | 0 | 1006  | Extended MPLS                     | In Progress   | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
 Flow    | 0 | 1007  | Extended NAT                      | In Progress   | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
@@ -95,13 +95,13 @@ Flow    | 0 | 1027  | Extended Decapsulate Egress       | In Progress   | [sFlow
 Flow    | 0 | 1028  | Extended Decapsulate Ingress      | In Progress   | [sFlow Tunnel Structure](http://www.sflow.org/sflow_tunnels.txt) |
 Flow    | 0 | 1029  | Extended VNI Egress               | In Progress   | [sFlow Tunnel Structure](http://www.sflow.org/sflow_tunnels.txt) |
 Flow    | 0 | 1030  | Extended VNI Ingress              | In Progress   | [sFlow Tunnel Structure](http://www.sflow.org/sflow_tunnels.txt) |
-Flow    | 0 | 1031  | Extended InfiniBand LRH           | In Progress   | []() |
-Flow    | 0 | 1032  | Extended InfiniBand GRH           | In Progress   | []() |
-Flow    | 0 | 1033  | Extended InfiniBand BRH           | In Progress   | []() |
-Flow    | 0 | 2000  | Transaction                       | In Progress   | []() |
-Flow    | 0 | 2001  | Extended NFS Storage Transaction  | In Progress   | []() |
-Flow    | 0 | 2002  | Extended SCSI Storage Transaction | In Progress   | []() |
-Flow    | 0 | 2003  | Extended HTTP Transaction         | In Progress   | []() |
+Flow    | 0 | 1031  | Extended InfiniBand LRH           | Yes           | [sFlow InfiniBand Structures](http://sflow.org/draft_sflow_infiniband_2.txt) |
+Flow    | 0 | 1032  | Extended InfiniBand GRH           | In Progress   | [sFlow InfiniBand Structures](http://sflow.org/draft_sflow_infiniband_2.txt) |
+Flow    | 0 | 1033  | Extended InfiniBand BRH           | Yes           | [sFlow InfiniBand Structures](http://sflow.org/draft_sflow_infiniband_2.txt) |
+Flow    | 0 | 2000  | Transaction                       | Yes           | []() |
+Flow    | 0 | 2001  | Extended NFS Storage Transaction  | Yes           | []() |
+Flow    | 0 | 2002  | Extended SCSI Storage Transaction | Yes           | []() |
+Flow    | 0 | 2003  | Extended Web Transaction          | Yes           | []() |
 Flow    | 0 | 2100  | Extended Socket IPv4              | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Flow    | 0 | 2101  | Extended Socket IPv6              | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Flow    | 0 | 2102  | Extended Proxy Socket IPv4        | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
@@ -120,50 +120,52 @@ Flow    | 0 | 2209  | Extended TCP Info                 | Yes           | [sFlow
 # Counter Data
 The default structures for counter data are shown below:
 Type | Enterprise | Format | Name | Supported | Link |
---          | --    | --    | --                                | --            | -- |
-Counter     | 0     | 1     | Generic Interface Counters        | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
-Counter     | 0     | 2     | Ethernet Interface Counters       | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
-Counter     | 0     | 3     | Token Ring Counters               | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
-Counter     | 0     | 4     | 100 BaseVG Interface Counters     | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
-Counter     | 0     | 5     | VLAN Counters                     | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
-Counter     | 0     | 6     | 802.11 Counters                   | Yes           | [sFlow 802.11 Structures](http://www.sflow.org/sflow_80211.txt) |
-Counter     | 0     | 7     | LAG Port Statistics               | In Progress   | [sFlow LAG Port Statistics](http://www.sflow.org/sflow_lag.txt) |
-Counter     | 0     | 8     | Slow Path Counts                  | In Progress   | []() |
-Counter     | 0     | 9     | InfiniBand Counters               | In Progress   | []() |
-Counter     | 0     | 10    | Optical SFP / QSFP Counters       | In Progress   | [sFlow Optical Interface Structures](http://www.sflow.org/sflow_optics.txt) |
-Counter     | 0     | 1001  | Processor                         | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
-Counter     | 0     | 1002  | Radio Utilization                 | In Progress   | [sFlow 802.11 Structures](http://www.sflow.org/sflow_80211.txt) |
-Counter     | 0     | 1003  | Queue Length                      | In Progress   | []() |
-Counter     | 0     | 1004  | OpenFlow Port                     | In Progress   | [sFlow OpenFlow Structures](http://www.sflow.org/sflow_openflow.txt) |
-Counter     | 0     | 1005  | OpenFlow Port Name                | In Progress   | [sFlow OpenFlow Structures](http://www.sflow.org/sflow_openflow.txt) |
-Counter     | 0     | 2000  | Host Description                  | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2001  | Host Adapters                     | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2002  | Host Parent                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2003  | Host CPU                          | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2004  | Host Memory                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2005  | Host Disk I/O                     | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2006  | Host Network I/O                  | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2007  | MIB2 IP Group                     | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
-Counter     | 0     | 2008  | MIB2 ICMP Group                   | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
-Counter     | 0     | 2009  | MIB2 TCP Group                    | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
-Counter     | 0     | 2010  | MIB2 UDP Group                    | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
-Counter     | 0     | 2100  | Virtual Node                      | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2101  | Virtual CPU                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2102  | Virtual Memory                    | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2103  | Virtual Disk I/O                  | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2104  | Virtual Network I/O               | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
-Counter     | 0     | 2105  | JMX Runtime                       | In Progress   | [sFlow Java Virtual Machine Structures](http://www.sflow.org/sflow_jvm.txt) |
-Counter     | 0     | 2106  | JMX Statistics                    | In Progress   | [sFlow Java Virtual Machine Structures](http://www.sflow.org/sflow_jvm.txt) |
-Counter     | 0     | 2200  | Memcached Counters (deprecated)   | N/A           | N/A |
-Counter     | 0     | 2201  | HTTP Counters                     | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
-Counter     | 0     | 2202  | App Operations                    | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
-Counter     | 0     | 2203  | App Resources                     | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
-Counter     | 0     | 2204  | Memcache Counters                 | In Progress   | [http://www.sflow.org/sflow_memcache.txt](http://www.sflow.org/sflow_memcache.txt) |
-Counter     | 0     | 2206  | App Workers                       | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
-Counter     | 0     | 2207  | OVS DP Statistics                 | In Progress   | []() |
-Counter     | 0     | 3000  | Energy                            | In Progress   | []() |
-Counter     | 0     | 3001  | Temperature                       | In Progress   | []() |
-Counter     | 0     | 3002  | Humidity                          | In Progress   | []() |
-Counter     | 0     | 3003  | Fans                              | In Progress   | []() |
-Counter     | 4413  | 3     | ASIC Table Utilizations           | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
-Counter     | 5703  | 1     | NVIDIA GPU Statistics             | In Progress   | [sFlow NVML GPU Structure](http://www.sflow.org/sflow_nvml.txt) |
+--          | --    | --    | --                                                | --            | -- |
+Counter     | 0     | 1     | Generic Interface Counters                        | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
+Counter     | 0     | 2     | Ethernet Interface Counters                       | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
+Counter     | 0     | 3     | Token Ring Counters                               | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
+Counter     | 0     | 4     | 100 BaseVG Interface Counters                     | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
+Counter     | 0     | 5     | VLAN Counters                                     | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
+Counter     | 0     | 6     | 802.11 Counters                                   | Yes           | [sFlow 802.11 Structures](http://www.sflow.org/sflow_80211.txt) |
+Counter     | 0     | 7     | LAG Port Statistics                               | Yes           | [sFlow LAG Port Statistics](http://www.sflow.org/sflow_lag.txt) |
+Counter     | 0     | 8     | Slow Path Counts                                  | Yes           | [Slow Path Counters](https://groups.google.com/forum/#!topic/sflow/4JM1_Mmoz7w) |
+Counter     | 0     | 9     | InfiniBand Counters                               | Yes           | [sFlow InfiniBand Structures](http://sflow.org/draft_sflow_infiniband_2.txt) |
+Counter     | 0     | 10    | Optical SFP / QSFP Counters                       | Yes           | [sFlow Optical Interface Structures](http://www.sflow.org/sflow_optics.txt) |
+Counter     | 0     | 1001  | Processor                                         | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
+Counter     | 0     | 1002  | Radio Utilization                                 | Yes           | [sFlow 802.11 Structures](http://www.sflow.org/sflow_80211.txt) |
+Counter     | 0     | 1003  | Queue Length                                      | In Progress   | [sFlow Queue Length Histogram Counters](https://groups.google.com/forum/#!searchin/sflow/format$20$3D/sflow/dz0nsXqBYAw/rFOuMcLYjmkJ) |
+Counter     | 0     | 1004  | OpenFlow Port                                     | In Progress   | [sFlow OpenFlow Structures](http://www.sflow.org/sflow_openflow.txt) |
+Counter     | 0     | 1005  | OpenFlow Port Name                                | In Progress   | [sFlow OpenFlow Structures](http://www.sflow.org/sflow_openflow.txt) |
+Counter     | 0     | 2000  | Host Description                                  | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2001  | Host Adapters                                     | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2002  | Host Parent                                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2003  | Host CPU                                          | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2004  | Host Memory                                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2005  | Host Disk I/O                                     | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2006  | Host Network I/O                                  | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2007  | MIB2 IP Group                                     | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
+Counter     | 0     | 2008  | MIB2 ICMP Group                                   | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
+Counter     | 0     | 2009  | MIB2 TCP Group                                    | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
+Counter     | 0     | 2010  | MIB2 UDP Group                                    | Yes           | [sFlow Host TCP/IP Counters](http://www.sflow.org/sflow_host_ip.txt) |
+Counter     | 0     | 2100  | Virtual Node                                      | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2101  | Virtual CPU                                       | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2102  | Virtual Memory                                    | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2103  | Virtual Disk I/O                                  | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2104  | Virtual Network I/O                               | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
+Counter     | 0     | 2105  | JMX Runtime                                       | Yes           | [sFlow Java Virtual Machine Structures](http://www.sflow.org/sflow_jvm.txt) |
+Counter     | 0     | 2106  | JMX Statistics                                    | Yes           | [sFlow Java Virtual Machine Structures](http://www.sflow.org/sflow_jvm.txt) |
+Counter     | 0     | 2200  | Memcached Counters (deprecated)                   | N/A           | N/A |
+Counter     | 0     | 2201  | HTTP Counters                                     | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
+Counter     | 0     | 2202  | App Operations                                    | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
+Counter     | 0     | 2203  | App Resources                                     | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
+Counter     | 0     | 2204  | Memcache Counters                                 | In Progress   | [http://www.sflow.org/sflow_memcache.txt](http://www.sflow.org/sflow_memcache.txt) |
+Counter     | 0     | 2206  | App Workers                                       | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
+Counter     | 0     | 2207  | OVS DP Statistics                                 | In Progress   | []() |
+Counter     | 0     | 3000  | Energy                                            | In Progress   | []() |
+Counter     | 0     | 3001  | Temperature                                       | In Progress   | []() |
+Counter     | 0     | 3002  | Humidity                                          | In Progress   | []() |
+Counter     | 0     | 3003  | Fans                                              | In Progress   | []() |
+Counter     | 4413  | 1     | Broadcom Switch Device Buffer Utilization         | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
+Counter     | 4413  | 2     | Broadcom Switch Port Level Buffer Utilization     | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
+Counter     | 4413  | 3     | Broadcom Switch ASIC Hardware Table Utilization   | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
+Counter     | 5703  | 1     | NVIDIA GPU Statistics                             | In Progress   | [sFlow NVML GPU Structure](http://www.sflow.org/sflow_nvml.txt) |
