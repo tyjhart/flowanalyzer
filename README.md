@@ -1,6 +1,5 @@
 # Manito Networks Flow Analyzer
-
-The Flow Analyzer is a [Netflow and IPFIX](Network%20Flow%20Basics.md) collector and parser, available under the [BSD 3-Clause License](#license), 
+The Flow Analyzer is a [Netflow, IPFIX](Network%20Flow%20Basics.md), and [sFlow](sFlow.md) collector and parser, available under the [BSD 3-Clause License](#license), 
 that stores flows in Elasticsearch and visualizes them in Kibana. It is designed to run on [Ubuntu Server](https://www.ubuntu.com/download/server), either as a single 
 installation or as part of an Elasticsearch cluster. 
 
@@ -33,68 +32,58 @@ See the [License section](#license) below for licensing details.
 12. [Attributions](#attributions)
 
 # Project Goals
-
 Our goal is to provide superior Netflow and IPFIX collection, visualization, and analysis. We do that by creating:
 
 - Efficient, accessible, and sustainable software
 - Scalable solutions that can evolve as you grow
 - Superior documentation from architecture through installation, configuration, tuning, and troubleshooting
 
-One other goal of ours is to make Elasticsearch and Kibana easy to implement and accessible to those who haven't used it before.
-The learning curve for distributed search systems and dashboarding software can be steap, but we think that everyone
+One other goal of ours is to make Elasticsearch and Kibana easy to implement and accessible to those who haven't used it before. The learning curve for distributed search systems and dashboarding software can be steap, but we think that everyone
 should be able to realize the benefits of meaningful, beautiful data visualization.
 
 # Features
 
 ### Quick Installation
-
 You can go from zero to up-and-running with graphed flow data in less than one hour. Check out [the installation documentation](Install/README.md).
 
 ### Flow Monitoring Protocols
-
 The Manito Networks Flow Analyzer supports the following flow data protocols:
 
 - Netflow v5
 - Netflow v9
 - IPFIX (aka Netflow v10)
+- sFlow
 
-If you're not familiar with Netflow or IPFIX that's alright - take a look at [Network Flow Basics](Network%20Flow%20Basics.md).
+If you're not familiar with Netflow or IPFIX that's alright - take a look at [Network Flow Basics](Network%20Flow%20Basics.md). For a description of sFlow and supported sFlow structures see the [Flow Analyzer sFlow document](sFlow.md).
 
-Our software ingests Netflow and IPFIX data, parses and tags it, then stores it in Elasticsearch for you to query and graph in Kibana.
+Our software ingests Netflow, IPFIX, and sFlow data then parses and tags it, and stores it in Elasticsearch for you to query and graph in Kibana.
 
 ### Fields
+The Flow Analyzer supports all defined Netflow v5 fields, all standard Netflow v9 fields, all IPFIX fields in the RFC, and almost all sFlow structures defined by InMon Corporation's enterprise ID. See the [Network Flow Basics document](Network%20Flow%20Basics.md) for a description of Netflow and IPFIX fields, and the [sFlow document](sFlow.md) for a description of supported structures.
 
-The Flow Analyzer supports over 60 pre-configured flow data fields, including the correct field types and analysis settings in 
-Elasticsearch so you don't have to do any guessing. Kibana Visualizations and Dashboards are included, so you can analyze those 60+
-fields right away. We also have dynamic support for other fields defined in the Netflow v5, v9, and IPFIX standards.
+Kibana Visualizations and Dashboards are included so you can leverage supported fields and structures right away. 
 
-Take a look at [the Fields list](Fields.md) for a list of the pre-configured fields. 
+Some limitations exist, mostly around proprietary or undocumented fields in Netflow or proprietary structures in sFlow - see the [Limitations](#limitations) section for details. Efforts are made to skip over unsupported or proprietary elements and continue parsing data uninterrupted.
 
 ### Tags
-
-Our custom Netflow and IPFIX collectors ingest and tag flow data. We record not only the basic protocol and port numbers, but we 
-also take it a step further and correlate the following:
+Our custom Netflow, IPFIX, and sFlow collectors ingest and tag flow data. We record not only the basic protocol and port numbers, but we also take it a step further and correlate the following:
 
 - Protocol numbers to protocol names (eg protocol 1 to "ICMP", 6 to "TCP")
 - IANA-registered port numbers to services (eg port 80 to "HTTP", 53 to "DNS")
 - Services to categories (eg HTTP, HTTPS, Alt-HTTP to "Web")
 
-This tagging functionality is running by default, and right now there is no functionality to turn it off.
+This tagging functionality is running by default and happens transparently in the background.
 
 ### DNS Reverse Lookups
-
 A reverse lookup against observed IPs is done if DNS lookups are enabled. Resolved domains are cached for 30 minutes to reduce
-the impact on DNS servers. Popular domains like facebook.com and cnn.com are categorized with content tags like "Social Media" and "News"
-to provide insight into website browsing on the network.
+the impact on DNS servers. Popular domains like facebook.com and cnn.com are categorized with content tags like "Social Media" and "News" to provide insight into website browsing on the network.
 
 ### MAC Address Lookups
-
-Correlation of MAC address OUI's to top manufacturer's is done to help graph traffic sources in hetergenous environments. 
+Correlation of MAC address OUI's to top manufacturers is done to help graph traffic sources in hetergenous environments. 
 
 Note: This feature is in beta, and the list of OUI's to be built is quite extensive.
 
 ### Development Roadmap
-
 See the [Roadmap file](ROADMAP.md) for information on upcoming features and current development efforts.
 
 # Requirements
@@ -121,7 +110,7 @@ The following versions of Ubuntu Server have been tested and verified to work wi
 - 16.04 LTS
 - 16.10
 
-**Note**: The installation script is incompatible with Ubuntu versions prior to 15.04 due to a move to SystemD.
+**Note**: The installation script is incompatible with Ubuntu versions prior to 15.04 due to the move to SystemD.
 
 ### Elasticsearch Nodes
 By default the installation script assumes you're using only one node for the collectors, Elasticsearch, and Kibana. The configuration options are included by the installation script for working in a multi-node cluster but they are commented out. This is fine for proof-of-concept or fairly small networks with low retention requirements, but it will not scale beyond a certain point. 
@@ -144,51 +133,38 @@ See the [Flow Management blog](http://www.manitonetworks.com/flow-management/) f
 * [Cisco Netflow v9](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/netflow/configuration/15-mt/nf-15-mt-book/get-start-cfg-nflow.html#GUID-2B7E9519-66FE-4F43-B8D3-00CA38C1FA9A)
 
 # Ports and Protocols
-
 All services listen for UDP flow packets on the following ports:
 
-Service | Protocol | Port
--------- | -------- | -------- |
-Netflow v5 | UDP | 2055 |
-Netflow v9 | UDP | 9995 |
-IPFIX | UDP | 4739 |
+Service     | Protocol  | Port  | Purpose                                   |
+--          | --        | --    | --                                        |
+Netflow v5  | UDP       | 2055  | Basic flow monitoring                     |
+Netflow v9  | UDP       | 9995  | Intermediate flow monitoring              |
+IPFIX       | UDP       | 4739  | Advanced flow monitoring                  |
+sFlow       | UDP       | 6343  | Advanced flow and performance monitoring  |
 
 These ports can be changed, see the [tuning documentation](Tuning.md).
 
 # Access
+You can access your flow data in a few different ways - graphically via Kibana, through Elasticsearch JSON-formatted queries, and via curl HTTP requests. Access to Kibana can optionally be restricted using Squid via a reverse proxy, and the directions for setting that up are included.
 
-You can access your flow data in a few different ways - graphically via Kibana, through Elasticsearch JSON-formatted queries, and via curl HTTP requests. 
-
-Access to Kibana can be restricted using Squid via a reverse proxy, and the directions for setting that up are included. Basic authentication is also included as part of Elasticsearch.
-
-See the [installation documentation](Install/README.md) for more information.
+See the [installation documentation](Install/README.md#kibana-authentication-optional) for more information.
 
 # Limitations
-
 The following Netflow protocols or features are NOT supported:
 
 - Cisco [Flexible Netflow](http://www.cisco.com/c/en/us/products/ios-nx-os-software/flexible-netflow/index.html)
 - Cisco [ASA Netflow Security Event Logging (NESL)](http://www.cisco.com/c/en/us/td/docs/security/asa/asa82/configuration/guide/config/monitor_nsel.html#wp1111174)
 - Cisco NAT Event Logging (NEL)
 
-These technologies may use Netflow as a transport protocol, but there are proprietary fields and codes in use that require additional 
-parsing to handle.
-
-The collection of flows from multiple exporters located behind a single NAT IP address is not supported because of how NAT works.
-
-Netflow protocols do not provide a way to differentiate flows that are sent via NAT from the same IP address without some tweaking, 
-hence the limitation. 
+These technologies may use Netflow as a transport protocol, but there are proprietary fields and codes in use that require additional parsing to handle.
 
 # Debugging
-
 If you run into any issues during or after installation check out the [Debugging page](Debug.md) for helpful commands and debugging options.
 
 # Contributing
-
 We encourage people who use the Flow Analyzer to contribute to the project if they find a bug or documentation issue, or want to see a feature added. See the [Contributing page](CONTRIBUTING.md) for more information about contributing code to the project.
 
 # License
-
 Copyright (c) 2016, Manito Networks, LLC
 All rights reserved.
 
@@ -203,7 +179,6 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Attributions
-
 Elasticsearch is a registered trademark of Elasticsearch BV.
 
 Kibana is a registered trademark of Elasticsearch BV.
