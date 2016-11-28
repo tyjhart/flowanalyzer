@@ -158,24 +158,82 @@ def wlan_counters(data):
 # IEEE 802.3ad LAG Port Statistics (Counter, Enterprise 0, Format 7)
 def lag_port_stats(data):
 	sample_data = {}
+	sample_data["dot3adAggPortActorSystemID"] = data.unpack_string()
+	sample_data["dot3adAggPortPartnerOperSystemID"] = data.unpack_string()
+	sample_data["dot3adAggPortAttachedAggID"] = int(data.unpack_uint())
+	sample_data["dot3adAggPortState"] = data.unpack_fopaque(4)
+	sample_data["dot3adAggPortStatsLACPDUsRx"] = int(data.unpack_uint())
+	sample_data["dot3adAggPortStatsMarkerPDUsRx"] = int(data.unpack_uint())
+	sample_data["dot3adAggPortStatsMarkerResponsePDUsRx"] = int(data.unpack_uint())
+	sample_data["dot3adAggPortStatsUnknownRx"] = int(data.unpack_uint())
+	sample_data["dot3adAggPortStatsIllegalRx"] = int(data.unpack_uint())
+	sample_data["dot3adAggPortStatsLACPDUsTx"] = int(data.unpack_uint())
+	sample_data["dot3adAggPortStatsMarkerPDUsTx"] = int(data.unpack_uint())
+	sample_data["dot3adAggPortStatsMarkerResponsePDUsTx"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
 # Slow Path Counts (Counter, Enterprise 0, Format 8)
+# https://groups.google.com/forum/#!topic/sflow/4JM1_Mmoz7w
 def slow_path_stats(data):
 	sample_data = {}
+	sample_data["Unknown"] = int(data.unpack_uint())
+	sample_data["Other"] = int(data.unpack_uint())
+	sample_data["CAM Miss"] = int(data.unpack_uint())
+	sample_data["CAM Full"] = int(data.unpack_uint())
+	sample_data["No Hardware Support"] = int(data.unpack_uint())
+	sample_data["CNTRL"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
 # InfiniBand Counters (Counter, Enterprise 0, Format 9)
 def infiniband_counters(data):
 	sample_data = {}
+	sample_data["Port Transmitted Data"] = data.unpack_hyper()
+	sample_data["Port Received Data"] = data.unpack_hyper()
+	sample_data["Port Transmitted Packets"] = data.unpack_hyper()
+	sample_data["Port Received Packets"] = data.unpack_hyper()
+	sample_data["Symbol Error Count"] = int(data.unpack_uint())
+	sample_data["Link Error Recovery Counter"] = int(data.unpack_uint())
+	sample_data["Link Downed Counter"] = int(data.unpack_uint())
+	sample_data["Receive Errors"] = int(data.unpack_uint())
+	sample_data["Receive Remote Physical Errors"] = int(data.unpack_uint())
+	sample_data["Receive Switch Relay Errors"] = int(data.unpack_uint())
+	sample_data["Transmit Discards"] = int(data.unpack_uint())
+	sample_data["Transmit Constraint Errors"] = int(data.unpack_uint())
+	sample_data["Receive Constraint Errors"] = int(data.unpack_uint())
+	sample_data["Local Link Integrity Errors"] = int(data.unpack_uint())
+	sample_data["Excessive Buffer Overrun Errors"] = int(data.unpack_uint())
+	sample_data["VL15 Dropped"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
 # SFP Optical Interfaces Counters (Counter, Enterprise 0, Format 10)
 def sfp_optical_counters(data):
 	sample_data = {}
+	sample_data["Module ID"] = int(data.unpack_uint())
+	sample_data["Module Lane Numbers"] = int(data.unpack_uint())
+	sample_data["Module Supply Voltage mV"] = int(data.unpack_uint())
+	sample_data["Module Temperature"] = int(data.unpack_int())
+	sample_data["dot3adAggPortStatsMarkerResponsePDUsTx"] = int(data.unpack_uint())
+	
+	def lane_parse():
+		lane = {}
+		lane["TX Bias Current uA"] = int(data.unpack_uint())
+		lane["TX Power uW"] = int(data.unpack_uint())		
+		lane["TX Power Min uW"] = int(data.unpack_uint())
+		lane["TX Power Max uW"] = int(data.unpack_uint())
+		lane["TX Wavelength nM"] = int(data.unpack_uint())
+		lane["RX Power uW"] = int(data.unpack_uint())		
+		lane["RX Power Min uW"] = int(data.unpack_uint())
+		lane["RX Power Max uW"] = int(data.unpack_uint())
+		lane["RX Wavelength nM"] = int(data.unpack_uint())
+		return lane
+
+	sample_data["Lanes"] = {}
+	for lane_num in range(0,sample_data["Module Lane Numbers"]):
+		sample_data["Lanes"][lane_num+1] = lane_parse()
+	
 	data.done()
 	return sample_data
 
@@ -196,6 +254,25 @@ def radio_util(data):
 	sample_data["Elapsed Time Milliseconds"] = int(data.unpack_uint())
 	sample_data["On Channel Time Milliseconds"] = int(data.unpack_uint())
 	sample_data["On Channel Busy Time Milliseconds"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
+# Queue Length Histogram Counters (Counter, Enterprise 0, Format 1003)
+def queue_len_histogram_counters(data):
+	sample_data = {}
+	sample_data["Queue Index"] = int(data.unpack_uint())
+	sample_data["Segment Size"] = int(data.unpack_uint())
+	sample_data["Queue Segments"] = int(data.unpack_uint())
+	sample_data["Queue Length 0"] = int(data.unpack_uint())
+	sample_data["Queue Length 1"] = int(data.unpack_uint())
+	sample_data["Queue Length 2"] = int(data.unpack_uint())
+	sample_data["Queue Length 4"] = int(data.unpack_uint())
+	sample_data["Queue Length 8"] = int(data.unpack_uint())
+	sample_data["Queue Length 32"] = int(data.unpack_uint())
+	sample_data["Queue Length 128"] = int(data.unpack_uint())
+	sample_data["Queue Length 1024"] = int(data.unpack_uint())
+	sample_data["Queue Length More"] = int(data.unpack_uint())
+	sample_data["Dropped"] = int(data.unpack_uint())
 	data.done()
 	return sample_data
 
@@ -453,7 +530,63 @@ def virtual_domain_net_stats(data):
 	data.done()
 	return sample_data
 
-# ASIC Hardware Table Utilizations (Counter, Enterprise 4413, Format 3)
+# JVM Runtime Attributes (Counter, Enterprise 0, Format 2105)
+def jvm_runtime_attr(data):
+	sample_data = {}
+	sample_data["VM Name"] = data.unpack_string()
+	sample_data["VM Vendor"] = data.unpack_string()
+	sample_data["VM Version"] = data.unpack_string()
+	data.done()
+	return sample_data
+
+# JVM Statistics (Counter, Enterprise 0, Format 2106)
+def jvm_stats(data):
+	sample_data = {}
+	sample_data["Heap Initial Memory Requested"] = data.unpack_uhyper()
+	sample_data["Heap Memory Used"] = data.unpack_uhyper()
+	sample_data["Heap Memory Committed"] = data.unpack_uhyper()
+	sample_data["Heap Maximum Space"] = data.unpack_uhyper()
+	sample_data["Non-Heap Initial Memory Requested"] = data.unpack_uhyper()
+	sample_data["Non-Heap Memory Used"] = data.unpack_uhyper()
+	sample_data["Non-Heap Memory Committed"] = data.unpack_uhyper()
+	sample_data["Non-Heap Maximum Space"] = data.unpack_uhyper()
+	sample_data["GC Count"] = int(data.unpack_uint())
+	sample_data["GC Time ms"] = int(data.unpack_uint())
+	sample_data["Classes Loaded"] = int(data.unpack_uint())
+	sample_data["Total Classes"] = int(data.unpack_uint())
+	sample_data["Unloaded Classes"] = int(data.unpack_uint())
+	sample_data["Compilation Time ms"] = int(data.unpack_uint())
+	sample_data["Live Threads"] = int(data.unpack_uint())
+	sample_data["Live Daemon Threads"] = int(data.unpack_uint())
+	sample_data["Total Threads Started"] = int(data.unpack_uint())
+	sample_data["Open File Descriptors"] = int(data.unpack_uint())
+	sample_data["Maximum File Descriptors"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
+# Broadcom Switch Device Buffer Utilization (Counter, Enterprise 4413, Format 1)
+# http://www.sflow.org/sflow_broadcom_tables.txt
+def broad_switch_dev_buffer_util(data):
+	sample_data = {}
+	sample_data["Unicast Buffers Utilization"] = int(data.unpack_uint())/100
+	sample_data["Multicast Buffers Utilization"] = int(data.unpack_uint())/100
+	data.done()
+	return sample_data
+
+# Broadcom Switch Port Level Buffer Utilization (Counter, Enterprise 4413, Format 2)
+# http://www.sflow.org/sflow_broadcom_tables.txt
+def broad_switch_port_buff_util(data):
+	sample_data = {}
+	sample_data["Ingress Unicast Buffer Utilization"] = int(data.unpack_uint())/100
+	sample_data["Ingress Multicast Buffers Utilization"] = int(data.unpack_uint())/100
+	sample_data["Egress Unicast Buffer Utilization"] = int(data.unpack_uint())/100
+	sample_data["Egress Multicast Buffer Utilization"] = int(data.unpack_uint())/100
+	sample_data["Per-Egress Queue Unicast Buffer Utilization"] = int(data.unpack_uint())/100
+	sample_data["Per-Egress Queue Multicast Buffer Utilization"] = int(data.unpack_uint())/100
+	data.done()
+	return sample_data
+
+# Broadcom Switch ASIC Hardware Table Utilization (Counter, Enterprise 4413, Format 3)
 # http://www.sflow.org/sflow_broadcom_tables.txt
 def asic_hardware_tab_util(data):
 	sample_data = {}
