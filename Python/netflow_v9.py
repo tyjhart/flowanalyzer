@@ -480,7 +480,7 @@ if __name__ == "__main__":
 								except (NameError,KeyError):
 									flow_index["_source"]["Traffic Category"] = protocol_traffic_category(flow_index["_source"]['Protocol Number'])
 							
-							logging.critical(str({"Protocol":flow_index["_source"]['Protocol Number'],"Traffic":flow_index["_source"]["Traffic"],"Traffic Category":flow_index["_source"]["Traffic Category"]}))
+							#logging.critical(str({"Protocol":flow_index["_source"]['Protocol Number'],"Traffic":flow_index["_source"]["Traffic"],"Traffic Category":flow_index["_source"]["Traffic Category"]}))
 							
 							# Tag the flow with Source and Destination FQDN and Domain info (if enabled and available)
 							if dns is True:
