@@ -3,7 +3,7 @@
 
 import time, datetime, socket, struct, sys, os, json, socket, collections, itertools, logging, logging.handlers, getopt
 from struct import *
-from socket import inet_ntoa,inet_ntop
+from socket import inet_ntoa#,inet_ntop
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 from IPy import IP
@@ -229,7 +229,76 @@ def ipv6_dns():
 				flow_index["_source"]["Content"] = dns_dict["Category"]
 	return
 
-# Netflow v9 server
+# Tag "Traffic Category" by Protocol classification ("Routing", "ICMP", etc.)
+def protocol_traffic_category(protocol_number):
+	try:
+		return protocol_type[protocol_number]["Category"]
+	except KeyError:
+		return "Other"
+
+# Tag traffic by SRC and DST port
+def port_traffic_classifier(src_port,dst_port):
+	traffic = {}
+
+	# SRC Port
+	if src_port in registered_ports:
+		traffic["Traffic"] = registered_ports[src_port]["Name"]
+
+		if "Category" in registered_ports[src_port]:
+			traffic["Traffic Category"] = registered_ports[src_port]["Category"]
+
+	elif src_port in other_ports:
+		traffic["Traffic"] = other_ports[src_port]["Name"]
+
+		if "Category" in other_ports[src_port]:
+			traffic["Traffic Category"] = other_ports[src_port]["Category"]
+
+	else:
+		pass
+	
+	# DST Port
+	if dst_port in registered_ports:
+		traffic["Traffic"] = registered_ports[dst_port]["Name"]
+
+		if "Category" in registered_ports[dst_port]:
+			traffic["Traffic Category"] = registered_ports[dst_port]["Category"]
+
+	elif dst_port in other_ports:
+		traffic["Traffic"] = other_ports[dst_port]["Name"]
+
+		if "Category" in other_ports[dst_port]:
+			traffic["Traffic Category"] = other_ports[dst_port]["Category"]
+	
+	else:
+		pass
+	
+	try: # Set as "Other" if not already set
+		traffic["Traffic"]
+	except (NameError,KeyError):
+		traffic["Traffic"] = "Other"
+
+	try: # Set as "Other" if not already set
+		traffic["Traffic Category"]
+	except (NameError,KeyError):
+		traffic["Traffic Category"] = "Other"
+	
+	return traffic
+
+	# Based on SRC / DST port try to classify as a common service
+	#elif (template_key in (7, 11)) and "Traffic" not in flow_index["_source"]:							
+		#if flow_payload in registered_ports:
+			#flow_index["_source"]['Traffic'] = registered_ports[flow_payload]["Name"]
+			#if "Category" in registered_ports[flow_payload]:
+				#flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_payload)]["Category"]
+		#elif flow_payload in other_ports:
+			#flow_index["_source"]['Traffic'] = other_ports[flow_payload]["Name"]
+			#if "Category" in other_ports[flow_payload]:
+				#flow_index["_source"]['Traffic Category'] = other_ports[int(flow_payload)]["Category"]
+		#else:
+			#pass
+
+
+### Netflow v9 server ###
 if __name__ == "__main__":
 	
 	# Stage the flows for the bulk API index operation
@@ -304,7 +373,6 @@ if __name__ == "__main__":
 				template_list.update(parsed_templates) # Add the new template(s) to the working template list					
 
 				logging.debug(str(parsed_templates))
-				
 				logging.info("Finished at position " + str(pointer))
 									
 			elif flow_set_id == 1: # Options template set
@@ -316,7 +384,6 @@ if __name__ == "__main__":
 				template_list.update(option_templates) # Add the new Option template(s) to the working template list
 
 				logging.warning(str(template_list))
-
 				logging.warning("Finished at position " + str(pointer))
 				sys.exit()
 
@@ -332,25 +399,38 @@ if __name__ == "__main__":
 					now = datetime.datetime.utcnow()
 
 					# Cache the flow data, to be appended to flow_dic[]	
-					global flow_index					
-					flow_index = {
-					"_index": str("flow-" + now.strftime("%Y-%m-%d")),
-					"_type": "Flow",
-					"_source": {
-					"Sensor": sensor_address[0],
-					"Sequence": packet["sequence_number"],
-					"Source ID": packet["source_id"],
-					"Time": now.strftime("%Y-%m-%dT%H:%M:%S") + ".%03d" % (now.microsecond / 1000) + "Z",
-					}
-					}
+					#global flow_index					
+					#flow_index = {
+					#"_index": str("flow-" + now.strftime("%Y-%m-%d")),
+					#"_type": "Flow",
+					#"_source": {
+					#"Sensor": sensor_address[0],
+					#"Sequence": packet["sequence_number"],
+					#"Source ID": packet["source_id"],
+					#"Time": now.strftime("%Y-%m-%dT%H:%M:%S") + ".%03d" % (now.microsecond / 1000) + "Z",
+					#}
+					#}
 					
 					if template_list[hashed_id]["Type"] == "Flow Data":
 
-						flow_index["_source"]["Flow Type"] = "Netflow v9" # Note the type
-
 						while data_position+4 <= (flow_set_length + (pointer-4)):
+							# Cache the flow data, to be appended to flow_dic[]	
+							global flow_index					
+							flow_index = {
+							"_index": str("flow-" + now.strftime("%Y-%m-%d")),
+							"_type": "Flow",
+							"_source": {
+							"Sensor": sensor_address[0],
+							"Sequence": packet["sequence_number"],
+							"Source ID": packet["source_id"],
+							"Time": now.strftime("%Y-%m-%dT%H:%M:%S") + ".%03d" % (now.microsecond / 1000) + "Z",
+							}
+							}
+							
 							flow_counter += 1
-							logging.info("Creating data flow number " + str(flow_counter) + ", set ID " + str(flow_set_id) + " from " + str(sensor_address[0])) 
+							flow_index["_source"]["Flow Type"] = "Netflow v9" # Note the type
+
+							logging.info("Data flow number " + str(flow_counter) + ", set ID " + str(flow_set_id) + " from " + str(sensor_address[0])) 
 							
 							# Iterate through fields in the matching template
 							for template_key, field_size in template_list[hashed_id]["Definitions"].iteritems():
@@ -372,24 +452,7 @@ if __name__ == "__main__":
 										
 									# IANA protocol number in case the customer wants to sort by protocol number
 									if template_key == 4:							
-										flow_index["_source"]['Protocol Number'] = flow_payload
-										
-										# Add "Category" of the protocol if there is one ("Routing", "ICMP", etc.)
-										if "Category" in protocol_type[flow_payload]:
-											flow_index["_source"]['Traffic Category'] = protocol_type[flow_payload]["Category"] 	
-										
-									# Based on source / destination port try to classify as a common service
-									elif (template_key in [7,11]) and "Traffic" not in flow_index["_source"]:							
-										if flow_payload in registered_ports:
-											flow_index["_source"]['Traffic'] = registered_ports[flow_payload]["Name"]
-											if "Category" in registered_ports[flow_payload]:
-												flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_payload)]["Category"]
-										elif flow_payload in other_ports:
-											flow_index["_source"]['Traffic'] = other_ports[flow_payload]["Name"]
-											if "Category" in other_ports[flow_payload]:
-												flow_index["_source"]['Traffic Category'] = other_ports[int(flow_payload)]["Category"]
-										else:
-											pass
+										flow_index["_source"]['Protocol Number'] = flow_payload	
 											
 									# Do the special calculations for ICMP Code and Type (% operator)
 									elif template_key in [32,139]:
@@ -425,6 +488,26 @@ if __name__ == "__main__":
 								# Move the byte position the number of bytes in the field we just parsed
 								data_position += field_size
 								
+							# Tag "Traffic" and "Traffic Category" for TCP/UDP:
+							if int(flow_index["_source"]['Protocol Number']) in (6, 17, 33, 132):
+								traffic_tags = port_traffic_classifier(flow_index["_source"]["Source Port"],flow_index["_source"]["Destination Port"])
+								flow_index["_source"]["Traffic"] = traffic_tags["Traffic"]
+								flow_index["_source"]["Traffic Category"] = traffic_tags["Traffic Category"]
+							
+							
+							else:
+								flow_index["_source"]["Traffic"] = None # No tagged traffic types for non-TCP/UDP protocols
+								flow_index["_source"]["Source Port"] = None # Not a transport protocol
+								flow_index["_source"]["Destination Port"] = None # Not a transport protocol
+								
+								# Tag the protocol's "Category" if defined, otherwise tag "Other"
+								try: 
+									flow_index["_source"]["Traffic Category"]
+								except (NameError,KeyError):
+									flow_index["_source"]["Traffic Category"] = protocol_traffic_category(flow_index["_source"]['Protocol Number'])
+							
+							logging.critical(str({"Protocol":flow_index["_source"]['Protocol Number'],"Traffic":flow_index["_source"]["Traffic"],"Traffic Category":flow_index["_source"]["Traffic Category"]}))
+							
 							# Tag the flow with Source and Destination FQDN and Domain info (if enabled and available)
 							if dns is True:
 
