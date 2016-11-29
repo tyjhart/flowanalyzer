@@ -383,23 +383,11 @@ if __name__ == "__main__":
 					
 					# Get the current UTC time for the flows
 					now = datetime.datetime.utcnow()
-
-					# Cache the flow data, to be appended to flow_dic[]	
-					#global flow_index					
-					#flow_index = {
-					#"_index": str("flow-" + now.strftime("%Y-%m-%d")),
-					#"_type": "Flow",
-					#"_source": {
-					#"Sensor": sensor_address[0],
-					#"Sequence": packet["sequence_number"],
-					#"Source ID": packet["source_id"],
-					#"Time": now.strftime("%Y-%m-%dT%H:%M:%S") + ".%03d" % (now.microsecond / 1000) + "Z",
-					#}
-					#}
 					
 					if template_list[hashed_id]["Type"] == "Flow Data":
 
 						while data_position+4 <= (flow_set_length + (pointer-4)):
+							
 							# Cache the flow data, to be appended to flow_dic[]	
 							global flow_index					
 							flow_index = {
