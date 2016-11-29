@@ -3,7 +3,7 @@
 
 import time, datetime, socket, struct, sys, os, json, socket, collections, itertools, logging, logging.handlers, getopt
 from struct import *
-from socket import inet_ntoa#,inet_ntop
+from socket import inet_ntoa,inet_ntop
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 from IPy import IP
@@ -284,20 +284,6 @@ def port_traffic_classifier(src_port,dst_port):
 	
 	return traffic
 
-	# Based on SRC / DST port try to classify as a common service
-	#elif (template_key in (7, 11)) and "Traffic" not in flow_index["_source"]:							
-		#if flow_payload in registered_ports:
-			#flow_index["_source"]['Traffic'] = registered_ports[flow_payload]["Name"]
-			#if "Category" in registered_ports[flow_payload]:
-				#flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_payload)]["Category"]
-		#elif flow_payload in other_ports:
-			#flow_index["_source"]['Traffic'] = other_ports[flow_payload]["Name"]
-			#if "Category" in other_ports[flow_payload]:
-				#flow_index["_source"]['Traffic Category'] = other_ports[int(flow_payload)]["Category"]
-		#else:
-			#pass
-
-
 ### Netflow v9 server ###
 if __name__ == "__main__":
 	
@@ -544,7 +530,7 @@ if __name__ == "__main__":
 
 				# No template, drop the flow per the standard and advanced the byte position
 				else:
-					logging.warning("Missing template for flow set " + 	str(flow_set_id) + " from " + str(sensor_address[0]) + ", sequence " + str(packet["sequence_number"]) + " - dropping per v9 standard")
+					logging.warning("Missing template for flow set " + 	str(flow_set_id) + " from " + str(sensor_address[0]) + ", sequence " + str(packet["sequence_number"]) + " - DROPPING")
 					
 				# Advance to the end of the flow
 				pointer = (flow_set_length + pointer)-4 # Skip the flow
