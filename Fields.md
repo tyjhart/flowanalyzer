@@ -1,4 +1,4 @@
-# **Fields**
+# Fields
 
 The Flow Analyzer supports a number of fields, which are used by many vendors and platforms. We've made an effort to
 analyze and include the most common fields, though there are certain to be fields in use we haven't seen yet.
@@ -78,11 +78,11 @@ Here are the commonly used fields supported out-of-the-box:
 
 <sup>1</sup> Mikrotik - Exported by Mikrotik as "0", but not supported yet by RouterOS as of Oct. 2016
 
-<sup>2</sup> Not all platforms support Egress (direction Out) flow reporting, most only support Ingress (direction In) reporting.
+<sup>2</sup> Not all platforms support Egress (Direction = Out) flow reporting, most only support Ingress (Direction = In) reporting.
 
 <sup>3</sup> Local to the individual collector devices - match this with the Sensor ID.
 
-<sup>4</sup> IANA registered protocols only. See the official IANA list of protocol numbers and names.
+<sup>4</sup> IANA-registered protocols only. See the official IANA list of protocol numbers and names.
 
 **Note**: Netflow v5 does not support IPv6.
 

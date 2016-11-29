@@ -564,6 +564,43 @@ def jvm_stats(data):
 	data.done()
 	return sample_data
 
+# Energy Consumption Statistics (Counter, Enterprise 0, Format 3000)
+def energy_consumption(data):
+	sample_data = {}
+	sample_data["Voltage mV"] = int(data.unpack_uint())
+	sample_data["Current mA"] = int(data.unpack_uint())
+	sample_data["Real Power mW"] = int(data.unpack_uint())
+	sample_data["Power Factor"] = int(data.unpack_int())/100
+	sample_data["Energy mJ"] = int(data.unpack_uint())
+	sample_data["Energy Errors"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
+# Temperature Statistics (Counter, Enterprise 0, Format 3001)
+def temperature_counter(data):
+	sample_data = {}
+	sample_data["Minimum Temperature"] = int(data.unpack_int())
+	sample_data["Maximum Temperature"] = int(data.unpack_int())
+	sample_data["Temperature Errors"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
+# Humidity Statistics (Counter, Enterprise 0, Format 3002)
+def humidity_counter(data):
+	sample_data = {}
+	sample_data["Relative Humidity"] = int(data.unpack_int())
+	data.done()
+	return sample_data
+
+# Cooling Statistics (Counter, Enterprise 0, Format 3003)
+def cooling_counter(data):
+	sample_data = {}
+	sample_data["Total Fans"] = int(data.unpack_uint())
+	sample_data["Failed Fans"] = int(data.unpack_uint())
+	sample_data["Average Fan Speed Percentage"] = int(data.unpack_uint())
+	data.done()
+	return sample_data
+
 # Broadcom Switch Device Buffer Utilization (Counter, Enterprise 4413, Format 1)
 # http://www.sflow.org/sflow_broadcom_tables.txt
 def broad_switch_dev_buffer_util(data):

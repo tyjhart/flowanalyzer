@@ -434,6 +434,18 @@ if __name__ == "__main__":
 
 						elif record_ent_form_number == [0, 2106]: # JVM Statistics 
 							flow_index["_source"].update(jvm_stats(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 3000]: # Energy Consumption Statistics 
+							flow_index["_source"].update(energy_consumption(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 3001]: # Temperature Statistics 
+							flow_index["_source"].update(temperature_counter(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 3002]: # Humidity Statistics 
+							flow_index["_source"].update(humidity_counter(unpacked_record_data))
+
+						elif record_ent_form_number == [0, 3003]: # Cooling (Fan) Statistics 
+							flow_index["_source"].update(cooling_counter(unpacked_record_data))
 							
 						elif record_ent_form_number == [4413, 1]: # Broadcom Switch Device Buffer Utilization
 							flow_index["_source"].update(broad_switch_dev_buffer_util(unpacked_record_data))
@@ -469,28 +481,30 @@ if __name__ == "__main__":
 
 			### Something else ###
 			else:
-				logging.warning("Oops - Unknown [Enterprise, Format] " + str(enterprise_format_num) + " - exiting.")
-				sys.exit("Unknown enterprise and format number - exiting.")
+				logging.warning("Unknown [Enterprise, Format] " + str(enterprise_format_num) + " - EXITING")
+				sys.exit("Unknown [Enterprise, Format] " + str(enterprise_format_num) + " - EXITING")
 			### Sample Parsing Finish ###
 
 		# Verify all data has been unpacked	
 		try:
 			unpacked_data.done()
-		except:
+		except Exception as unpack_done_error:
+			logging.warning(str(unpack_done_error))
 			logging.warning("Failed to completely unpack sample data - FAIL")
 		
 		### sFlow Samples End ###
 
 		# Have enough flows to do a bulk index to Elasticsearch
 		if len(sflow_data) >= bulk_insert_count:
-							
+			bulk_upload_length = str(len(sflow_data))
+
 			# Perform the bulk upload to the index
 			try:
 				helpers.bulk(es,sflow_data)
-				logging.info(str(len(sflow_data)) + " record(s) uploaded to Elasticsearch - OK")
+				logging.info(bulk_upload_length + " record(s) uploaded to Elasticsearch - OK")
 			except ValueError as bulk_index_error:
-				logging.critical(str(len(sflow_data)) + " record(s) DROPPED, unable to index flows - FAIL")
 				logging.critical(bulk_index_error)
+				logging.critical(bulk_upload_length + " record(s) DROPPED, unable to index flows - FAIL")
 				
 			# Reset sflow_data
 			sflow_data = []

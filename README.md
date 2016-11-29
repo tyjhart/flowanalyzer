@@ -49,14 +49,16 @@ You can go from zero to up-and-running with graphed flow data in less than one h
 ### Flow Monitoring Protocols
 The Manito Networks Flow Analyzer supports the following flow data protocols:
 
-- Netflow v5
-- Netflow v9
-- IPFIX (aka Netflow v10)
-- sFlow
+- Netflow v5 (Cisco)
+- Netflow v9 (Cisco)
+- IPFIX (IEEE, aka Netflow v10)
+- sFlow (InMon Corporation)
+- Traffic Flow (Mikrotik, Netflow-equivalent)
+- Netstream (Huawei Technologies, Netflow-equivalent)
 
 If you're not familiar with Netflow or IPFIX that's alright - take a look at [Network Flow Basics](Network%20Flow%20Basics.md). For a description of sFlow and supported sFlow structures see the [Flow Analyzer sFlow document](sFlow.md).
 
-Our software ingests Netflow, IPFIX, and sFlow data then parses and tags it, and stores it in Elasticsearch for you to query and graph in Kibana.
+Our software ingests Netflow (and Netflow-equivalents), IPFIX, and sFlow data then parses and tags it, and stores it in Elasticsearch for you to query and graph in Kibana.
 
 ### Fields
 The Flow Analyzer supports all defined Netflow v5 fields, all standard Netflow v9 fields, all IPFIX fields in the RFC, and almost all sFlow structures defined by InMon Corporation's enterprise ID. See the [Network Flow Basics document](Network%20Flow%20Basics.md) for a description of Netflow and IPFIX fields, and the [sFlow document](sFlow.md) for a description of supported structures.
@@ -150,13 +152,13 @@ You can access your flow data in a few different ways - graphically via Kibana, 
 See the [installation documentation](Install/README.md#kibana-authentication-optional) for more information.
 
 # Limitations
-The following Netflow protocols or features are NOT supported:
+The following Netflow protocols or features are **NOT** supported by the Flow Analyzer project:
 
-- Cisco [Flexible Netflow](http://www.cisco.com/c/en/us/products/ios-nx-os-software/flexible-netflow/index.html)
-- Cisco [ASA Netflow Security Event Logging (NESL)](http://www.cisco.com/c/en/us/td/docs/security/asa/asa82/configuration/guide/config/monitor_nsel.html#wp1111174)
+- [Cisco Flexible Netflow](http://www.cisco.com/c/en/us/products/ios-nx-os-software/flexible-netflow/index.html)
+- [Cisco ASA Netflow Security Event Logging (NESL)](http://www.cisco.com/c/en/us/td/docs/security/asa/asa82/configuration/guide/config/monitor_nsel.html#wp1111174)
 - Cisco NAT Event Logging (NEL)
 
-These technologies may use Netflow as a transport protocol, but there are proprietary fields and codes in use that require additional parsing to handle.
+These technologies may use Netflow as a transport protocol, but there are proprietary fields, codes, and structures in use that require additional parsing to handle.
 
 # Debugging
 If you run into any issues during or after installation check out the [Debugging page](Debug.md) for helpful commands and debugging options.
@@ -179,13 +181,21 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Attributions
-Elasticsearch is a registered trademark of Elasticsearch BV.
+"_Elasticsearch_" and "_Kibana_" are registered trademarks of Elasticsearch BV.
 
-Kibana is a registered trademark of Elasticsearch BV.
+"_Elasticsearch_" and "_Kibana_" are distributed under the Apache 2 license by Elasticsearch BV.
 
-Elasticsearch and Kibana are distributed under the Apache 2 license by Elasticsearch BV.
+"_Ubuntu_" is a registered trademark of Canonical Ltd.
 
-Ubuntu is a trademark of Canonical Ltd.
+_"sFlow"_ is a registered trademark of InMon Corporation.
+
+"_Cisco_" is a registered trademark of Cisco Systems, Inc.
+
+"_Mikrotik_" is a trademark of Mikrotikls SIA.
+
+"_Huawei_" is a trademark of Huawei Technologies Co., Ltd.
+
+"_NVIDIA_" is a trademark of NVIDIA Corporation.
 
 # ---
 **Copyright (c) 2016, Manito Networks, LLC**

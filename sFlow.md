@@ -1,4 +1,10 @@
-sFlow is a robust, extensible protocol for reporting performance and system counters, as well as network flows. It's important to understand how the sFlow protocol and its structures work, so you can effectively ingest and parse sFlow data.
+sFlow is a robust, extensible protocol for reporting performance and system counters, as well as network flows. From the [InMon Corporation website](http://www.inmon.com/technology/):
+
+> Originally developed by InMon, sFlow is the leading, multi-vendor, standard for monitoring high-speed switched and routed networks. sFlow technology is built into network equipment and gives complete visibility into network activity, enabling effective management and control of network resources. InMon is a founding member of the sFlow.org industry consortium.
+
+See the InMon [Network Equipment page](http://www.sflow.org/products/network.php) for a list of platforms and devices that support sFlow.
+
+By bringing together both flow data and performance counter data, it's possible to get a wider and more holistic view of overall network and system performance. It's important to understand how the sFlow protocol and its structures work so you can effectively ingest and parse sFlow data.
 
 1. [Structures](#structures)
 2. [Samples](#samples)
@@ -8,6 +14,7 @@ sFlow is a robust, extensible protocol for reporting performance and system coun
     4. [Expanded Counter Sample](#expanded-counter-sample)
 3. [Flow Data](#flow-data)
 4. [Counter Data](#counter-data)
+5. [Attributions](#attributions)
 
 # Structures
 sFlow structures define specific data sets that follow a defined standard. The Flow Analyzer currently supports most of the standard sFlow-defined structures. Vendors and open source developers are free to define and use their own structures, but support for those structures (especially proprietary, vendor-specific structures) is limited in this project.
@@ -82,8 +89,8 @@ Flow    | 0 | 1014  | Extended 802.11 RX                | Yes           | [sFlow
 Flow    | 0 | 1015  | Extended 802.11 TX                | Yes           | [sFlow 802.11 Structures](http://www.sflow.org/sflow_80211.txt) |
 Flow    | 0 | 1016  | Extended 802.11 Aggregation       | In Progress   | [sFlow 802.11 Structures](http://www.sflow.org/sflow_80211.txt) |
 Flow    | 0 | 1017  | Extended OpenFlow v1 (deprecated) | N/A           | N/A |
-Flow    | 0 | 1018  | Extended Fibre Channel            | In Progress   | []() |
-Flow    | 0 | 1019  | Extended Queue Length             | In Progress   | []() |
+Flow    | 0 | 1018  | Extended Fibre Channel            | In Progress   | [sFlow, CEE and FCoE](http://sflow.org/discussion/sflow-discussion/0244.html) |
+Flow    | 0 | 1019  | Extended Queue Length             | In Progress   | [sFlow for queue length monitoring](https://groups.google.com/forum/#!topic/sflow/dz0nsXqBYAw) |
 Flow    | 0 | 1020  | Extended NAT Port                 | In Progress   | [sFlow Port NAT Structure](http://www.sflow.org/sflow_pnat.txt) |
 Flow    | 0 | 1021  | Extended L2 Tunnel Egress         | In Progress   | [sFlow Tunnel Structure](http://www.sflow.org/sflow_tunnels.txt) |
 Flow    | 0 | 1022  | Extended L2 Tunnel Ingress        | In Progress   | [sFlow Tunnel Structure](http://www.sflow.org/sflow_tunnels.txt) |
@@ -158,14 +165,21 @@ Counter     | 0     | 2200  | Memcached Counters (deprecated)                   
 Counter     | 0     | 2201  | HTTP Counters                                     | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
 Counter     | 0     | 2202  | App Operations                                    | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
 Counter     | 0     | 2203  | App Resources                                     | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
-Counter     | 0     | 2204  | Memcache Counters                                 | In Progress   | [http://www.sflow.org/sflow_memcache.txt](http://www.sflow.org/sflow_memcache.txt) |
+Counter     | 0     | 2204  | Memcache Counters                                 | In Progress   | [sFlow Memcache Structures](http://www.sflow.org/sflow_memcache.txt) |
 Counter     | 0     | 2206  | App Workers                                       | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
 Counter     | 0     | 2207  | OVS DP Statistics                                 | In Progress   | []() |
-Counter     | 0     | 3000  | Energy                                            | In Progress   | []() |
-Counter     | 0     | 3001  | Temperature                                       | In Progress   | []() |
-Counter     | 0     | 3002  | Humidity                                          | In Progress   | []() |
-Counter     | 0     | 3003  | Fans                                              | In Progress   | []() |
+Counter     | 0     | 3000  | Energy                                            | Yes           | [Energy Management Thread](https://groups.google.com/forum/#!topic/sflow/gN3nxSi2SBs) |
+Counter     | 0     | 3001  | Temperature                                       | Yes           | [Energy Management Thread](https://groups.google.com/forum/#!topic/sflow/gN3nxSi2SBs) |
+Counter     | 0     | 3002  | Humidity                                          | Yes           | [Energy Management Thread](https://groups.google.com/forum/#!topic/sflow/gN3nxSi2SBs) |
+Counter     | 0     | 3003  | Fans                                              | Yes           | [Energy Management Thread](https://groups.google.com/forum/#!topic/sflow/gN3nxSi2SBs) |
 Counter     | 4413  | 1     | Broadcom Switch Device Buffer Utilization         | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
 Counter     | 4413  | 2     | Broadcom Switch Port Level Buffer Utilization     | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
 Counter     | 4413  | 3     | Broadcom Switch ASIC Hardware Table Utilization   | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
 Counter     | 5703  | 1     | NVIDIA GPU Statistics                             | In Progress   | [sFlow NVML GPU Structure](http://www.sflow.org/sflow_nvml.txt) |
+
+# Attributions
+See the [README Attributions section](README.md#attributions) for trademark attributions.
+
+# ---
+**Copyright (c) 2016, Manito Networks, LLC**
+**All rights reserved.**
