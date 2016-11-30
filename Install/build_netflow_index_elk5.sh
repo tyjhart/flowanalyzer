@@ -2,7 +2,7 @@
 # All rights reserved.
 
 # Build the Netflow index in Elasticsearch
-curl -XPOST localhost:9200/_template/flow_template -d '
+curl -XPOST localhost:9200/_template/flow_template?pretty -d '
 {
 "template": "flow*","settings": {},
 
@@ -14,8 +14,8 @@ curl -XPOST localhost:9200/_template/flow_template -d '
 
 "properties": {
 
-"Bytes In":                             {"type":"integer"},
-"Bytes Out":                            {"type":"integer"},
+"Bytes In":                             {"type":"long"},
+"Bytes Out":                            {"type":"long"},
 "Content":                              {"type":"keyword"},
 "BGP IPv4 Next Hop":                    {"type":"ip"},
 "Destination AS":                       {"type":"integer"},
@@ -28,12 +28,12 @@ curl -XPOST localhost:9200/_template/flow_template -d '
 "Direction":                            {"type":"keyword"},
 "Dot-1q Customer VLAN ID":              {"type":"integer"},
 "Dot-1q VLAN ID":                       {"type":"integer"},
-"First Switched":                       {"type":"double"},
-"Flows":                                {"type":"integer"},
-"Flow End Milliseconds":                {"type":"integer"},
+"First Switched":                       {"type":"long"},
+"Flows":                                {"type":"long"},
+"Flow End Milliseconds":                {"type":"long"},
 "Flow End Reason":                      {"type":"keyword"},
 "Flow Sampler ID":                      {"type":"integer"},
-"Flow Start Milliseconds":              {"type":"integer"},
+"Flow Start Milliseconds":              {"type":"long"},
 "Flow Type":                            {"type":"keyword"},
 "ICMP Code":                            {"type":"integer"},
 "ICMP Type":                            {"type":"integer"},
@@ -50,7 +50,7 @@ curl -XPOST localhost:9200/_template/flow_template -d '
 "IPv6 Next Hop":                        {"type":"ip"},
 "IPv6 Source":                          {"type":"ip"},
 "IPv6 Source Mask":                     {"type":"integer"},
-"Last Switched":                        {"type":"double"},
+"Last Switched":                        {"type":"long"},
 "Maximum TTL":                          {"type":"integer"},
 "Minimum TTL":                          {"type":"integer"},
 "MPLS Label Stack Length":              {"type":"integer"},
@@ -58,15 +58,15 @@ curl -XPOST localhost:9200/_template/flow_template -d '
 "Outgoing Destination MAC":             {"type":"keyword"},
 "Outgoing Source MAC":                  {"type":"keyword"},
 "Output Interface":                     {"type":"integer"},
-"Packets In":                           {"type":"integer"},
-"Packets Out":                          {"type":"integer"},
+"Packets In":                           {"type":"long"},
+"Packets Out":                          {"type":"long"},
 "Post-NAT Destination IPv4":            {"type":"ip"},
 "Post-NAT Destination Transport Port":  {"type":"integer"},
 "Post-NAT Source IPv4":                 {"type":"ip"},
 "Post-NAT Source Transport Port":       {"type":"integer"},
 "Protocol":                             {"type":"keyword"},
 "Protocol Number":                      {"type":"integer"},
-"Sensor":                               {"type":"keyword"},
+"Sensor":                               {"type":"ip"},
 "Sequence":                             {"type":"integer"},
 "Source AS":                            {"type":"integer"},
 "Source Domain":                        {"type":"keyword"},
