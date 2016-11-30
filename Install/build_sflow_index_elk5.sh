@@ -2,7 +2,7 @@
 # All rights reserved.
 
 # Build the sFlow index in Elasticsearch
-curl -XPOST localhost:9200/_template/sflow_template -d '
+curl -XPOST localhost:9200/_template/sflow_template?pretty -d '
 {
 "template": "sflow*",
 "settings": {
