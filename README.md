@@ -135,7 +135,7 @@ See the [Flow Management blog](http://www.manitonetworks.com/flow-management/) f
 * [Cisco Netflow v9](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/netflow/configuration/15-mt/nf-15-mt-book/get-start-cfg-nflow.html#GUID-2B7E9519-66FE-4F43-B8D3-00CA38C1FA9A)
 
 # Ports and Protocols
-All services listen for UDP flow packets on the following ports:
+All services listen for UDP flow packets on the following default ports:
 
 Service     | Protocol  | Port  | Purpose                                   |
 --          | --        | --    | --                                        |
