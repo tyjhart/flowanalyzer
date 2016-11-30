@@ -10,10 +10,6 @@ chmod -R +x ..
 echo "Copy example netflow_options_default.py to real netflow_options.py"
 cp $(pwd)/Python/netflow_options_default.py $(pwd)/Python/netflow_options.py
 
-# Set the hostname for Squid
-echo "Set the hostname"
-hostnamectl set-hostname Flow00
-
 # Set timezone to UTC
 echo "Set timezone to UTC"
 timedatectl set-timezone UTC
@@ -47,7 +43,7 @@ echo "#discovery.zen.ping.unicast.hosts: ["192.168.1.10","192.168.1.11"]" >> /et
 
 # Set the Elasticsearch heap size to 50% of RAM (must be <= 32GB per documentation)
 echo "Set the Elasticsearch heap size to 50% of RAM (must be <= 32GB per documentation)"
-echo "ES_JAVA_OPTS=\"-Xms1g -Xmx1g\"" >> /etc/default/elasticsearch
+echo "ES_JAVA_OPTS=\"-Xms2g -Xmx2g\"" >> /etc/default/elasticsearch
 
 # Enabling and restarting Elasticsearch service
 echo "Enabling and starting Elasticsearch service"
@@ -122,7 +118,7 @@ echo "Register new services created above"
 systemctl daemon-reload
 
 # Set the Netflow services to automatically start
-echo "Set the Netflow services to automatically start"
+echo "Set the collector services to automatically start"
 systemctl enable netflow_v5
 systemctl enable netflow_v9
 systemctl enable ipfix
