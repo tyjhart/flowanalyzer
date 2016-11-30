@@ -1,4 +1,4 @@
-# Overview
+# Preface
 
 The installation is orchestrated with Git, Pip, and Bash scripting. The process should require no manual intervention on your part, as
 long as you're running the latest stable LTS release of Ubuntu Server.
@@ -13,12 +13,14 @@ The installation script is incompatible with Ubuntu versions prior to 15.04 due 
 
 While installing everything on one server is good for proof-of-concept or testing, additional Elasticsearch nodes will greatly increase performance and provide failover. Having additional Elasticsearch nodes will also allow you to retain more flow data, and tune overall performance to your needs.
 
-# Installation
+# Overview
 
 1. [Installation](#installation)
     1. [Clone the Git Repository](#clone-the-git-repository)
     2. [Run the Installation Script](#installation-script)
-    3. [Build Elasticsearch Flow Index](#build-the-elasticsearch-flow-index)
+    3. [Build Elasticsearch Indexes](#build-elasticsearch-indexes)
+        1. [Netflow Index](#netflow-index)
+        2. [sFlow Index](#sflow-index)
     4. [Elasticsearch Tuning](#elasticsearch-tuning)
     5. [Firewall (Optional)](#firewall-optional)
     6. [Kibana Authentication (Optional)](#kibana-authentication-optional)
@@ -33,8 +35,10 @@ While installing everything on one server is good for proof-of-concept or testin
 5. [Updates](#updates)
 6. [Elasticsearch Clustering](#elasticsearch-clustering)
 
-### Clone the Git Repository
+# Installation
+Follow the steps below in order and the installation should take no more than about 20 minutes. Copy-paste commands for easier installation.
 
+## Clone the Git Repository
 If you don't have Git installed on your Ubuntu Server machine that's OK, just run the following:
 ```
 sudo apt-get install git
@@ -50,8 +54,7 @@ The download should only take a moment. Move into the repo directory:
 cd flowanalyzer
 ```
 
-### Installation Script
-
+## Installation Script
 The ubuntu_install.sh script handles almost everything, just be sure to run it with sudo privileges:
 ```
 sudo sh ./Install/ubuntu_install.sh
@@ -73,13 +76,16 @@ The ubuntu_install.sh script does the following:
 - Creates an index pruning job (>30 days old) using Curator in /etc/cron.daily
 - Installs Head plugin for Elasticsearch
 
-### Build the Elasticsearch Flow Index
+## Build Elasticsearch Indexes
+Index templates need to be created in Elasticsearch, so when data is collected the fields will be assigned the right data types and proper indexing settings.
 
+### Netflow Index
 The build_index.sh script creates the default index for storing Netflow and IPFIX flow data in Elasticsearch:
 ```
 sh ./Install/build_index.sh
 ```
 
+### sFlow Index
 The build_sflow_index.sh script creates the default index for storing sFlow data in Elasticsearch. A separate script and index are used because sFlow data can be very different from network flow data depending on what sFlow counter records are being exported.
 
 Run the sFlow index script:
@@ -87,8 +93,7 @@ Run the sFlow index script:
 sh ./Install/build_sflow_index.sh
 ```
 
-### Elasticsearch Tuning
-
+## Elasticsearch Tuning
 One of the biggest ways to destroy Elasticsearch performance is to not properly allocate the right sized heap. The creators of Elasticsearch recommend setting
 Elasticsearch to use [50% of the available memory](https://www.elastic.co/guide/en/elasticsearch/guide/current/heap-sizing.html#_give_less_than_half_your_memory_to_lucene) 
 on a given server, up to the 32GB limit. The configuration set in the installation script sets Elasticsearch memory to 2GB, assuming a server with at least 4GB of RAM. 
@@ -102,8 +107,7 @@ ES_HEAP_SIZE=2g
 
 If you have a server with more RAM then you need to adjust this value and reboot the server (or restart Elasticsearch and then the collector services).
 
-### Firewall (Optional)
-
+## Firewall (Optional)
 These are examples of commands you may need to use if you're running a firewall on the Ubuntu Server installation:
 ```
 ufw allow from xxx.xxx.xxx.xxx/xx to any port 80 proto tcp comment "Kibana interface"
@@ -111,7 +115,7 @@ ufw allow from xxx.xxx.xxx.xxx/xx to any port 9200 proto tcp comment "Elasticsea
 ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739,6343 proto udp comment "Flow data in"
 ```
 
-### Kibana Authentication (Optional)
+## Kibana Authentication (Optional)
 By default Kibana comes with no authentication capabilities. This typically isn't an issue if flow data is not considered confidential, and if the Flow Analyzer server is running in an isolated VLAN or network enclave.
 
 If you need authentication for Kibana access there are two available options:
@@ -169,8 +173,7 @@ Restart the Kibana process to force it to use the new configuration:
 systemctl restart kibana
 ```
 
-### Reboot
-
+## Reboot
 It's important to reboot so that we're sure the services were registered and start correctly:
 ```
 sudo reboot
@@ -221,11 +224,10 @@ Browse to Kibana at http://your_server_ip:5601
 
 No username or password is required.
 
-### Using a Reverse Proxy
+### Using a Reverse Proxy (optional)
 Browse to Kibana at http://your_server_ip
 
 Log in with the default Squid credentials shown below:
-
 - Username: **admin**
 - Password: **manitonetworks**
 
@@ -235,12 +237,11 @@ A few steps are required to point Kibana to the Flow index, import the Visualiza
 ### Configure the default index pattern
 The installation script has already created the Elasticsearch index, but we need to point Kibana in the right direction.
 
-In Kibana, under **Index name or pattern** enter " flow* " without the quotes, and it should automatically parse your input.
+In Kibana, under **Index name or pattern** enter " _flow*_ " without the quotes - it should automatically parse your input when you click outside the entry field.
 
 **Note**: If you haven't already configured your devices to send flows to the collector go back and [perform that configuration](#configure-devices).
 
-**Note**: There is currently an issue in Chrome with form validation that may cause this step not to work.
-If you run into issues use Firefox or Edge to configure the Index Name.
+**Note**: There is currently an issue in Chrome with form validation that may cause this step not to work. If you run into issues use Firefox or Edge to configure the Index Name.
 
 Leave the automatically selected **Time** field under **Time-field name**.
 
@@ -268,7 +269,7 @@ Perform the same steps above on the **Bytes Out** field.
 There are additional features that you can utilize, but they have to be enabled by you. This includes:
 
  - [Reverse DNS Lookups](../Tuning.md#lookups) & Content Tagging
- - MAC Address Prefix Tagging (Beta)
+ - MAC Address Prefix Tagging (in development)
 
 See [the tuning documentation](../Tuning.md) for how to enable these features, and recommendations for baseline settings.
 
@@ -276,18 +277,17 @@ See [the tuning documentation](../Tuning.md) for how to enable these features, a
 To get the latest updates do the following:
 
 Change to the flowanalyzer directory and fetch the latest stable code via Git:
-
 ```
 cd /your/directory/flowanalyzer
-git fetch
+git pull
 ```
 
-Restart the listener services:
-
+Restart the listener services you are actively using on your network (all are listed here for documentation purposes):
 ```
 systemctl restart netflow_v5
 systemctl restart netflow_v9
 systemctl restart ipfix
+systemctl restart sflow
 ```
 
 # Elasticsearch Clustering
@@ -324,10 +324,11 @@ On each additional Ubuntu server you want to run as an Elasticsearch node perfor
 
 Add the Elasticsearch repository: 
 ```
-sudo wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-echo "deb https://packages.elastic.co/elasticsearch/2.x/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+sudo echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-5.x.list
 sudo apt-get update
 ```
+
 Install Elasticsearch and its dependencies:
 ```
 sudo apt-get -y install elasticsearch openjdk-8-jre
@@ -349,10 +350,10 @@ pointing it to other nodes so they can discover each other.
 For example, say your network is 10.25.98.0/24, and you have the original host and two additional Elasticsearch servers:
 
 **Node** | **IP Address** | **Node Type**
--------- | -------- | -------- |
-[Master01](#master01) | 10.25.98.3 | Existing node |
-[Data01](#data01) | 10.25.98.4 | New node |
-[Data02](#data02) | 10.25.98.5 | New node |
+--------                | --------   | --------         |
+[Master01](#master01)   | 10.25.98.3 | Existing node    |
+[Data01](#data01)       | 10.25.98.4 | New node         |
+[Data02](#data02)       | 10.25.98.5 | New node         |
 
 Here's how your **/etc/elasticsearch/elasticsearch.yml** file will look on the three hosts:
 
@@ -363,6 +364,7 @@ node.name: Master01
 cluster.name: manito_networks
 discovery.zen.ping.unicast.hosts: ["10.25.98.4","10.25.98.5"]
 ```
+
 #### Data01
 ```
 network.host: [_local_,_site_]
@@ -370,6 +372,7 @@ node.name: Data01
 cluster.name: manito_networks
 discovery.zen.ping.unicast.hosts: ["10.25.98.3","10.25.98.5"]
 ```
+
 #### Data02
 ```
 network.host: [_local_,_site_]
@@ -385,7 +388,7 @@ up to 32GB per the vendor's recommendation](https://www.elastic.co/guide/en/elas
 
 For a server with 4GB of RAM, set the heap size to 2GB:
 ```
-ES_HEAP_SIZE=2g
+ES_JAVA_OPTS="-Xms2g -Xmx2g"
 ```
 
 ## Enable Elasticsearch Service
@@ -398,6 +401,11 @@ sudo systemctl enable elasticsearch
 After reconfiguring Elasticsearch it's important to restart the service: 
 ```
 sudo systemctl restart elasticsearch
+```
+
+...OR reboot the server:
+```
+sudo reboot
 ```
 
 # ---
