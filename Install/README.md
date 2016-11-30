@@ -1,12 +1,7 @@
 # Preface
-
-The installation is orchestrated with Git, Pip, and Bash scripting. The process should require no manual intervention on your part, as
-long as you're running the latest stable LTS release of Ubuntu Server.
-
-Right now Ubuntu Server 16.04 LTS is recommended.
+The installation is orchestrated with Git, Pip, and Bash scripting. The process should require no manual intervention on your part, as long as you're running the latest stable LTS release of Ubuntu Server. Kibana requires some minimal configuration, but it is all point-and-click in the Kibana interface and only needs to be done once.
 
 # Minimum Requirements
-
 Each instance should be installed on a fresh 64-bit [Ubuntu Server](https://www.ubuntu.com/download/server) machine with **systemd support**, and at least the minimum required resources as listed in the [main README document Requirements section](../README.md#requirements).
 
 The installation script is incompatible with Ubuntu versions prior to 15.04 due to a shift to SystemD by Canonical. Earlier versions of Ubuntu can use SystemD with a fair amount of work, but the installation script isn't supported on non-SystemD platforms with workarounds implemented.
@@ -14,7 +9,6 @@ The installation script is incompatible with Ubuntu versions prior to 15.04 due 
 While installing everything on one server is good for proof-of-concept or testing, additional Elasticsearch nodes will greatly increase performance and provide failover. Having additional Elasticsearch nodes will also allow you to retain more flow data, and tune overall performance to your needs.
 
 # Overview
-
 1. [Installation](#installation)
     1. [Clone the Git Repository](#clone-the-git-repository)
     2. [Run the Installation Script](#installation-script)
@@ -25,10 +19,13 @@ While installing everything on one server is good for proof-of-concept or testin
     5. [Firewall (Optional)](#firewall-optional)
     6. [Kibana Authentication (Optional)](#kibana-authentication-optional)
     7. [Reboot](#reboot)
+    8. [Verify Services](#verify-services)
 2. [Configure Devices](#configure-devices)
 3. [Kibana](#kibana)
     1. [Access Kibana](#access-kibana)
-    2. [Configure the Default Index Pattern](#configure-the-default-index-pattern)
+    2. [Configure Index Patterns](#configure-index-patterns)
+        1. [Netflow Index Pattern](#netflow-index-pattern)
+        2. [sFlow Index Pattern](#sflow-index-pattern)
     3. [Set Special Byte Fields](#set-special-byte-fields)
     4. [Import Kibana Visualizations and Dashboards](#import-kibana-visualizations-and-dashboards)
 4. [Tuning](#tuning)
@@ -55,57 +52,70 @@ cd flowanalyzer
 ```
 
 ## Installation Script
-The ubuntu_install.sh script handles almost everything, just be sure to run it with sudo privileges:
+The ubuntu_install_elk5.sh script handles almost everything, just be sure to run it with sudo privileges:
 ```
-sudo sh ./Install/ubuntu_install.sh
+sudo sh ./Install/ubuntu_install_elk5.sh
 ```
 
-The ubuntu_install.sh script does the following:
+The ubuntu_install_elk5.sh script does the following:
 
 - Shifts the Ubuntu Server to UTC time and configures an NTP client so timestamps are accurate
-- Adds software repos for Elasticsearch and Kibana
+- Adds software repos for Elasticsearch and Kibana v5
 - Updates software repos and keys
-- Installs Elasticsearch pre-reqs (Curl, OpenJDK 8, etc)
-- Installs Elasticsearch and Kibana
+- Installs Elasticsearch v5 pre-reqs (Curl, OpenJDK 8, etc)
+- Installs Elasticsearch and Kibana v5
 - Creates the following collector services for Netflow v5/v9, IPFIX (aka Netflow v10), and sFlow:
   - netflow_v5
   - netflow_v9
   - ipfix
   - sflow
-- Registers collector services and sets auto-start
+- Registers collector services, sets auto-start on boot, and auto-restart on failure (30 seconds)
 - Creates an index pruning job (>30 days old) using Curator in /etc/cron.daily
-- Installs Head plugin for Elasticsearch
 
 ## Build Elasticsearch Indexes
 Index templates need to be created in Elasticsearch, so when data is collected the fields will be assigned the right data types and proper indexing settings.
 
 ### Netflow Index
-The build_index.sh script creates the default index for storing Netflow and IPFIX flow data in Elasticsearch:
+The build_netflow_index_elk5.sh script creates the default index for storing Netflow and IPFIX flow data in Elasticsearch:
 ```
-sh ./Install/build_index.sh
+sh ./Install/build_netflow_index_elk5.sh
+```
+
+This should output the following message, indicating the template has been created:
+```
+{
+    "acknowledged" : true
+}
 ```
 
 ### sFlow Index
-The build_sflow_index.sh script creates the default index for storing sFlow data in Elasticsearch. A separate script and index are used because sFlow data can be very different from network flow data depending on what sFlow counter records are being exported.
+The build_sflow_index_elk5.sh script creates the default index for storing sFlow data in Elasticsearch. A separate script and index are used because sFlow data can be very different from network flow data depending on what sFlow counter records are being exported.
 
 Run the sFlow index script:
 ```
-sh ./Install/build_sflow_index.sh
+sh ./Install/build_sflow_index_elk5.sh
+```
+
+This should output the following message, indicating the template has been created:
+```
+{
+    "acknowledged" : true
+}
 ```
 
 ## Elasticsearch Tuning
 One of the biggest ways to destroy Elasticsearch performance is to not properly allocate the right sized heap. The creators of Elasticsearch recommend setting
 Elasticsearch to use [50% of the available memory](https://www.elastic.co/guide/en/elasticsearch/guide/current/heap-sizing.html#_give_less_than_half_your_memory_to_lucene) 
-on a given server, up to the 32GB limit. The configuration set in the installation script sets Elasticsearch memory to 2GB, assuming a server with at least 4GB of RAM. 
+on a given server, up to the 32GB limit. 
 
-That's done by setting...
+The configuration set in the installation script sets Elasticsearch memory to 2GB, assuming a server with at least 4GB of RAM. If you're using a 4GB server as a PoC or just a small installation you don't need to change anything.
+
+If you have more RAM, Heap size is increased by setting the following in the **/etc/default/elasticsearch** configuration file:
 ```
-ES_HEAP_SIZE=2g
+ES_JAVA_OPTS="-Xms2g -Xmx2g"
 ```
 
-...in the **/etc/default/elasticsearch** configuration file.
-
-If you have a server with more RAM then you need to adjust this value and reboot the server (or restart Elasticsearch and then the collector services).
+**Note**: If you have a server with more RAM then you need to adjust this value and reboot the server (or restart Elasticsearch and then the collector services).
 
 ## Firewall (Optional)
 These are examples of commands you may need to use if you're running a firewall on the Ubuntu Server installation:
@@ -116,62 +126,16 @@ ufw allow from xxx.xxx.xxx.xxx/xx to any port 2055,9995,4739,6343 proto udp comm
 ```
 
 ## Kibana Authentication (Optional)
-By default Kibana comes with no authentication capabilities. This typically isn't an issue if flow data is not considered confidential, and if the Flow Analyzer server is running in an isolated VLAN or network enclave.
+By default Kibana comes with no authentication capabilities. This typically isn't an issue if flow data is not considered confidential, and if the Flow Analyzer server is running in an isolated VLAN or management network enclave.
 
 If you need authentication for Kibana access there are two available options:
 
 - Reverse Proxy with NGINX or Squid
 - [Elastic's X-Pack commercial product](https://www.elastic.co/products/x-pack)
 
-Putting a reverse proxy in front of Kibana blocks access to the web interface until the user has authenticated. Once successfully authenticated the user has access to all Searches, Visualizations, and Dashboards. The reverse proxy isn't integrated with Kibana, it simply sits in front of the interface.
+Putting a reverse proxy in front of Kibana blocks access to the web interface until the user has authenticated. Once successfully authenticated the user has access to all Searches, Visualizations, and Dashboards. The reverse proxy isn't integrated with Kibana, it simply sits in front of the interface. See the [Squid.md](Squid.md) file for steps to configure the reverse proxy.
 
 Elastic's X-Pack commercial product is an integrated solution that works with Kibana, and provides more granular authentication, permissions, and roles. If you're looking for robust authentication, integration with Active Directory, and granular access permissions then X-Pack is the best solution available.
-
-To use a reverse Squid proxy with Kibana perform the following steps, or run the [ubuntu_squid_install.sh](ubuntu_squid_install.sh) file.
-
-Install Squid:
-```
-sudo apt-get install squid -y
-```
-Ensure you have a hostname entry for 127.0.0.1 in /etc/hosts file:
-```
-sudo echo "127.0.0.1    $(hostname)" >> /etc/hosts
-```
-Configure Kibana to only listen locally on 127.0.0.1 so it can't be accessed except via the reverse proxy:
-```
-sudo echo "server.host: \"127.0.0.1\" " >> /opt/kibana/config/kibana.yml
-```
-Create the Squid configuration file with the right entries for reverse proxy and basic authentication:
-```
-sudo echo "" > /etc/squid/squid.conf
-sudo echo "### Basic Kibana authentication via Squid reverse proxy ###" >> /etc/squid/squid.conf
-sudo echo "acl CONNECT method CONNECT" >> /etc/squid/squid.conf
-sudo echo "auth_param basic program /usr/lib/squid3/basic_ncsa_auth /etc/squid/.htpasswd" >> /etc/squid/squid.conf
-sudo echo "auth_param basic children 5" >> /etc/squid/squid.conf
-sudo echo "auth_param basic realm Manito Networks Flow Analyzer" >> /etc/squid/squid.conf
-sudo echo "auth_param basic credentialsttl 5 minutes" >> /etc/squid/squid.conf
-sudo echo "acl password proxy_auth REQUIRED" >> /etc/squid/squid.conf
-sudo echo "http_access deny !password" >> /etc/squid/squid.conf
-sudo echo "http_access allow password" >> /etc/squid/squid.conf
-sudo echo "http_access deny all" >> /etc/squid/squid.conf
-sudo echo "http_port 80 accel defaultsite=$(hostname) no-vhost" >> /etc/squid/squid.conf
-sudo echo "cache_peer $(hostname) parent 5601 0 no-query originserver" >> /etc/squid/squid.conf
-```
-You can also copy the [ubuntu_squid.conf](ubuntu_squid.conf) file and customize the hostname for your server.
-
-Create the first set of credentials for authentication:
-```
-htpasswd -bc /etc/squid/.htpasswd admin manitonetworks
-```
-Set the Squid process to start automatically on boot, then start it manually the first time:
-```
-systemctl enable squid
-systemctl start squid
-```
-Restart the Kibana process to force it to use the new configuration:
-```
-systemctl restart kibana
-```
 
 ## Reboot
 It's important to reboot so that we're sure the services were registered and start correctly:
@@ -179,26 +143,26 @@ It's important to reboot so that we're sure the services were registered and sta
 sudo reboot
 ```
 
+## Verify Services
 Once the Ubuntu instance comes back up verify that the services have started:
 ```
 systemctl status elasticsearch
+systemctl status kibana
 systemctl status netflow_v5
 systemctl status netflow_v9
 systemctl status ipfix
 systemctl status sflow
-systemctl status kibana
 ```
 
 # Configure Devices
-Configure your devices to send Netflow, IPFIX, and sFlow data to the Flow Analyzer collector. Consult your vendor's documentation for configuring Netflow v5, Netflow v9, and IPFIX.
-Also see the [Flow Management blog](http://www.manitonetworks.com/flow-management/) at manitonetworks.com for instructions on configuring Cisco, Ubiquiti, Mikrotik, and other platforms.
+Configure your devices to send Netflow, IPFIX, and sFlow data to the Flow Analyzer collector. Consult your vendor's documentation for configuring Netflow v5, Netflow v9, and IPFIX. Also see the [Flow Management blog](http://www.manitonetworks.com/flow-management/) at manitonetworks.com for instructions on configuring Cisco, Ubiquiti, Mikrotik, and other platforms.
 
 * [Ubiquiti IPFIX](http://www.manitonetworks.com/flow-management/2016/7/1/ubiquiti-ipfix-configuration)
 * [Mikrotik Netflow v5](http://www.manitonetworks.com/flow-management/2016/7/1/mikrotik-netflow-configuration)
 * [Mikrotik Netflow v9](http://www.manitonetworks.com/flow-management/2016/10/10/mikrotik-netflow-v9-configuration)
 * [Cisco Netflow v9](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/netflow/configuration/15-mt/nf-15-mt-book/get-start-cfg-nflow.html#GUID-2B7E9519-66FE-4F43-B8D3-00CA38C1FA9A)
 
-Use the following ports:
+Use the following ports for each respective collector service:
 
 Service     | Protocol  | Port |
 --------    | --------  | -------- |
@@ -207,8 +171,7 @@ Netflow v9  | UDP       | 9995 |
 IPFIX       | UDP       | 4739 |
 sFlow       | UDP       | 6343 |     
 
-These ports can be changed, see the [tuning documentation](../Tuning.md). Make sure your devices are configured to send flow data
-before moving on to [configuring Kibana](#kibana).
+These ports can be changed, see the [tuning documentation](../Tuning.md). Make sure your devices are configured to send flow data before moving on to [configuring Kibana](#kibana).
 
 **Note**: Configuring devices and receiving flows **before** moving onto the next step will make adding the default index in Kibana much easier.
 
@@ -222,48 +185,73 @@ There are a couple ways to access Kibana, depending on if you're using the [reve
 ### No Reverse Proxy (default):
 Browse to Kibana at http://your_server_ip:5601
 
-No username or password is required.
+### Using a Reverse Proxy (optional, only if configured)
+1. Browse to Kibana at http://your_server_ip
+2. Log in with the default Squid credentials you created during the [Squid configuration](Squid.md).
 
-### Using a Reverse Proxy (optional)
-Browse to Kibana at http://your_server_ip
+## Configure Index Patterns
+On first logging in to Kibana you'll notice an orange **Warning** message that states:
+> No default index pattern. You must select or create one to continue.
 
-Log in with the default Squid credentials shown below:
-- Username: **admin**
-- Password: **manitonetworks**
+The Netflow and sFlow index scripts already created the index templates and your devices should have been sending flows already which triggers index creation, but we need to point Kibana in the right direction. 
 
-## Configure Kibana
-A few steps are required to point Kibana to the Flow index, import the Visualizations and Dashboards, and set some special Byte fields for better readability in KB, MB, GB, etc.
+### Netflow Index Pattern
+Use the following steps to point Kibana to the Netflow index:
+1. Click **Index Patterns**
+2. Click the **Add New** button in the upper-left if not already placed at the **Configure an index pattern** page
+3. Under **Index name or pattern** enter __flow\*__
+4. Click outside the entry field and it should automatically parse your input, revealing more information below
 
-### Configure the default index pattern
-The installation script has already created the Elasticsearch index, but we need to point Kibana in the right direction.
+**Note**: If you haven't already configured your devices to send flows to the collector go back and [perform that configuration](#configure-devices) because the following steps won't work.
 
-In Kibana, under **Index name or pattern** enter " _flow*_ " without the quotes - it should automatically parse your input when you click outside the entry field.
+5. Leave the automatically selected **Time** field under **Time-field name**.
+6. Click the **Create** button.
+7. You will be taken to the **flow\*** index pattern.
 
-**Note**: If you haven't already configured your devices to send flows to the collector go back and [perform that configuration](#configure-devices).
+### sFlow Index Pattern
+Use the following steps to point Kibana to the sFlow index:
+1. Click **Index Patterns**
+2. Click the **Add New** button in the upper-left if not already placed at the **Configure an index pattern** page
+3. Under **Index name or pattern** enter __sflow\*__
+4. Click outside the entry field and it should automatically parse your input, revealing more information below
 
-**Note**: There is currently an issue in Chrome with form validation that may cause this step not to work. If you run into issues use Firefox or Edge to configure the Index Name.
+**Note**: If you haven't already configured your devices to send flows to the collector go back and [perform that configuration](#configure-devices) because the following steps won't work.
 
-Leave the automatically selected **Time** field under **Time-field name**.
+5. Leave the automatically selected **Time** field under **Time-field name**.
+6. Click the **Create** button.
+7. You will be taken to the **sflow\*** index pattern.
 
-Click the **Create** button.
+## Set Special Byte Fields
+Most flow protocols report packet and data sizes in Byte units, which is fine for computers, but isn't very helpful when trying to present a human-readable dashboard. By setting the field formatting in Kibana we can automatically have number fields with raw octets displayed in KB, MB, GB, TB, etc.
 
-Click the **Green Star** button to set the Flow index as the default index.
+### Netflow
+Perform the following steps below on the following Netflow index fields:
+- Bytes In
+- Bytes Out
 
-### Set special Byte fields
-Sort field names by clicking the **name** heading
+### sFlow
+Perform the following steps below on the following sFlow index fields:
+- Bytes In
+- Bytes Out
+- Bytes Read
+- Bytes Written
 
-Click the **Edit** pencil icon to the far right of the **Bytes In** field
+### Steps to Set Byte Field Formatting
+1. Click **Management** on the left navigation bar
+2. Click **Index Patterns** at the top of the window
+4. Select the index to modify fields in
+5. Sort field names by clicking the **name** heading
+6. Click the **pencil icon** in the far-right **controls** column to edit the field
+7. Under the **Format** drop-down choose **Bytes**
+8. Click **Update Field**
 
-Under the **Format** drop-down choose **Bytes** so Kibana will render this field in human-readable sizes (Kb, Mb, Gb, etc)
-
-Click **Update Field**
-
-Perform the same steps above on the **Bytes Out** field.
-
-### Import Kibana Visualizations and Dashboards
-1. Download the [Visualization and Dashboard JSON file](../Kibana/Default.json)
-2. In Kibana click Settings > Objects > Import
-3. Browse to the downloaded JSON file
+## Import Kibana Visualizations and Dashboards
+1. Download the [Visualization and Dashboard](../Kibana/Default.json) JSON file
+2. In Kibana perform the following steps:
+    1. Click Management on the left navigation bar
+    2. Click Saved Objects at the top of the window
+    3. Click the Import button
+    4. Browse to the downloaded JSON file
 
 # Tuning
 There are additional features that you can utilize, but they have to be enabled by you. This includes:
@@ -276,13 +264,15 @@ See [the tuning documentation](../Tuning.md) for how to enable these features, a
 # Updates
 To get the latest updates do the following:
 
-Change to the flowanalyzer directory and fetch the latest stable code via Git:
+Change to the flowanalyzer directory and fetch the latest stable code via Git from the Master branch:
 ```
 cd /your/directory/flowanalyzer
 git pull
 ```
 
-Restart the listener services you are actively using on your network (all are listed here for documentation purposes):
+Any changes to files will be shown. If nothing has changed disregard the next steps that restart the collector services.
+
+Restart the collector services you are actively using on your network (all are listed here for documentation purposes):
 ```
 systemctl restart netflow_v5
 systemctl restart netflow_v9
