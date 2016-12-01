@@ -3,7 +3,7 @@ The Flow Analyzer is a [Netflow, IPFIX](Network%20Flow%20Basics.md), and [sFlow]
 
 Visualizations and Dashboards are provided to support network flow analysis right out of the box.
 
-See the [License section](#license) below for licensing details.
+See the [License section](#license) below for licensing details, and the [Release document](Release.md) for notes on current and past releases.
 
 1. [Project Goals](#project-goals)
 2. [Features](#features)
