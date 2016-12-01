@@ -1,7 +1,5 @@
 # Manito Networks Flow Analyzer
-The Flow Analyzer is a [Netflow, IPFIX](Network%20Flow%20Basics.md), and [sFlow](sFlow.md) collector and parser, available under the [BSD 3-Clause License](#license), 
-that stores flows in Elasticsearch and visualizes them in Kibana. It is designed to run on [Ubuntu Server](https://www.ubuntu.com/download/server), either as a single 
-installation or as part of an Elasticsearch cluster. 
+The Flow Analyzer is a [Netflow, IPFIX](Network%20Flow%20Basics.md), and [sFlow](sFlow.md) collector and parser, available under the [BSD 3-Clause License](#license), that stores flows in Elasticsearch and visualizes them in Kibana. It is designed to run on [Ubuntu Server](https://www.ubuntu.com/download/server), either as a single installation or as part of an Elasticsearch cluster. 
 
 Visualizations and Dashboards are provided to support network flow analysis right out of the box.
 
@@ -42,11 +40,12 @@ One other goal of ours is to make Elasticsearch and Kibana easy to implement and
 should be able to realize the benefits of meaningful, beautiful data visualization.
 
 # Features
+The Flow Analyzer has flow collection, tagging, and categorizing capabilities to satisfy enterprise, service provider, and research and development networking.
 
-### Quick Installation
+## Quick Installation
 You can go from zero to up-and-running with graphed flow data in less than one hour. Check out [the installation documentation](Install/README.md).
 
-### Flow Monitoring Protocols
+## Flow Monitoring Protocols
 The Manito Networks Flow Analyzer supports the following flow data protocols:
 
 - Netflow v5 (Cisco)
@@ -60,14 +59,14 @@ If you're not familiar with Netflow or IPFIX that's alright - take a look at [Ne
 
 Our software ingests Netflow (and Netflow-equivalents), IPFIX, and sFlow data then parses and tags it, and stores it in Elasticsearch for you to query and graph in Kibana.
 
-### Fields
+## Fields
 The Flow Analyzer supports all defined Netflow v5 fields, all standard Netflow v9 fields, all IPFIX fields in the RFC, and almost all sFlow structures defined by InMon Corporation's enterprise ID. See the [Network Flow Basics document](Network%20Flow%20Basics.md) for a description of Netflow and IPFIX fields, and the [sFlow document](sFlow.md) for a description of supported structures.
 
 Kibana Visualizations and Dashboards are included so you can leverage supported fields and structures right away. 
 
 Some limitations exist, mostly around proprietary or undocumented fields in Netflow or proprietary structures in sFlow - see the [Limitations](#limitations) section for details. Efforts are made to skip over unsupported or proprietary elements and continue parsing data uninterrupted.
 
-### Tags
+## Tags
 Our custom Netflow, IPFIX, and sFlow collectors ingest and tag flow data. We record not only the basic protocol and port numbers, but we also take it a step further and correlate the following:
 
 - Protocol numbers to protocol names (eg protocol 1 to "ICMP", 6 to "TCP")
@@ -76,26 +75,26 @@ Our custom Netflow, IPFIX, and sFlow collectors ingest and tag flow data. We rec
 
 This tagging functionality is running by default and happens transparently in the background.
 
-### DNS Reverse Lookups
+## DNS Reverse Lookups
 A reverse lookup against observed IPs is done if DNS lookups are enabled. Resolved domains are cached for 30 minutes to reduce
 the impact on DNS servers. Popular domains like facebook.com and cnn.com are categorized with content tags like "Social Media" and "News" to provide insight into website browsing on the network.
 
-### MAC Address Lookups
+## MAC Address Lookups
 Correlation of MAC address OUI's to top manufacturers is done to help graph traffic sources in hetergenous environments. 
 
 Note: This feature is in beta, and the list of OUI's to be built is quite extensive.
 
-### Development Roadmap
+## Development Roadmap
 See the [Roadmap file](ROADMAP.md) for information on upcoming features and current development efforts.
 
 # Requirements
 At least one Ubuntu Server installation with the following **minimum** hardware specs:
 
-### RAM and CPU
+## RAM and CPU
 - 4GB RAM
 - 2 CPU Cores
 
-### Storage
+## Storage
 A **minimum** of 20GB HDD space is recommended for testing the appliance, but long-term storage requirements will vary depending on a number of factors. The following should be considered when provisioning storage space and additional Elasticsearch nodes:
 
 - Flow data retenion (default 30 days)
@@ -106,7 +105,7 @@ A **minimum** of 20GB HDD space is recommended for testing the appliance, but lo
 
 Every network is different, so it's difficult to give a hard-and-fast suggestion on the right amount of storage for your organization over the long-term. It's recommended that you start small with a couple collectors, determine your average daily index size, then scale up from there.
 
-### Operating System
+## Operating System
 The following versions of Ubuntu Server have been tested and verified to work with the [installation](./Install/README.md) script:
 
 - 16.04 LTS
@@ -114,7 +113,7 @@ The following versions of Ubuntu Server have been tested and verified to work wi
 
 **Note**: The installation script is incompatible with Ubuntu versions prior to 15.04 due to the move to SystemD.
 
-### Elasticsearch Nodes
+## Elasticsearch Nodes
 By default the installation script assumes you're using only one node for the collectors, Elasticsearch, and Kibana. The configuration options are included by the installation script for working in a multi-node cluster but they are commented out. This is fine for proof-of-concept or fairly small networks with low retention requirements, but it will not scale beyond a certain point. 
 
 Additional Elasticsearch nodes will greatly increase performance and reliability in case of node failure. As your flow volume, data retention, and failover needs increase you can tune the amount of Elasticsearch shards and replicas to meet your needs.
