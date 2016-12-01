@@ -32,6 +32,7 @@ apt-get -y install elasticsearch kibana
 echo "Install Python dependencies"
 apt-get install python-pip -y
 pip install --upgrade pip
+pip install --upgrade setuptools
 pip install -r $flow_analyzer_dir/requirements.txt
 
 # Set the Elasticsearch cluster details
