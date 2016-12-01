@@ -139,5 +139,6 @@ echo "Set the NTP service to automatically start"
 systemctl enable ntp
 
 # Prune old indexes
-echo "curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'" >> /etc/cron.daily/index_prune
+#echo "curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'" >> /etc/cron.daily/index_prune
+echo "curator --config $flow_analyzer_dir/curator_config.yml $flow_analyzer_dir/curator_actions.yml" >> /etc/cron.daily/index_prune
 chmod +x /etc/cron.daily/index_prune
