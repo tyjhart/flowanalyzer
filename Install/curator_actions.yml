@@ -1,4 +1,5 @@
 ---
+# Copyright 2016, Manito Networks, LLC. All rights reserved.
 # Delete flow* and sflow* data older than 30 days by default
 actions:
   1:
