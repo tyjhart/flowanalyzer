@@ -1,0 +1,45 @@
+---
+# Delete flow* and sflow* data older than 30 days by default
+actions:
+  1:
+    action: delete_indices
+    description: >-
+      Delete Netflow indices older than 30 days.
+    options:
+      ignore_empty_list: True
+      timeout_override:
+      continue_if_exception: False
+      disable_action: True
+    filters:
+    - filtertype: pattern
+      kind: prefix
+      value: flow
+      exclude:
+    - filtertype: age
+      source: name
+      direction: older
+      timestring: '%Y-%m-%d'
+      unit: days
+      unit_count: 30
+      exclude:
+  2:
+    action: delete_indices
+    description: >-
+      Delete sFlow indices older than 30 days.
+    options:
+      ignore_empty_list: True
+      timeout_override:
+      continue_if_exception: False
+      disable_action: True
+    filters:
+    - filtertype: pattern
+      kind: prefix
+      value: sflow
+      exclude:
+    - filtertype: age
+      source: name
+      direction: older
+      timestring: '%Y-%m-%d'
+      unit: days
+      unit_count: 30
+      exclude:
