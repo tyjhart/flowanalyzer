@@ -1,19 +1,17 @@
 # Copyright (c) 2016, Manito Networks, LLC
 # All rights reserved.
 
-from __future__ import division
-
 ### GENERIC PARSERS ###
 class mac_address(object):
     def __init__(self,mac):
         self.mac = mac
-    
+
     def mac_parse(self):
         return
 
 # Class for parsing ICMP attributes like Type and Code
 class icmp_parse(object):
-        
+
     def __init__(self):
 
         # ICMP Types and corresponding Codes
@@ -108,24 +106,30 @@ class icmp_parse(object):
         }
 
     # Parse human ICMP Type and Code from integers
-    @classmethod
-    def icmp_type_code(self,icmp_type,icmp_code):
+    def icmp_human_type_code(self,icmp_reported):
         
-        self.icmp_num_type = icmp_type//256 # ICMP Type
-        self.icmp_num_code = icmp_code%265 # ICMP Code
+        icmp_num_type = icmp_reported//256 # ICMP Type
+        icmp_num_code = icmp_reported%256 # ICMP Code
 
         try:
-            icmp_parsed_type = self.icmp_table[self.icmp_num_type]["Type"]
+            icmp_parsed_type = self.icmp_table[icmp_num_type]["Type"]
 
             try:
-                icmp_parsed_code = self.icmp_table[self.icmp_num_type]["Codes"][self.icmp_num_code]
+                icmp_parsed_code = self.icmp_table[icmp_num_type]["Codes"][icmp_num_code]
             except (NameError,KeyError):
                 icmp_parsed_code = "No Code"
 
-            return (icmp_parsed_type,icmp_parsed_code,self.icmp_num_type,self.icmp_num_code) # Return human ICMP Type and Code
+            return (icmp_parsed_type,icmp_parsed_code) # Return human ICMP Type and Code
         
         # Failed to parse ICMP Type / Code, just return original Type and Code numbers
         except (NameError,KeyError):
-            return (self.icmp_num_type,self.icmp_num_code)
+            return (icmp_num_type,icmp_num_code)
+
+    def icmp_num_type_code(self,icmp_reported):
+        
+        icmp_num_type = icmp_reported//256 # ICMP Type
+        icmp_num_code = icmp_reported%256 # ICMP Code
+        
+        return (icmp_num_type,icmp_num_code)
 
 ### GENERIC PARSERS END ###

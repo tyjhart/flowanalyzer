@@ -8,6 +8,9 @@ from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 from IPy import IP
 
+# Field parsing functions
+from parser_modules import *
+
 # Field types, ports, etc
 from defined_ports import registered_ports,other_ports
 from field_types import v9_fields
@@ -294,6 +297,9 @@ if __name__ == "__main__":
 	# Cache the Netflow v9 templates in received order to decode the data flows. ORDER MATTERS FOR TEMPLATES.
 	global template_list
 	template_list = {}
+
+	# Class for parsing ICMP Types and Codes
+	icmp_parser = icmp_parse()
 	
 	# Continually run
 	while True:
@@ -430,8 +436,13 @@ if __name__ == "__main__":
 											
 									# Do the special calculations for ICMP Code and Type (% operator)
 									elif template_key in [32,139]:
-										flow_index["_source"]['ICMP Type'] = int(flow_payload)//256
-										flow_index["_source"]['ICMP Code'] = int(flow_payload)%256
+										num_icmp = icmp_parser.icmp_num_type_code(flow_payload)
+										flow_index["_source"]['ICMP Type'] = num_icmp[0]
+										flow_index["_source"]['ICMP Code'] = num_icmp[1]
+
+										human_icmp = icmp_parser.icmp_human_type_code(flow_payload)
+										flow_index["_source"]['ICMP Parsed Type'] = human_icmp[0]
+										flow_index["_source"]['ICMP Parsed Code'] = human_icmp[1]
 
 									# Not a specially parsed field, just ignore
 									else:
