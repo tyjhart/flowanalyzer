@@ -193,14 +193,9 @@ v9_fields = {
 	"Type":"Integer",
 	"Index ID":"ICMP Type",
 	"Options": {
-	0: {
-		"Type":"Echo Reply",
-		"Codes": {
-			0: "No Code"
-		}
-	}, 
-	1: "Unassigned",
-	2: "Unassigned",
+	0: {"Type":"Echo Reply","Codes": {0: "No Code"}}, 
+	1: {"Type":"Unassigned"},
+	2: {"Type":"Unassigned"},
 	3: {
 		"Type":"Destination Unreachable",
 		"Codes": {
@@ -222,12 +217,7 @@ v9_fields = {
 			15: "Precedence cutoff in effect"
 		}
 	},
-	4: {
-		"Type":"Source Quench",
-		"Codes": {
-			0: "No Code"
-		}
-	},
+	4: {"Type":"Source Quench","Codes": {0: "No Code"}},
 	5: {
 		"Type":"Redirect",
 		"Codes": {
@@ -243,25 +233,10 @@ v9_fields = {
 			0: "Alternate Address for Host"
 		}
 	}, 
-	7: "Unassigned",
-	8: {
-		"Type":"Echo",
-		"Codes": {
-			0: "No Code"
-		}
-	},
-	9: {
-		"Type":"Router Advertisement",
-		"Codes": {
-			0: "No Code"
-		}
-	},
-	10: {
-		"Type":"Router Selection",
-		"Codes": {
-			0: "No Code"
-		}
-	},
+	7: {"Type":"Unassigned"},
+	8: {"Type":"Echo","Codes": {0: "No Code"}},
+	9: {"Type":"Router Advertisement","Codes": {0: "No Code"}},
+	10: {"Type":"Router Selection","Codes": {0: "No Code"}},
 	11: {
 		"Type":"Time Exceeded",
 		"Codes": {
@@ -277,64 +252,34 @@ v9_fields = {
 			2: "Bad Length"
 		}
 	},
-	13: {
-		"Type":"Timestamp",
-		"Codes": {
-			0: "No Code"
-		}
-	},
-	14: {
-		"Type":"Timestamp Reply",
-		"Codes": {
-			0: "No Code"
-		}
-	},
-	15: {
-		"Type":"Information Request",
-		"Codes": {
-			0: "No Code"
-		}
-	},
-	16: {
-		"Type":"Information Reply",
-		"Codes": {
-			0: "No Code"
-		}
-	},
-	17: {
-		"Type":"Address Mask Request",
-		"Codes": {
-			0: "No Code"
-		}
-	},
-	18: {
-		"Type":"Address Mask Reply",
-		"Codes": {
-			0: "No Code"
-		}
-	},
-	19: "Reserved",
-	20: "Reserved",
-	21: "Reserved",
-	22: "Reserved",
-	23: "Reserved",
-	24: "Reserved",
-	25: "Reserved",
-	26: "Reserved",
-	27: "Reserved",
-	28: "Reserved",
-	29: "Reserved",
-	30: "Traceroute",
-	31: "Datagram Conversion Error",
-	32: "Mobile Host Redirect",
-	33: "IPv6 Where-Are-You",
-	34: "IPv6 I-Am-Here",
-	35: "Mobile Registration Request",
-	36: "Mobile Registration Reply",
-	37: "Domain Name Request",
-	38: "Domain Name Reply",
-	39: "SKIP",
-	40: "Photuris"
+	13: {"Type":"Timestamp","Codes": {0: "No Code"}},
+	14: {"Type":"Timestamp Reply","Codes": {0: "No Code"}},
+	15: {"Type":"Information Request","Codes": {0: "No Code"}},
+	16: {"Type":"Information Reply","Codes": {0: "No Code"}},
+	17: {"Type":"Address Mask Request","Codes": {0: "No Code"}},
+	18: {"Type":"Address Mask Reply","Codes": {0: "No Code"}},
+	19: {"Type":"Reserved"},
+	20: {"Type":"Reserved"},
+	21: {"Type":"Reserved"},
+	22: {"Type":"Reserved"},
+	23: {"Type":"Reserved"},
+	24: {"Type":"Reserved"},
+	25: {"Type":"Reserved"},
+	26: {"Type":"Reserved"},
+	27: {"Type":"Reserved"},
+	28: {"Type":"Reserved"},
+	29: {"Type":"Reserved"},
+	30: {"Type":"Traceroute"},
+	31: {"Type":"Datagram Conversion Error"},
+	32: {"Type":"Mobile Host Redirect"},
+	33: {"Type":"IPv6 Where-Are-You"},
+	34: {"Type":"IPv6 I-Am-Here"},
+	35: {"Type":"Mobile Registration Request"},
+	36: {"Type":"Mobile Registration Reply"},
+	37: {"Type":"Domain Name Request"},
+	38: {"Type":"Domain Name Reply"},
+	39: {"Type":"SKIP"},
+	40: {"Type":"Photuris"}
 	}
 }, # Use to calculate ICMP Type and Code (x * 256 + Code), http://www.nthelp.com/icmp.html
 33:{"Name":"MUL_IGMP_TYPE",								"Type":"Integer",				"Index ID":"IGMP Type"},
