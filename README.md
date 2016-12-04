@@ -137,7 +137,7 @@ See the [Flow Management blog](http://www.manitonetworks.com/flow-management/) f
 All services listen for UDP flow packets on the following default ports:
 
 Service     | Protocol  | Port  | Purpose                                   |
---          | --        | --    | --                                        |
+---         | ---       | ---   | ---                                       |
 Netflow v5  | UDP       | 2055  | Basic flow monitoring                     |
 Netflow v9  | UDP       | 9995  | Intermediate flow monitoring              |
 IPFIX       | UDP       | 4739  | Advanced flow monitoring                  |
