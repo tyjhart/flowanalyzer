@@ -69,7 +69,7 @@ echo "Type=simple" >> /etc/systemd/system/netflow_v5.service
 echo "ExecStart=/usr/bin/python $(dirname $PWD)/flowanalyzer/Python/netflow_v5.py" >> /etc/systemd/system/netflow_v5.service
 echo "Restart=on-failure" >> /etc/systemd/system/netflow_v5.service
 echo "RestartSec=30" >> /etc/systemd/system/netflow_v5.service
-echo "StandardOutput=journal+console" >> /etc/systemd/system/netflow_v5.service
+echo "StandardOutput=journal" >> /etc/systemd/system/netflow_v5.service
 echo "[Install]" >> /etc/systemd/system/netflow_v5.service
 echo "WantedBy=multi-user.target" >> /etc/systemd/system/netflow_v5.service
 
@@ -83,7 +83,7 @@ echo "Type=simple" >> /etc/systemd/system/netflow_v9.service
 echo "ExecStart=/usr/bin/python $(dirname $PWD)/flowanalyzer/Python/netflow_v9.py" >> /etc/systemd/system/netflow_v9.service
 echo "Restart=on-failure" >> /etc/systemd/system/netflow_v9.service
 echo "RestartSec=30" >> /etc/systemd/system/netflow_v9.service
-echo "StandardOutput=journal+console" >> /etc/systemd/system/netflow_v9.service
+echo "StandardOutput=journal" >> /etc/systemd/system/netflow_v9.service
 echo "[Install]" >> /etc/systemd/system/netflow_v9.service
 echo "WantedBy=multi-user.target" >> /etc/systemd/system/netflow_v9.service
 
@@ -97,7 +97,7 @@ echo "Type=simple" >> /etc/systemd/system/ipfix.service
 echo "ExecStart=/usr/bin/python $(dirname $PWD)/flowanalyzer/Python/ipfix.py" >> /etc/systemd/system/ipfix.service
 echo "Restart=on-failure" >> /etc/systemd/system/ipfix.service
 echo "RestartSec=30" >> /etc/systemd/system/ipfix.service
-echo "StandardOutput=journal+console" >> /etc/systemd/system/ipfix.service
+echo "StandardOutput=journal" >> /etc/systemd/system/ipfix.service
 echo "[Install]" >> /etc/systemd/system/ipfix.service
 echo "WantedBy=multi-user.target" >> /etc/systemd/system/ipfix.service
 
@@ -111,7 +111,7 @@ echo "Type=simple" >> /etc/systemd/system/sflow.service
 echo "ExecStart=/usr/bin/python $(dirname $PWD)/flowanalyzer/Python/sflow.py" >> /etc/systemd/system/sflow.service
 echo "Restart=on-failure" >> /etc/systemd/system/sflow.service
 echo "RestartSec=30" >> /etc/systemd/system/sflow.service
-echo "StandardOutput=journal+console" >> /etc/systemd/system/sflow.service
+echo "StandardOutput=journal" >> /etc/systemd/system/sflow.service
 echo "[Install]" >> /etc/systemd/system/sflow.service
 echo "WantedBy=multi-user.target" >> /etc/systemd/system/sflow.service
 
