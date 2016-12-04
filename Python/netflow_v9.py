@@ -96,10 +96,11 @@ except ValueError as elasticsearch_connect_error:
 # Parsing template flowset
 def template_flowset_parse(packed_data,sensor,pointer,length):
 	cache = {}
-					
 	while pointer < length:
 		(template_id, template_field_count) = struct.unpack('!HH',packed_data[pointer:pointer+4])
-		logging.info("Found template number " + str(template_id) + ", field count " + str(template_field_count) + " at " + str(pointer))
+		pointer += 4 # Advance the field
+		
+		logging.info("Template number " + str(template_id) + ", field count " + str(template_field_count) + ", position " + str(pointer))
 
 		hashed_id = hash(str(sensor)+str(template_id))
 		cache[hashed_id] = {}
@@ -108,8 +109,6 @@ def template_flowset_parse(packed_data,sensor,pointer,length):
 		cache[hashed_id]["Length"] = template_field_count # Field count
 		cache[hashed_id]["Type"] = "Flow Data"
 		cache[hashed_id]["Definitions"] = collections.OrderedDict()
-
-		pointer += 4 # Advance the field
 
 		for _ in range(0,template_field_count): # Iterate through each line in the template
 			(element, element_length) = struct.unpack('!HH',packed_data[pointer:pointer+4])
@@ -347,7 +346,7 @@ if __name__ == "__main__":
 			
 			# Unpack flow set ID and the length
 			try:
-				logging.info("Unpacking flow ID and Length at position " + str(pointer))
+				logging.info("Unpacking flow ID and Length, position " + str(pointer))
 				(flow_set_id, flow_set_length) = struct.unpack('!HH',flow_packet_contents[pointer:pointer+4])
 				logging.info("Found ID " + str(flow_set_id) + ", length " + str(flow_set_length))
 			except:
@@ -356,19 +355,22 @@ if __name__ == "__main__":
 			
 			pointer += 4 # Advance past the flow ID and Length
 			
-			logging.info("Finshed at position " + str(pointer))
+			logging.info("Finshed, position " + str(pointer))
 			
 			if flow_set_id == 0: # Template flowset
-				logging.info("Unpacking template flowset " + str(flow_set_id) + " at position " + str(pointer))
+				logging.info("Unpacking template flowset " + str(flow_set_id) + ", position " + str(pointer))
 				
 				parsed_templates = template_flowset_parse(flow_packet_contents,sensor_address[0],pointer,flow_set_length) # Parse templates
 				template_list.update(parsed_templates) # Add the new template(s) to the working template list					
 
 				logging.debug(str(parsed_templates))
-				logging.info("Finished at position " + str(pointer))
+
+				# Advance to the end of the flow
+				pointer = (flow_set_length + pointer)-4
+				logging.info("Finished, position " + str(pointer))
 									
 			elif flow_set_id == 1: # Options template set
-				logging.warning("Unpacking Options template set at position " + str(pointer))
+				logging.warning("Unpacking Options template set, position " + str(pointer))
 				
 				flow_counter += 1
 				
@@ -376,12 +378,13 @@ if __name__ == "__main__":
 				template_list.update(option_templates) # Add the new Option template(s) to the working template list
 
 				logging.warning(str(template_list))
-				logging.warning("Finished at position " + str(pointer))
+				pointer = (flow_set_length + pointer)-4
+				logging.warning("Finished, position " + str(pointer))
 				sys.exit()
 
 			# Flow data set
 			elif flow_set_id > 255:
-				logging.info("Unpacking data set " + str(flow_set_id) + " at position " + str(pointer))
+				logging.info("Unpacking data set " + str(flow_set_id) + ", position " + str(pointer))
 				
 				hashed_id = hash(str(sensor_address[0])+str(flow_set_id))
 				if hashed_id in template_list:
@@ -532,13 +535,13 @@ if __name__ == "__main__":
 					logging.warning("Missing template for flow set " + 	str(flow_set_id) + " from " + str(sensor_address[0]) + ", sequence " + str(packet["sequence_number"]) + " - DROPPING")
 					
 				# Advance to the end of the flow
-				pointer = (flow_set_length + pointer)-4 # Skip the flow
-				logging.info("Finished at position " + str(pointer))
+				pointer = (flow_set_length + pointer)-4
+				logging.info("Finished, position " + str(pointer))
 			
 			# Rcvd a flow set ID we haven't accounted for
 			else:
 				logging.warning("Unknown flow ID " + str(flow_set_id) + " from " + str(sensor_address[0]) + " - FAIL")
-				pointer = (flow_set_length + pointer)-4 # Skip the flow
+				pointer = (flow_set_length + pointer)-4
 				continue
 			
 		packet["Reported Flow Count"] = flow_counter	
