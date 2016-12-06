@@ -122,7 +122,7 @@ def template_flowset_parse(packed_data,sensor,pointer,length):
 			pointer += 4 # Advance the field
 
 		logging.debug(str(cache[hashed_id]))
-		logging.info("Added hash " + str(hashed_id) + " to the template cache, ID number " + str(template_id))
+		logging.info(str(hashed_id) + " hash added to cache, template ID " + str(template_id))
 		
 	return cache
 
@@ -303,10 +303,7 @@ if __name__ == "__main__":
 	# Continually run
 	while True:
 
-		# Tracking location in the packet
-		global pointer
-		pointer = 0
-		
+		pointer = 0 # Tracking location in the packet
 		flow_packet_contents, sensor_address = netflow_sock.recvfrom(65565) # Listen for packets inbound
 		
 		# Get the Netflow version and flow size, or just continue listening
