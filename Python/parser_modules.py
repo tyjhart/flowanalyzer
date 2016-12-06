@@ -1,13 +1,43 @@
 # Copyright (c) 2016, Manito Networks, LLC
 # All rights reserved.
 
-### GENERIC PARSERS ###
 class mac_address(object):
-    def __init__(self,mac):
-        self.mac = mac
+    
+    def __init__(self):
+        mac_oui = {
+        "005056": {"Vendor":"VMware",               "Type":"Virtualization"},
+        "01000C": {"Vendor":"Cisco",                "Type":"Logical"},
+        "01005E": {"Vendor":"Multicast",            "Type":"Logical"},
+        "0180C2": {"Vendor":"IEEE",                 "Type":"Logical"},
+        "0A0027": {"Vendor":"Oracle",               "Type":"Virtualization"},
+        "2C0E3D": {"Vendor":"Samsung",              "Type":"Physical"},
+        "333300": {"Vendor":"IPv6",                 "Type":"Virtualization"},
+        "48F8B3": {"Vendor":"Linksys",              "Type":"Physical"},
+        "5855CA": {"Vendor":"Apple",                "Type":"Physical"},
+        "74C63B": {"Vendor":"AzureWave Technology", "Type":"Physical"},
+        "74D435": {"Vendor":"Giga-Byte Technology", "Type":"Physical"},
+        "FFFFFF": {"Vendor":"Broadcast",            "Type":"Logical"}
+        }
 
-    def mac_parse(self):
-        return
+    # MAC passed as Python list, 6 elements
+    def mac_parse(self,mac):
+        mac_list = []
+        for mac_item in mac:
+            mac_item_hex = hex(mac_item).replace('0x','') # Strip leading characters
+            if len(mac_item_hex) == 1:
+                mac_item_hex = str("0" + mac_item_hex) # Handle leading zeros and double-0's
+            mac_list.append(mac_item_hex)
+        parsed_mac = (':'.join(mac_list)).upper() # Format MAC as 00:11:22:33:44:AA
+        parsed_mac_oui = (''.join(mac_list[0],mac_list[1],mac_list[2])).upper() # MAC OUI as 001122
+        return (parsed_mac,parsed_mac_oui)
+    
+    # MAC OUI formatted "001122"
+    def mac_oui(self,mac_oui_num):
+        try:
+            return (self.mac_oui[mac_oui_num]["Vendor"],self.mac_oui[mac_oui_num]["Type"])
+        except NameError,KeyError:
+            return False
+
 
 # Class for parsing ICMP attributes like Type and Code
 class icmp_parse(object):
@@ -131,5 +161,3 @@ class icmp_parse(object):
         icmp_num_code = icmp_reported%256 # ICMP Code
         
         return (icmp_num_type,icmp_num_code)
-
-### GENERIC PARSERS END ###
