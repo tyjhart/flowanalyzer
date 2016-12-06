@@ -353,6 +353,7 @@ def broad_sel_egress_queue(data):
 	return datagram
 
 # Extended Class (Flow, Enterprise 8800, Format 1) for Vyatta, VyOS, Ubiquiti
+# Documented pmacct bug https://github.com/pmacct/pmacct/issues/71
 def extended_class(data):
 	datagram = {}
 	datagram["Class"] = int(data.unpack_uint())
@@ -360,6 +361,7 @@ def extended_class(data):
 	return datagram
 
 # Extended Tag (Flow, Enterprise 8800, Format 2) for Vyatta, VyOS, Ubiquiti
+# Documented pmacct bug https://github.com/pmacct/pmacct/issues/71
 def extended_tag(data):
 	datagram = {}
 	datagram["Tag"] = int(data.unpack_uint())
