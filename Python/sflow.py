@@ -100,13 +100,14 @@ if __name__ == "__main__":
 
 	global uuid_cache
 	uuid_cache = {}
+
+	record_num = 0 # Record index number for the record cache
 	
+	# Continue to run
 	while True: 
 		
 		# Listen for packets inbound
 		sflow_packet_contents, sensor_address = netflow_sock.recvfrom(65565)
-		
-		record_num = 0 # Record index number for the record cache
 
 		### sFlow Datagram Start ###
 		try:
@@ -155,6 +156,7 @@ if __name__ == "__main__":
 			### Flow Sample ###
 			if enterprise_format_num in [[0,1], [0,3]]: # Flow Sample
 
+				# Iterate through the flow records
 				for record_counter_num in range(0,flow_sample_cache["Record Count"]): # For each staged sample
 					record_ent_form_number = enterprise_format_numbers(unpacked_sample_data.unpack_uint()) # [Enterprise, Format] numbers
 					counter_data_length = int(unpacked_sample_data.unpack_uint()) # Length of record
@@ -278,9 +280,11 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [4413, 1]: # Broadcom selected egress queue
 							flow_index["_source"].update(broad_sel_egress_queue(unpacked_record_data))
 						
+						# Documented pmacct bug https://github.com/pmacct/pmacct/issues/71
 						#elif record_ent_form_number == [8800,1]: # Extended Class
 							#flow_index["_source"].update(extended_class(unpacked_record_data))
 						
+						# Documented pmacct bug https://github.com/pmacct/pmacct/issues/71
 						#elif record_ent_form_number == [8800,2]: # Extended Tag
 							#flow_index["_source"].update(extended_tag(unpacked_record_data))
 						
@@ -303,11 +307,13 @@ if __name__ == "__main__":
 					flow_index = {} # Reset the flow_index
 					
 					record_num += 1 # Increment the record counter
+				### Flow Records End ###
 			### Flow Sample End ###
 			
 			### Counter Sample ###
 			elif enterprise_format_num in [[0,2], [0,4]]: # Counter Sample
 				
+				# Iterate through the counter records
 				for record_counter_num in range(0,flow_sample_cache["Record Count"]):
 					record_ent_form_number = enterprise_format_numbers(unpacked_sample_data.unpack_uint()) # [Enterprise, Format] numbers
 					counter_data_length = int(unpacked_sample_data.unpack_uint()) # Length of record
@@ -477,6 +483,8 @@ if __name__ == "__main__":
 					flow_index = {} # Reset the flow_index
 
 					record_num += 1 # Increment the record counter
+				
+				### Counter Records End ###
 			### Counter Sample End ###
 			
 			### Something else ###
@@ -485,7 +493,7 @@ if __name__ == "__main__":
 		
 		### Sample Parsing Finish ###
 
-		# Verify all data has been unpacked	
+		# Verify XDR data has been completely unpacked	
 		try:
 			unpacked_data.done()
 		except Exception as unpack_done_error:
@@ -494,17 +502,16 @@ if __name__ == "__main__":
 		
 		### sFlow Samples End ###
 
-		# Have enough flows to do a bulk index to Elasticsearch
-		if len(sflow_data) >= bulk_insert_count:
-			bulk_upload_length = str(len(sflow_data))
+		# Elasticsearch bulk upload
+		if record_num > bulk_insert_count:
 
 			# Perform the bulk upload to the index
 			try:
 				helpers.bulk(es,sflow_data)
-				logging.info(bulk_upload_length + " record(s) uploaded to Elasticsearch - OK")
+				logging.info(str(record_num) + " record(s) uploaded to Elasticsearch - OK")
 			except ValueError as bulk_index_error:
 				logging.critical(bulk_index_error)
-				logging.critical(bulk_upload_length + " record(s) DROPPED, unable to index flows - FAIL")
-				
-			# Reset sflow_data
-			sflow_data = []
+				logging.critical(str(record_num) + " record(s) DROPPED, unable to index flows - FAIL")
+			
+			sflow_data = [] # Reset sflow_data cache
+			record_num = 0 # Reset flow counter
