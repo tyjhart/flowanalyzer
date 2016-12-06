@@ -114,21 +114,6 @@ def int_source_id_type(id):
 	else:
 		return False
 
-# MAC address parser
-def mac_parse(mac):
-	mac_list = []
-	for mac_item in mac:
-		mac_item_formatted = hex(mac_item).replace('0x','')
-		if len(mac_item_formatted) == 1:
-			mac_item_formatted = str("0" + mac_item_formatted)
-		mac_list.append(mac_item_formatted)
-	flow_payload = (':'.join(mac_list)).upper()
-	
-	if flow_payload == '00:00:00:00:00:00' or flow_payload == 'FF:FF:FF:FF:FF:FF':
-		return False
-	else:
-		return flow_payload
-
 # Parse raw Ethernet header
 def parse_eth_header(header_string):
 	ord_dest_mac = [ord(x) for x in [header_string[0],header_string[1],header_string[2],header_string[3],header_string[4],header_string[5]]]
