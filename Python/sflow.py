@@ -176,7 +176,6 @@ if __name__ == "__main__":
 						"_source": {
 						"Flow Type": "sFlow Flow",
 						"Sensor": datagram_info["Agent IP"],
-						#"Sequence": packet_attributes["sequence_number"],
 						"Sub Agent": datagram_info["Sub Agent"],
 						"Enterprise, Format": record_ent_form_number,
 						"Data Length": counter_data_length,
@@ -304,7 +303,8 @@ if __name__ == "__main__":
 					flow_index = {} # Reset the flow_index
 					
 					record_num += 1 # Increment the record counter
-
+			### Flow Sample End ###
+			
 			### Counter Sample ###
 			elif enterprise_format_num in [[0,2], [0,4]]: # Counter Sample
 				
@@ -329,7 +329,6 @@ if __name__ == "__main__":
 						"_source": {
 						"Flow Type": "sFlow Counter",
 						"Sensor": datagram_info["Agent IP"],
-						#"Sequence": packet_attributes["sequence_number"],
 						"Sub Agent": datagram_info["Sub Agent"],
 						"Enterprise, Format": record_ent_form_number,
 						"Data Length": counter_data_length,
@@ -478,12 +477,13 @@ if __name__ == "__main__":
 					flow_index = {} # Reset the flow_index
 
 					record_num += 1 # Increment the record counter
-
+			### Counter Sample End ###
+			
 			### Something else ###
 			else:
-				logging.warning("Unknown [Enterprise, Format] " + str(enterprise_format_num) + " - EXITING")
-				sys.exit("Unknown [Enterprise, Format] " + str(enterprise_format_num) + " - EXITING")
-			### Sample Parsing Finish ###
+				logging.warning("Unknown [Enterprise, Format] " + str(enterprise_format_num) + " not defined in sFlow standard - FAIL")		
+		
+		### Sample Parsing Finish ###
 
 		# Verify all data has been unpacked	
 		try:
