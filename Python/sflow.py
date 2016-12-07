@@ -90,10 +90,10 @@ except ValueError as elasticsearch_connect_error:
 
 # sFlow collector
 if __name__ == "__main__":
-	from sflow.counter_records import * # Functions to parse headers and format numbers
-	from sflow.flow_records import * # Functions to parse headers and format numbers
-	from sflow.sflow_parsers import * # Functions to parse headers and format numbers
-	from sflow.sflow_samples import * # Functions to parse headers and format numbers
+	from counter_records import * # Functions to parse headers and format numbers
+	from flow_records import * # Functions to parse headers and format numbers
+	from sflow_parsers import * # Functions to parse headers and format numbers
+	from sflow_samples import * # Functions to parse headers and format numbers
 	
 	global sflow_data
 	sflow_data = [] # For bulk upload to Elasticsearch
@@ -235,6 +235,7 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0,1012]: # Extended VLAN tunnel data
 							flow_index["_source"].update(extended_vlan_tunnel(unpacked_record_data))
 
+						# Requires special parsing, still working on this
 						#elif record_ent_form_number == [0,1013]: # Extended 802.11 Payload
 							#flow_index["_source"].update(extended_vlan_tunnel(unpacked_record_data))
 
@@ -244,6 +245,7 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0,1015]: # Extended 802.11 TX
 							flow_index["_source"].update(extended_wlan_tx(unpacked_record_data))
 
+						# Requires special parsing, still working on this
 						#elif record_ent_form_number == [0,1016]: # Extended 802.11 Aggregation
 							#flow_index["_source"].update(extended_wlan_aggregation(unpacked_record_data))
 
@@ -485,6 +487,7 @@ if __name__ == "__main__":
 					record_num += 1 # Increment the record counter
 				
 				### Counter Records End ###
+			
 			### Counter Sample End ###
 			
 			### Something else ###
@@ -508,7 +511,7 @@ if __name__ == "__main__":
 			# Perform the bulk upload to the index
 			try:
 				helpers.bulk(es,sflow_data)
-				logging.info(str(record_num) + " record(s) uploaded to Elasticsearch - OK")
+				logging.warning(str(record_num) + " record(s) uploaded to Elasticsearch - OK")
 			except ValueError as bulk_index_error:
 				logging.critical(bulk_index_error)
 				logging.critical(str(record_num) + " record(s) DROPPED, unable to index flows - FAIL")
