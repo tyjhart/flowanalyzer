@@ -2,8 +2,10 @@
 # All rights reserved.
 
 class mac_address(object):
+    import struct
     
     def __init__(self):
+
         mac_oui = {
         "005056": {"Vendor":"VMware",               "Type":"Virtualization"},
         "01000C": {"Vendor":"Cisco",                "Type":"Logical"},
@@ -28,7 +30,20 @@ class mac_address(object):
                 mac_item_hex = str("0" + mac_item_hex) # Handle leading zeros and double-0's
             mac_list.append(mac_item_hex)
         parsed_mac = (':'.join(mac_list)).upper() # Format MAC as 00:11:22:33:44:AA
-        parsed_mac_oui = (''.join(mac_list[0],mac_list[1],mac_list[2])).upper() # MAC OUI as 001122
+        parsed_mac_oui = (''.join(mac_list[0:3])).upper() # MAC OUI as 001122
+        return (parsed_mac,parsed_mac_oui)
+
+    # MAC passed as Python list, 6 elements
+    def mac_packed_parse(self,packed_data,pointer,field_size):
+        mac_list = []
+        mac_objects = self.struct.unpack('!%dB' % field_size,packed_data[pointer:pointer+field_size])
+        for mac_item in mac_objects:
+            mac_item_hex = hex(mac_item).replace('0x','') # Strip leading characters
+            if len(mac_item_hex) == 1:
+                mac_item_hex = str("0" + mac_item_hex) # Handle leading zeros and double-0's
+            mac_list.append(mac_item_hex)
+        parsed_mac = (':'.join(mac_list)).upper() # Format MAC as 00:11:22:33:44:AA
+        parsed_mac_oui = (''.join(mac_list[0:3])).upper() # MAC OUI as 001122
         return (parsed_mac,parsed_mac_oui)
     
     # MAC OUI formatted "001122"
