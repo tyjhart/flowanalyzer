@@ -251,6 +251,15 @@ Perform the following steps below on the following sFlow index fields:
 - Bytes Out
 - Bytes Read
 - Bytes Written
+- Current Allocation
+- Memory Buffers
+- Memory Cached
+- Memory Free
+- Memory Shared
+- Memory Total
+- Memory Used
+- Total Available
+- Total Capacity
 
 ### Steps to Set Byte Field Formatting
 1. Click **Management** on the left navigation bar
