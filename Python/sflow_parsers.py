@@ -11,6 +11,7 @@ from parser_modules import mac_address
 # Parse IANA interface types
 # See https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
 def iana_interface_type(num):
+	"""Parse IANA-defined interface types"""
 	if num == 1:
 		return "Other"
 	elif num == 2:
@@ -98,6 +99,7 @@ def iana_interface_type(num):
 
 # Parse Enterprise and Format numbers
 def enterprise_format_numbers(unparsed_int):
+	"""Unpack and parse [enterprise,format] numbers"""
 	sample_type_binary = '{0:032b}'.format(unparsed_int) # Break out the binary
 	enterprise_num = int(sample_type_binary[:20],2) # Enterprise number first 20 bits
 	sample_data_format = int(sample_type_binary[20:32],2) # Format number last 12 bits
@@ -105,12 +107,14 @@ def enterprise_format_numbers(unparsed_int):
 
 # Sample Source Type / Index parser
 def source_type_index_parser(unparsed_int):
+	"""Parse [source_type,source_index] of interface numbers"""
 	source_type = unparsed_int >> 24
 	source_index = unparsed_int & 0xfff
 	return [int_source_id_type(source_type), source_index]
 
 # Source ID type parser
 def int_source_id_type(id):
+	"""Parse source ID types defined by InMon"""
 	if id == 0:
 		return "ifIndex"
 	elif id == 1:
@@ -122,6 +126,7 @@ def int_source_id_type(id):
 
 # Parse raw Ethernet header
 def parse_eth_header(header_string):
+	"""Get MAC addresses from Ethernet header string"""
 
 	mac_parser_class = mac_address() # MAC parser class
 	
@@ -137,6 +142,7 @@ def parse_eth_header(header_string):
 
 # Parse header protocol name from protocol number
 def parse_header_prot_name(protocol_int):
+	"""Parse InMon-defined header protocol names"""
 	if protocol_int == 1:
 		protocol_name = "Ethernet"
 	elif protocol_int == 2:
@@ -180,6 +186,7 @@ def parse_header_prot_name(protocol_int):
 
 # Parse Operating System name
 def enum_os_name(os_int):
+	"""Parse InMon-defined Operating System names"""
 	if os_int == 0:
 		os_name = "Unknown"
 	elif os_int == 1:
@@ -215,6 +222,7 @@ def enum_os_name(os_int):
 
 # Parse machine architecture
 def enum_machine_type(os_arch):
+	"""Parse InMon-defined system architectures"""
 	if os_arch == 0:
 		machine_type = "Unknown"
 	elif os_arch == 1:
@@ -248,6 +256,7 @@ def enum_machine_type(os_arch):
 
 # Parse IANA protocol name
 def iana_protocol_name(protocol_int):
+	"""Reconcile IANA-defined protocol numbers to names"""
 	try:
 		return protocol_type[protocol_int]["Name"]
 	except:
@@ -255,6 +264,7 @@ def iana_protocol_name(protocol_int):
 
 # Parse IANA protocol name
 def protocol_category(protocol_int):
+	"""Reconcile IANA-defined protocol numbers to categories (Web, Email, etc)"""
 	try:
 		return protocol_type[protocol_int]["Category"]
 	except:
@@ -262,6 +272,7 @@ def protocol_category(protocol_int):
 
 # Packet direction
 def packet_direction(direction_int):
+	"""Parse InMon-defined packet direction"""
 	if direction_int == 0:
 		return "Unknown"
 	elif direction_int == 1:
@@ -273,6 +284,7 @@ def packet_direction(direction_int):
 
 # Service direction
 def service_direction(direction_int):
+	"""Parse InMon-defined service direction"""
 	if direction_int == 1:
 		return "Client"
 	elif direction_int == 2:
@@ -282,6 +294,7 @@ def service_direction(direction_int):
 
 # Status Value
 def status_value(status_int):
+	"""Parse InMon-defined transaction status"""
 	if status_int == 0:
 		return "Succeeded"
 	elif status_int == 1:
@@ -297,6 +310,7 @@ def status_value(status_int):
 
 # URL direction
 def url_direction(direction_int):
+	"""Parse InMon-defined URL direction"""
 	if direction_int == 1:
 		return "Source"
 	elif direction_int == 2:
@@ -306,6 +320,7 @@ def url_direction(direction_int):
 
 # IEEE 802.11 versions
 def wlan_version(version_num):
+	"""Reconcile  InMon-defined 802.11 WLAN version numbers to WiFi letter designations"""
 	if version_num == 1:
 		return "A"
 	elif version_num == 2:
@@ -319,6 +334,7 @@ def wlan_version(version_num):
 
 # IEEE 802.11 WLAN Transmissions
 def wlan_transmissions(transmission_int):
+	"""Parse InMon-defined WLAN transmission status"""
 	if transmission_int == 0:
 		return "Unknown"
 	elif transmission_int == 1:
@@ -331,10 +347,12 @@ def wlan_transmissions(transmission_int):
 # IEEE 802.3ad Link Aggregation Port State
 # FIX!
 def agg_port_state(port_state_num):
+	"""Parse 802.3ad aggregation port state"""
 		return 
 
 # Parse the sFlow datagram
 def datagram_parse(data):
+	"""Parse an sFlow high-level datagram"""
 	datagram = {}
 	datagram["sFlow Version"] = int(data.unpack_uint()) # sFlow Version
 	datagram["IP Version"] = data.unpack_uint() # Agent IP version
