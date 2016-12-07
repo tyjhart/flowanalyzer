@@ -9,7 +9,7 @@ from elasticsearch import helpers
 from IPy import IP
 
 # Field parsing functions
-from parser_modules import *
+from parser_modules import mac_address,icmp_parse
 
 # Field types, ports, etc
 from defined_ports import registered_ports,other_ports
@@ -173,20 +173,6 @@ def integer_unpack(packed_data,pointer,field_size):
 	else:
 		return False
 
-def parse_mac(packed_data,pointer,field_size):
-	mac_list = []
-	mac_objects = struct.unpack('!%dB' % field_size,packed_data[pointer:pointer+field_size])
-	
-	for mac_item in mac_objects:
-		mac_item_formatted = hex(mac_item).replace('0x','')
-		
-		if len(mac_item_formatted) == 1:
-			mac_item_formatted = str("0" + mac_item_formatted)
-		
-		mac_list.append(mac_item_formatted)
-	
-	return (':'.join(mac_list)).upper()
-
 #IPv4 lookup
 def ipv4_dns():
 	# Resolve IPv4 Source IP
@@ -235,7 +221,7 @@ def ipv6_dns():
 def protocol_traffic_category(protocol_number):
 	try:
 		return protocol_type[protocol_number]["Category"]
-	except KeyError:
+	except (NameError,KeyError):
 		return "Other"
 
 # Tag traffic by SRC and DST port
@@ -289,7 +275,12 @@ def port_traffic_classifier(src_port,dst_port):
 ### Netflow v9 server ###
 if __name__ == "__main__":
 	
-	# Stage the flows for the bulk API index operation
+	# Stage individual flow
+	global flow_index
+	flow_index = {}
+	flow_index["_source"] = {}
+	
+	# Stage multiple flows for the bulk Elasticsearch API index operation
 	global flow_dic
 	flow_dic = []
 	
@@ -299,6 +290,9 @@ if __name__ == "__main__":
 
 	# Class for parsing ICMP Types and Codes
 	icmp_parser = icmp_parse()
+
+	# Class for parsing MAC addresses and OUIs
+	mac = mac_address()
 	
 	# Continually run
 	while True:
@@ -322,9 +316,7 @@ if __name__ == "__main__":
 			packet["source_id"]
 			) = struct.unpack('!HHLLLL',flow_packet_contents[0:20])	
 
-			logging.info("Received " + str(packet["total_flow_count"]) + " flow(s) from " + str(sensor_address[0]))
-			logging.info(str(packet))
-
+			packet["Sensor"] = str(sensor_address[0])
 			pointer += 20 # Move past the packet header
 		
 		# Something went wrong unpacking the header, bail out
@@ -343,9 +335,8 @@ if __name__ == "__main__":
 			
 			# Unpack flow set ID and the length
 			try:
-				logging.info("Unpacking flow ID and Length, position " + str(pointer))
 				(flow_set_id, flow_set_length) = struct.unpack('!HH',flow_packet_contents[pointer:pointer+4])
-				logging.info("Found ID " + str(flow_set_id) + ", length " + str(flow_set_length))
+				logging.info("Found flow ID " + str(flow_set_id) + ", length " + str(flow_set_length) + " at " + str(pointer))
 			except:
 				logging.info("Out of bytes to unpack, stopping - OK")
 				break
@@ -365,19 +356,20 @@ if __name__ == "__main__":
 				# Advance to the end of the flow
 				pointer = (flow_set_length + pointer)-4
 				logging.info("Finished, position " + str(pointer))
+
+				flow_counter += 1
 									
 			elif flow_set_id == 1: # Options template set
 				logging.warning("Unpacking Options template set, position " + str(pointer))
 				
-				flow_counter += 1
-				
 				option_templates = option_template_parse(flow_packet_contents,sensor_address[0],pointer)
 				template_list.update(option_templates) # Add the new Option template(s) to the working template list
 
-				logging.warning(str(template_list))
+				logging.debug(str(template_list))
 				pointer = (flow_set_length + pointer)-4
-				logging.warning("Finished, position " + str(pointer))
-				sys.exit()
+				logging.info("Finished, position " + str(pointer))
+
+				flow_counter += 1
 
 			# Flow data set
 			elif flow_set_id > 255:
@@ -450,7 +442,45 @@ if __name__ == "__main__":
 										
 								# MAC Address
 								elif v9_fields[template_key]["Type"] == "MAC":
-									flow_payload = parse_mac(flow_packet_contents,data_position,field_size)
+									
+									# Returns (Parsed MAC, MAC OUI)
+									parsed_mac = mac.mac_packed_parse(flow_packet_contents,data_position,field_size)
+									flow_payload = parsed_mac[0] # Parsed MAC address
+									
+									# Incoming Source MAC
+									if template_key == 56:							
+										flow_index["_source"]['Incoming Source MAC OUI'] = parsed_mac[1]
+									
+									# Outgoing Destination MAC
+									elif template_key == 57:							
+										flow_index["_source"]['Outgoing Destination MAC OUI'] = parsed_mac[1]
+									
+									# Incoming Destination MAC
+									elif template_key == 80:							
+										flow_index["_source"]['Incoming Destination MAC OUI'] = parsed_mac[1]
+									
+									# Outgoing Source MAC
+									elif template_key == 81:							
+										flow_index["_source"]['Outgoing Source MAC OUI'] = parsed_mac[1]
+
+									# Station MAC Address
+									elif template_key == 365:							
+										flow_index["_source"]['Station MAC Address OUI'] = parsed_mac[1]
+
+									# WTP MAC Address
+									elif template_key == 367:							
+										flow_index["_source"]['WTP MAC Address OUI'] = parsed_mac[1]
+
+									# Dot1q Customer Source MAC Address
+									elif template_key == 414:							
+										flow_index["_source"]['Dot1q Customer Source MAC Address OUI'] = parsed_mac[1]
+
+									# Dot1q Customer Destination MAC Address
+									elif template_key == 415:							
+										flow_index["_source"]['Dot1q Customer Destination MAC Address OUI'] = parsed_mac[1]
+									
+									else:
+										pass
 
 								# Something we haven't accounted for yet						
 								else:
@@ -515,14 +545,13 @@ if __name__ == "__main__":
 						logging.info("Creating Netflow v9 Options flow number " + str(flow_counter) + ", set ID " + str(flow_set_id) + " from " + str(sensor_address[0]))
 						flow_index["_source"]["Flow Type"] = "Netflow v9 Options" # Note the type
 
-						for scope_field,scope_length in template_list[hashed_id]["Scope Fields"]:
-							logging.debug(scope_field,scope_length)
+						for scope_field in template_list[hashed_id]["Scope Fields"]:
+							logging.debug(str(scope_field))
 
-						for option_field,option_length in template_list[hashed_id]["Option Fields"]:
-							logging.debug(option_field,option_length)
+						for option_field in template_list[hashed_id]["Option Fields"]:
+							logging.debug(str(option_field))
 
 						logging.info("Ending Netflow v9 Options flow " + str(flow_counter))
-						sys.exit()
 
 					else:
 						pass
@@ -539,11 +568,12 @@ if __name__ == "__main__":
 			else:
 				logging.warning("Unknown flow ID " + str(flow_set_id) + " from " + str(sensor_address[0]) + " - FAIL")
 				pointer = (flow_set_length + pointer)-4
+				flow_counter += 1
 				continue
 			
 		packet["Reported Flow Count"] = flow_counter	
 		
-		logging.debug("Current cached templates: " + str(template_list)) # Dump active templates for debug
+		logging.debug("Cached templates: " + str(template_list)) # Dump active templates for debug
 
 		# Have enough flows to do a bulk index to Elasticsearch
 		if len(flow_dic) >= bulk_insert_count:
