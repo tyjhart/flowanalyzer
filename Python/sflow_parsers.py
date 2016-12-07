@@ -6,41 +6,47 @@ from xdrlib import Unpacker
 from socket import inet_ntoa#,inet_ntop
 from protocol_numbers import *
 
+from parser_modules import mac_address
+
 # Parse IANA interface types
 # See https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
 def iana_interface_type(num):
 	if num == 1:
 		return "Other"
 	elif num == 2:
-		return "regular1822"
+		return "BBN 1822"
 	elif num == 3:
-		return "hdh1822"
+		return "HDH 1822"
 	elif num == 4:
-		return "ddnX25"
+		return "DDN X.25"
 	elif num == 5:
-		return "rfc877x25"
+		return "RFC-877 X.25"
+	
+	# For all Ethernet-like CSMA-CD interfaces per IANA
 	elif num == 6:
-		return "ethernetCsmacd"
+		return "Ethernet"
+	
+	# Deprecated, should use 6 per IANA
 	elif num == 7:
-		return "iso88023Csmacd"
+		return "Ethernet"
 	elif num == 8:
-		return "iso88024TokenBus"
+		return "Token Bus"
 	elif num == 9:
-		return "iso88025TokenRing"
+		return "Token Ring"
 	elif num == 10:
-		return "iso88026Man"
+		return "ISO88026Man"
 	elif num == 11:
-		return "starLan"
+		return "Star LAN"
 	elif num == 12:
-		return "proteon10Mbit"
+		return "Proteon 10Mbit"
 	elif num == 13:
-		return "proteon80Mbit"
+		return "Proteon 80Mbit"
 	elif num == 14:
-		return "hyperchannel"
+		return "Hyperchannel"
 	elif num == 15:
 		return "FDDI"
 	elif num == 16:
-		return "lapb"
+		return "LAPB"
 	elif num == 17:
 		return "SDLC"
 	elif num == 18:
@@ -58,7 +64,7 @@ def iana_interface_type(num):
 	elif num == 24:
 		return "Software Loopback"
 	elif num == 25:
-		return "eon"
+		return "EON"
 	elif num == 26:
 		return "Ethernet 3Mbit"
 	elif num == 27:
@@ -76,15 +82,15 @@ def iana_interface_type(num):
 	elif num == 33:
 		return "RS232"
 	elif num == 34:
-		return "para"
+		return "PARA"
 	elif num == 35:
-		return "arcnet"
+		return "ARCNet"
 	elif num == 36:
-		return "arcnetPlus"
+		return "ARCNet Plus"
 	elif num == 37:
 		return "ATM"
 	elif num == 38:
-		return "miox25"
+		return "MIOX25"
 	elif num == 39:
 		return "SONET"
 	else:
@@ -116,11 +122,18 @@ def int_source_id_type(id):
 
 # Parse raw Ethernet header
 def parse_eth_header(header_string):
+
+	mac_parser_class = mac_address() # MAC parser class
+	
+	# Destination MAC
 	ord_dest_mac = [ord(x) for x in [header_string[0],header_string[1],header_string[2],header_string[3],header_string[4],header_string[5]]]
-	dest_mac = mac_parse(ord_dest_mac)
+	dest_mac = mac_parser_class.mac_parse(ord_dest_mac) # Get MAC and MAC OUI
+
+	# Source MAC
 	ord_src_mac = [ord(x) for x in [header_string[6],header_string[7],header_string[8],header_string[9],header_string[10],header_string[11]]]
-	src_mac = mac_parse(ord_src_mac)
-	return [dest_mac,src_mac]
+	src_mac = mac_parser_class.mac_parse(ord_src_mac) # Get MAC and MAC OUI
+	
+	return (dest_mac[0],src_mac[0],dest_mac[1],src_mac[1]) # DST MAC, SRC MAC, DST MAC OUI, SRC MAC OUI
 
 # Parse header protocol name from protocol number
 def parse_header_prot_name(protocol_int):
@@ -135,7 +148,7 @@ def parse_header_prot_name(protocol_int):
 	elif protocol_int == 5:
 		protocol_name = "Frame Relay"
 	elif protocol_int == 6:
-		protocol_name = "X25"
+		protocol_name = "X.25"
 	elif protocol_int == 7:
 		protocol_name = "PPP"
 	elif protocol_int == 8:
@@ -219,7 +232,7 @@ def enum_machine_type(os_arch):
 	elif os_arch == 7:
 		machine_type = "PowerPC"
 	elif os_arch == 8:
-		machine_type = "m68k"
+		machine_type = "M68K"
 	elif os_arch == 9:
 		machine_type = "MIPS"
 	elif os_arch == 10:
@@ -227,7 +240,7 @@ def enum_machine_type(os_arch):
 	elif os_arch == 11:
 		machine_type = "HPPA"
 	elif os_arch == 12:
-		machine_type = "s390"
+		machine_type = "S390"
 	else:
 		machine_type = "Unknown"
 	
@@ -238,7 +251,7 @@ def iana_protocol_name(protocol_int):
 	try:
 		return protocol_type[protocol_int]["Name"]
 	except:
-		return "Undefined"
+		return "Unknown"
 
 # Parse IANA protocol name
 def protocol_category(protocol_int):
