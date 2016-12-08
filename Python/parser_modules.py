@@ -5,11 +5,15 @@ class mac_address(object):
     import struct
     
     def __init__(self):
-
+        
+        # See the following for MAC OUI information:
+        # http://www.iana.org/assignments/ethernet-numbers/ethernet-numbers.xhtml
+        # https://tools.ietf.org/html/rfc7042
         mac_oui = {
         "005056": {"Vendor":"VMware",               "Type":"Virtualization"},
+        "00005E": {"Vendor":"IANA",                 "Type":"Unicast"},
         "01000C": {"Vendor":"Cisco",                "Type":"Logical"},
-        "01005E": {"Vendor":"Multicast",            "Type":"Logical"},
+        "01005E": {"Vendor":"IANA",                 "Type":"Multicast"},
         "0180C2": {"Vendor":"IEEE",                 "Type":"Logical"},
         "0A0027": {"Vendor":"Oracle",               "Type":"Virtualization"},
         "2C0E3D": {"Vendor":"Samsung",              "Type":"Physical"},
@@ -22,7 +26,7 @@ class mac_address(object):
         }
 
     # MAC passed as Python list, 6 elements
-    def mac_parse(self,mac):
+    def mac_parse(self,mac:list):
         """Parse MAC addresses passed as Python list(6) that has already been unpacked"""
         mac_list = []
         for mac_item in mac:
@@ -35,7 +39,7 @@ class mac_address(object):
         return (parsed_mac,parsed_mac_oui)
 
     # MAC passed as packed bytes
-    def mac_packed_parse(self,packed_data,pointer,field_size):
+    def mac_packed_parse(self,packed_data:"Packed Data",pointer:int,field_size:int):
         """Parse MAC addresses passed as packed bytes that first need to be unpacked"""
         mac_list = []
         mac_objects = self.struct.unpack('!%dB' % field_size,packed_data[pointer:pointer+field_size])
@@ -49,7 +53,7 @@ class mac_address(object):
         return (parsed_mac,parsed_mac_oui)
     
     # MAC OUI formatted "001122"
-    def mac_oui(self,mac_oui_num):
+    def mac_oui(self,mac_oui_num:str):
         """Get MAC OUI (vendor,type) based on an OUI number formatted as '0011AA'"""
         try:
             return (self.mac_oui[mac_oui_num]["Vendor"],self.mac_oui[mac_oui_num]["Type"])
@@ -154,7 +158,7 @@ class icmp_parse(object):
         }
 
     # Parse human ICMP Type and Code from integers
-    def icmp_human_type_code(self,icmp_reported):
+    def icmp_human_type_code(self,icmp_reported:int):
         """Parse ICMP integer to get the human ICMP Type and Code"""
         icmp_num_type = icmp_reported//256 # ICMP Type
         icmp_num_code = icmp_reported%256 # ICMP Code
@@ -173,7 +177,7 @@ class icmp_parse(object):
         except (NameError,KeyError):
             return (icmp_num_type,icmp_num_code)
 
-    def icmp_num_type_code(self,icmp_reported):
+    def icmp_num_type_code(self,icmp_reported:int):
         """Parse ICMP integer to get the numeric ICMP Type and Code"""
         icmp_num_type = icmp_reported//256 # ICMP Type
         icmp_num_code = icmp_reported%256 # ICMP Code
