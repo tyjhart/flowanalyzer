@@ -90,10 +90,10 @@ except ValueError as elasticsearch_connect_error:
 
 # sFlow collector
 if __name__ == "__main__":
-	from counter_records import * # Functions to parse headers and format numbers
-	from flow_records import * # Functions to parse headers and format numbers
-	from sflow_parsers import * # Functions to parse headers and format numbers
-	from sflow_samples import * # Functions to parse headers and format numbers
+	from counter_records import * 	# Functions to parse counter record structures
+	from flow_records import * 		# Functions to parse flow record structures
+	from sflow_parsers import * 	# Functions to parse headers and misc data chunks
+	from sflow_samples import * 	# Functions to parse sFlow samples
 	
 	global sflow_data
 	sflow_data = [] # For bulk upload to Elasticsearch
@@ -510,8 +510,14 @@ if __name__ == "__main__":
 
 			# Perform the bulk upload to the index
 			try:
-				helpers.bulk(es,sflow_data)
+				helpers.bulk(es,sflow_data) # Call Elasticsearch bulk upload API
+
+				# Debug output to a file
+				#with open('data.txt', 'w') as outfile:
+					#json.dump(sflow_data, outfile)
+				
 				logging.warning(str(record_num) + " record(s) uploaded to Elasticsearch - OK")
+			
 			except ValueError as bulk_index_error:
 				logging.critical(bulk_index_error)
 				logging.critical(str(record_num) + " record(s) DROPPED, unable to index flows - FAIL")
