@@ -6,7 +6,9 @@ from xdrlib import Unpacker
 from sflow_parsers import * # Functions to parse headers and format numbers
 
 # Flow Sample [0,1] 
-def flow_sample(unparsed_data:"XDR Data"):
+def flow_sample(
+	unparsed_data # type: "XDR Data"
+	):
 	sample_cache = {}
 	sample_cache["Sequence"] = unparsed_data.unpack_uint() # Sequence number
 	source_id_type_index = source_type_index_parser(unparsed_data.unpack_uint()) # Parse Source and Index types
@@ -21,7 +23,9 @@ def flow_sample(unparsed_data:"XDR Data"):
 	return sample_cache
 
 # Counter Sample [0,2] 
-def counter_sample(unparsed_data:"XDR Data"):
+def counter_sample(
+	unparsed_data # type: "XDR Data"
+	):
 	sample_cache = {}
 	sample_cache["Sequence"] = unparsed_data.unpack_uint() # Sequence number
 	source_id_type_index = source_type_index_parser(unparsed_data.unpack_uint()) # Parse Source and Index types
@@ -31,7 +35,9 @@ def counter_sample(unparsed_data:"XDR Data"):
 	return sample_cache
 
 # Expanded Flow Sample [0,3] 
-def expanded_flow_sample(unparsed_data:"XDR Data"):
+def expanded_flow_sample(
+	unparsed_data # type: "XDR Data"
+	):
 	sample_cache = {}
 	sample_cache["Sequence"] = unparsed_data.unpack_uint() # Sequence number
 	sample_cache["Source Type"] = unparsed_data.unpack_uint() # Source type
@@ -47,7 +53,9 @@ def expanded_flow_sample(unparsed_data:"XDR Data"):
 	return sample_cache
 
 # Expanded Flow Sample [0,4] 
-def expanded_counter_sample(unparsed_data:"XDR Data"):
+def expanded_counter_sample(
+	unparsed_data # type: "XDR Data"
+	):
 	sample_cache = {}
 	sample_cache["Sequence"] = unparsed_data.unpack_uint() # Sequence number
 	sample_cache["Source ID Type"] = unparsed_data.unpack_uint() # Source ID Type
@@ -56,7 +64,10 @@ def expanded_counter_sample(unparsed_data:"XDR Data"):
 	return sample_cache
 
 # Pick Flow, Expanded Flow, Counter, Expanded Counter types to unpack
-def sample_picker(enterprise_format:list,unpacked_sample_data:"XDR Data"):
+def sample_picker(
+	enterprise_format, # type: int
+	unpacked_sample_data # type: "XDR Data"
+	):
 	if enterprise_format == [0,1]:
 		return flow_sample(unpacked_sample_data) # Parse the sample header
 	elif enterprise_format == [0,2]:

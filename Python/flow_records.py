@@ -9,7 +9,9 @@ from parser_modules import mac_address # Field parsing functions
 from sflow_parsers import *  # Functions to parse headers and format numbers
 
 # Raw Packet Header (Flow, Enterprise 0, Format 1)
-def raw_packet_header(data:"XDR Data"):
+def raw_packet_header(
+	data # type: "XDR Data"
+	):
 	"""Raw Packet Header - Type: Flow, Enterprise: 0, Format: 1"""
 	sample_data = {} # Cache
 	sample_data["Header Protocol Number"] = data.unpack_uint()
@@ -29,7 +31,9 @@ def raw_packet_header(data:"XDR Data"):
 	return sample_data
 
 # Ethernet Frame Data (Flow, Enterprise 0, Format 2)
-def eth_frame_data(data:"XDR Data"):
+def eth_frame_data(
+	data # type: "XDR Data"
+	):
 	"""Ethernet Frame Data - Type: Flow, Enterprise: 0, Format: 2"""
 	sample_data = {} # Cache
 	sample_data["Packet Length"] = data.unpack_uint()
@@ -40,7 +44,9 @@ def eth_frame_data(data:"XDR Data"):
 	return sample_data
 
 # IPv4 Data (Flow, Enterprise 0, Format 3)
-def ipv4_data(data:"XDR Data"):
+def ipv4_data(
+	data # type: "XDR Data"
+	):
 	"""IPv4 Data - Type: Flow, Enterprise: 0, Format: 3"""
 	sample_data = {} # Cache
 	sample_data["IP Packet Length"] = data.unpack_uint()
@@ -55,7 +61,9 @@ def ipv4_data(data:"XDR Data"):
 	return sample_data
 
 # IPv6 Data (Flow, Enterprise 0, Format 4)
-def ipv6_data(data:"XDR Data"):
+def ipv6_data(
+	data # type: "XDR Data"
+	):
 	"""IPv6 Data - Type: Flow, Enterprise: 0, Format: 4"""
 	sample_data = {} # Cache
 	sample_data["Packet Length"] = data.unpack_uint()
@@ -70,7 +78,9 @@ def ipv6_data(data:"XDR Data"):
 	return sample_data
 
 # Extended Switch Data (Flow, Enterprise 0, Format 1001)
-def extended_switch_data(data:"XDR Data"):
+def extended_switch_data(
+	data # type: "XDR Data"
+	):
 	"""Extended Switch Data - Type: Flow, Enterprise: 0, Format: 1001"""
 	sample_data = {} # Cache
 	sample_data["Source VLAN"] = data.unpack_uint()
@@ -81,7 +91,9 @@ def extended_switch_data(data:"XDR Data"):
 	return sample_data
 
 # Extended Router Data (Flow, Enterprise 0, Format 1002)
-def extended_router_data(data:"XDR Data"):
+def extended_router_data(
+	data # type: "XDR Data"
+	):
 	"""Extended Router Data - Type: Flow, Enterprise: 0, Format: 1002"""
 	sample_data = {} # Cache
 	sample_data["Next Hop IP Version"] = int(data.unpack_uint())
@@ -99,14 +111,18 @@ def extended_router_data(data:"XDR Data"):
 	return sample_data
 
 # Extended Gateway Data (Flow, Enterprise 0, Format 1003)
-def extended_gateway_data(data:"XDR Data"):
+def extended_gateway_data(
+	data # type: "XDR Data"
+	):
 	"""Extended Gateway Data - Type: Flow, Enterprise: 0, Format: 3"""
 	sample_data = {} # Cache
 	data.done() # Verify all data unpacked
 	return sample_data
 
 # Extended User Data (Flow, Enterprise 0, Format 1004)
-def extended_user_data(data:"XDR Data"):
+def extended_user_data(
+	data # type: "XDR Data"
+	):
 	"""Extended User Data - Type: Flow, Enterprise: 0, Format: 1004"""
 	sample_data = {} # Cache
 	sample_data["Source Charset"] = int(data.unpack_uint())
@@ -117,7 +133,9 @@ def extended_user_data(data:"XDR Data"):
 	return sample_data
 
 # Extended URL Data (Flow, Enterprise 0, Format 1005)
-def extended_url_data(data:"XDR Data"):
+def extended_url_data(
+	data # type: "XDR Data"
+	):
 	"""Extended URL Data - Type: Flow, Enterprise: 0, Format: 1005"""
 	sample_data = {} # Cache
 	sample_data["Connection Direction"] = url_direction(int(data.unpack_uint()))
@@ -127,21 +145,27 @@ def extended_url_data(data:"XDR Data"):
 	return sample_data
 
 # Extended MPLS Data (Flow, Enterprise 0, Format 1006)
-def extended_mpls_data(data:"XDR Data"):
+def extended_mpls_data(
+	data # type: "XDR Data"
+	):
 	"""Extended MPLS Data - Type: Flow, Enterprise: 0, Format: 1006"""
 	sample_data = {} # Cache
 	data.done() # Verify all data unpacked
 	return sample_data
 
 # Extended NAT Data (Flow, Enterprise 0, Format 1007)
-def extended_nat_data(data:"XDR Data"):
+def extended_nat_data(
+	data # type: "XDR Data"
+	):
 	"""Extended NAT Data - Type: Flow, Enterprise: 0, Format: 1007"""
 	sample_data = {} # Cache
 	data.done() # Verify all data unpacked
 	return sample_data
 
 # Extended MPLS Tunnel (Flow, Enterprise 0, Format 1008)
-def extended_mpls_tunnel(data:"XDR Data"):
+def extended_mpls_tunnel(
+	data # type: "XDR Data"
+	):
 	"""Extended MPLS Tunnel Data - Type: Flow, Enterprise: 0, Format: 1008"""
 	sample_data = {} # Cache
 	sample_data["Tunnel LSP Name"] = data.unpack_string()
@@ -151,7 +175,9 @@ def extended_mpls_tunnel(data:"XDR Data"):
 	return sample_data
 
 # Extended MPLS VC (Flow, Enterprise 0, Format 1009)
-def extended_mpls_vc(data:"XDR Data"):
+def extended_mpls_vc(
+	data # type: "XDR Data"
+	):
 	"""Extended MPLS VC Data - Type: Flow, Enterprise: 0, Format: 1009"""
 	sample_data = {} # Cache
 	sample_data["VC Instance Name"] = data.unpack_string()
@@ -161,7 +187,9 @@ def extended_mpls_vc(data:"XDR Data"):
 	return sample_data
 
 # Extended MPLS FEC (Flow, Enterprise 0, Format 1010)
-def exteded_mpls_fec(data:"XDR Data"):
+def exteded_mpls_fec(
+	data # type: "XDR Data"
+	):
 	"""Extended MPLS FEC Data - Type: Flow, Enterprise: 0, Format: 1010"""
 	sample_data = {} # Cache
 	sample_data["MPLS FTN Description"] = data.unpack_string()
@@ -170,7 +198,9 @@ def exteded_mpls_fec(data:"XDR Data"):
 	return sample_data
 
 # Extended MPLS LVP FEC (Flow, Enterprise 0, Format 1011)
-def extended_mpls_lvp_fec(data:"XDR Data"):
+def extended_mpls_lvp_fec(
+	data # type: "XDR Data"
+	):
 	"""Extended MPLS LVP FEC Data - Type: Flow, Enterprise: 0, Format: 1011"""
 	sample_data = {} # Cache
 	sample_data["MPLS FEC Address Prefix Length"] = int(data.unpack_uint())
@@ -178,7 +208,9 @@ def extended_mpls_lvp_fec(data:"XDR Data"):
 	return sample_data
 
 # Extended VLAN Tunnel (Flow, Enterprise 0, Format 1012)
-def extended_vlan_tunnel(data:"XDR Data"):
+def extended_vlan_tunnel(
+	data # type: "XDR Data"
+	):
 	"""Extended VLAN Tunnel Data - Type: Flow, Enterprise: 0, Format: 1012"""
 	sample_data = {} # Cache
 	vlan_int = int(data.unpack_uint())
@@ -187,14 +219,18 @@ def extended_vlan_tunnel(data:"XDR Data"):
 	return sample_data
 
 # Extended 802.11 Payload (Flow, Enterprise 0, Format 1013)
-def extended_wlan_payload(data:"XDR Data"):
+def extended_wlan_payload(
+	data # type: "XDR Data"
+	):
 	"""Extended WLAN Payload - Type: Flow, Enterprise: 0, Format: 1013"""
 	sample_data = {} # Cache
 	data.done() # Verify all data unpacked
 	return sample_data
 
 # Extended 802.11 RX (Flow, Enterprise 0, Format 1014)
-def extended_wlan_rx(data:"XDR Data"):
+def extended_wlan_rx(
+	data # type: "XDR Data"
+	):
 	"""Extended WLAN RX - Type: Flow, Enterprise: 0, Format: 1014"""
 	sample_data = {} # Cache
 	sample_data["SSID"] = data.unpack_fstring(32)
@@ -209,7 +245,9 @@ def extended_wlan_rx(data:"XDR Data"):
 	return sample_data
 
 # Extended 802.11 TX (Flow, Enterprise 0, Format 1015)
-def extended_wlan_tx(data:"XDR Data"):
+def extended_wlan_tx(
+	data # type: "XDR Data"
+	):
 	"""Extended WLAN TX - Type: Flow, Enterprise: 0, Format: 1015"""
 	sample_data = {} # Cache
 	sample_data["SSID"] = data.unpack_fstring(32)
@@ -225,18 +263,24 @@ def extended_wlan_tx(data:"XDR Data"):
 	return sample_data
 
 # Extended 802.11 Aggregation (Flow, Enterprise 0, Format 1016)
-def extended_wlan_aggregation(data:"XDR Data"):
+def extended_wlan_aggregation(
+	data # type: "XDR Data"
+	):
 	"""Extended WLAN Aggregation - Type: Flow, Enterprise: 0, Format: 1016"""
 	sample_data = {} # Cache
 	data.done() # Verify all data unpacked
 	return sample_data
 
 # Slow Packet Data Path (Flow, Enterprise 0, Format 1020)
-def slow_packet_data_path(data:"XDR Data"):
+def slow_packet_data_path(
+	data # type: "XDR Data"
+	):
 	"""Slow Packet Data Path - Type: Flow, Enterprise: 0, Format: 1020"""
 	sample_data = {} # Cache
 
-	def slow_path_reason(reason_int):
+	def slow_path_reason(
+		reason_int # type: int
+		):
 		if reason_int == 0:
 			return "Unknown"
 		elif reason_int == 1:
@@ -257,7 +301,9 @@ def slow_packet_data_path(data:"XDR Data"):
 	return sample_data
 
 # Extended InfiniBand Local Routing Header (Flow, Enterprise 0, Format 1031)
-def extended_ib_lrh(data:"XDR Data"):
+def extended_ib_lrh(
+	data # type: "XDR Data"
+	):
 	"""Extended InfiniBand Local Routing Header - Type: Flow, Enterprise: 0, Format: 1031"""
 	sample_data = {} # Cache
 	sample_data["Source Virtual Lane"] = int(data.unpack_uint())
@@ -274,7 +320,9 @@ def extended_ib_lrh(data:"XDR Data"):
 	return sample_data
 
 # Extended InfiniBand Base Transport Header (Flow, Enterprise 0, Format 1033)
-def extended_ib_brh(data:"XDR Data"):
+def extended_ib_brh(
+	data # type: "XDR Data"
+	):
 	"""Extended InfiniBand Base Transport Header - Type: Flow, Enterprise: 0, Format: 1033"""
 	sample_data = {} # Cache
 	sample_data["Partition Key"] = int(data.unpack_uint())
@@ -284,7 +332,9 @@ def extended_ib_brh(data:"XDR Data"):
 	return sample_data
 
 # Generic Transaction Record (Flow, Enterprise 0, Format 2000)
-def generic_transaction_record(data:"XDR Data"):
+def generic_transaction_record(
+	data # type: "XDR Data"
+	):
 	"""Generic Transaction Record - Type: Flow, Enterprise: 0, Format: 2000"""
 	sample_data = {} # Cache
 	sample_data["Service Direction"] = service_direction(int(data.unpack_uint()))
@@ -297,7 +347,9 @@ def generic_transaction_record(data:"XDR Data"):
 	return sample_data
 
 # Extended NFS Storage Transaction (Flow, Enterprise 0, Format 2001)
-def ext_nfs_storage_trans(data:"XDR Data"):
+def ext_nfs_storage_trans(
+	data # type: "XDR Data"
+	):
 	"""Extended NFS Storage Transaction - Type: Flow, Enterprise: 0, Format: 2001"""
 	sample_data = {} # Cache
 	sample_data["Path"] = str(data.unpack_opaque())
@@ -307,7 +359,9 @@ def ext_nfs_storage_trans(data:"XDR Data"):
 	return sample_data
 
 # Extended SCSI Transaction (Flow, Enterprise 0, Format 2002)
-def ext_scsi_storage_trans(data:"XDR Data"):
+def ext_scsi_storage_trans(
+	data # type: "XDR Data"
+	):
 	"""Extended SCSI Storage Transaction - Type: Flow, Enterprise: 0, Format: 2002"""
 	sample_data = {} # Cache
 	sample_data["LUN"] = int(data.unpack_uint())
@@ -317,7 +371,9 @@ def ext_scsi_storage_trans(data:"XDR Data"):
 	return sample_data
 
 # Extended Web Transaction (Flow, Enterprise 0, Format 2003)
-def extended_web_trans(data:"XDR Data"):
+def extended_web_trans(
+	data # type: "XDR Data"
+	):
 	"""Extended Web Transaction - Type: Flow, Enterprise: 0, Format: 2003"""
 	sample_data = {} # Cache
 	sample_data["URL"] = data.unpack_string()
@@ -330,7 +386,9 @@ def extended_web_trans(data:"XDR Data"):
 	return sample_data
 
 # IPv4 Socket (Flow, Enterprise 0, Format 2100)
-def ipv4_socket(data:"XDR Data"):
+def ipv4_socket(
+	data # type: "XDR Data"
+	):
 	"""IPv4 Socket - Type: Flow, Enterprise: 0, Format: 2100"""
 	sample_data = {} # Cache
 	sample_data["Protocol Number"] = int(data.unpack_uint())
@@ -345,7 +403,9 @@ def ipv4_socket(data:"XDR Data"):
 	return sample_data
 
 # IPv6 Socket (Flow, Enterprise 0, Format 2101)
-def ipv6_socket(data:"XDR Data"):
+def ipv6_socket(
+	data # type: "XDR Data"
+	):
 	"""IPv6 Socket - Type: Flow, Enterprise: 0, Format: 2101"""
 	sample_data = {} # Cache
 	sample_data["Protocol Number"] = int(data.unpack_uint())
@@ -360,7 +420,9 @@ def ipv6_socket(data:"XDR Data"):
 	return sample_data
 
 # Extended TCP Information (Flow, Enterprise 0, Format 2209)
-def extended_tcp_info(data:"XDR Data"):
+def extended_tcp_info(
+	data # type: "XDR Data"
+	):
 	"""Extended TCP Information - Type: Flow, Enterprise: 0, Format: 2209"""
 	datagram = {}
 	datagram["Packet Direction"] = packet_direction(data.unpack_uint()) # Parsed packet direction
@@ -379,7 +441,9 @@ def extended_tcp_info(data:"XDR Data"):
 	return datagram
 
 # Broadcom Selected Egress Queue (Flow, Enterprise 4413, Format 1)
-def broad_sel_egress_queue(data:"XDR Data"):
+def broad_sel_egress_queue(
+	data # type: "XDR Data"
+	):
 	"""Broadcom Selected Egress Queue - Type: Flow, Enterprise: 4413, Format: 1"""
 	datagram = {}
 	datagram["Queue"] = packet_direction(data.unpack_uint())
@@ -388,7 +452,9 @@ def broad_sel_egress_queue(data:"XDR Data"):
 
 # Extended Class (Flow, Enterprise 8800, Format 1) for Vyatta, VyOS, Ubiquiti
 # Documented pmacct bug https://github.com/pmacct/pmacct/issues/71
-def extended_class(data:"XDR Data"):
+def extended_class(
+	data # type: "XDR Data"
+	):
 	"""PMACCT Extended Class - Type: Flow, Enterprise: 8800, Format: 1"""
 	datagram = {}
 	datagram["Class"] = int(data.unpack_uint())
@@ -397,7 +463,9 @@ def extended_class(data:"XDR Data"):
 
 # Extended Tag (Flow, Enterprise 8800, Format 2) for Vyatta, VyOS, Ubiquiti
 # Documented pmacct bug https://github.com/pmacct/pmacct/issues/71
-def extended_tag(data:"XDR Data"):
+def extended_tag(
+	data # type: "XDR Data"
+	):
 	"""PMACCT Extended Tag - Type: Flow, Enterprise: 8800, Format: 2"""
 	datagram = {}
 	datagram["Tag"] = int(data.unpack_uint())

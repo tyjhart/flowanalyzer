@@ -9,7 +9,9 @@ from parser_modules import mac_address # Field parsing functions
 from sflow_parsers import *  # Functions to parse headers and format numbers
 
 # Generic Interface (Counter, Enterprise 0, Format 1)
-def gen_int_counter(data:"XDR Data"):
+def gen_int_counter(
+	data # type: "XDR Data"
+	):
 	"""Generic Interface Counter - Type: Counter, Enterprise: 0, Format: 1"""
 	sample_data = {} # Cache
 	sample_data["Interface Index"] = int(data.unpack_uint())
@@ -57,7 +59,9 @@ def gen_int_counter(data:"XDR Data"):
 	return sample_data
 
 # Ethernet Interface (Counter, Enterprise 0, Format 2)
-def eth_int_counter(data:"XDR Data"):
+def eth_int_counter(
+	data # type: "XDR Data"
+	):
 	"""Ethernet Interface Counter - Type: Counter, Enterprise: 0, Format: 2"""
 	sample_data = {} # Cache
 	sample_data["Alignment Errors"] = int(data.unpack_uint())
@@ -77,7 +81,9 @@ def eth_int_counter(data:"XDR Data"):
 	return sample_data
 
 # Token Ring (Counter, Enterprise 0, Format 3)
-def token_ring_counter(data:"XDR Data"):
+def token_ring_counter(
+	data # type: "XDR Data"
+	):
 	"""Token Ring Interface Counter - Type: Counter, Enterprise: 0, Format: 3"""
 	sample_data = {} # Cache
 	sample_data["Line Errors"] = int(data.unpack_uint())
@@ -102,7 +108,9 @@ def token_ring_counter(data:"XDR Data"):
 	return sample_data
 
 # 100 BaseVG Interface (Counter, Enterprise 0, Format 4)
-def basevg_int_counter(data:"XDR Data"):
+def basevg_int_counter(
+	data # type: "XDR Data"
+	):
 	"""100 BaseVG Interface Counter - Type: Counter, Enterprise: 0, Format: 4"""
 	sample_data = {} # Cache
 	sample_data["High Priority Frames In"] = int(data.unpack_uint())
@@ -123,7 +131,9 @@ def basevg_int_counter(data:"XDR Data"):
 	return sample_data
 
 # VLAN (Counter, Enterprise 0, Format 5)
-def vlan_counter(data:"XDR Data"):
+def vlan_counter(
+	data # type: "XDR Data"
+	):
 	"""VLAN Counter - Type: Counter, Enterprise: 0, Format: 5"""
 	sample_data = {} # Cache
 	sample_data["VLAN ID"] = int(data.unpack_uint())
@@ -136,7 +146,9 @@ def vlan_counter(data:"XDR Data"):
 	return sample_data
 
 # IEEE 802.11 Counters (Counter, Enterprise 0, Format 6)
-def wlan_counters(data:"XDR Data"):
+def wlan_counters(
+	data # type: "XDR Data"
+	):
 	"""WLAN Counter - Type: Counter, Enterprise: 0, Format: 6"""
 	sample_data = {} # Cache
 	sample_data["Transmitted Fragments"] = int(data.unpack_uint())
@@ -163,7 +175,9 @@ def wlan_counters(data:"XDR Data"):
 	return sample_data	
 
 # IEEE 802.3ad LAG Port Statistics (Counter, Enterprise 0, Format 7)
-def lag_port_stats(data:"XDR Data"):
+def lag_port_stats(
+	data # type: "XDR Data"
+	):
 	"""LAG Port Statistics Counter - Type: Counter, Enterprise: 0, Format: 7"""
 	sample_data = {} # Cache
 	sample_data["dot3adAggPortActorSystemID"] = data.unpack_string()
@@ -183,7 +197,9 @@ def lag_port_stats(data:"XDR Data"):
 
 # Slow Path Counts (Counter, Enterprise 0, Format 8)
 # https://groups.google.com/forum/#!topic/sflow/4JM1_Mmoz7w
-def slow_path_stats(data:"XDR Data"):
+def slow_path_stats(
+	data # type: "XDR Data"
+	):
 	"""Slow Path Statistics Counter - Type: Counter, Enterprise: 0, Format: 8"""
 	sample_data = {} # Cache
 	sample_data["Unknown"] = int(data.unpack_uint())
@@ -196,7 +212,9 @@ def slow_path_stats(data:"XDR Data"):
 	return sample_data
 
 # InfiniBand Counters (Counter, Enterprise 0, Format 9)
-def infiniband_counters(data:"XDR Data"):
+def infiniband_counters(
+	data # type: "XDR Data"
+	):
 	"""InfiniBand Interface Counter - Type: Counter, Enterprise: 0, Format: 9"""
 	sample_data = {} # Cache
 	sample_data["Port Transmitted Data"] = data.unpack_hyper()
@@ -219,7 +237,9 @@ def infiniband_counters(data:"XDR Data"):
 	return sample_data
 
 # SFP Optical Interfaces Counters (Counter, Enterprise 0, Format 10)
-def sfp_optical_counters(data:"XDR Data"):
+def sfp_optical_counters(
+	data # type: "XDR Data"
+	):
 	"""SFP Optical Interface Counter - Type: Counter, Enterprise: 0, Format: 10"""
 	sample_data = {} # Cache
 	sample_data["Module ID"] = int(data.unpack_uint())
@@ -249,7 +269,9 @@ def sfp_optical_counters(data:"XDR Data"):
 	return sample_data
 
 # Processor Information (Counter, Enterprise 0, Format 1001)
-def proc_info(data:"XDR Data"):
+def proc_info(
+	data # type: "XDR Data"
+	):
 	"""Processor Information Counter - Type: Counter, Enterprise: 0, Format: 1001"""
 	sample_data = {} # Cache
 	sample_data["5s CPU Percentage"] = int(data.unpack_uint())
@@ -261,7 +283,9 @@ def proc_info(data:"XDR Data"):
 	return sample_data
 
 # 802.11 Radio Utilization (Counter, Enterprise 0, Format 1002)
-def radio_util(data:"XDR Data"):
+def radio_util(
+	data # type: "XDR Data"
+	):
 	"""Radio Utilization Counter - Type: Counter, Enterprise: 0, Format: 1002"""
 	sample_data = {} # Cache
 	sample_data["Elapsed Time Milliseconds"] = int(data.unpack_uint())
@@ -271,7 +295,9 @@ def radio_util(data:"XDR Data"):
 	return sample_data
 
 # Queue Length Histogram Counters (Counter, Enterprise 0, Format 1003)
-def queue_len_histogram_counters(data:"XDR Data"):
+def queue_len_histogram_counters(
+	data # type: "XDR Data"
+	):
 	"""Queue Length Histogram Counter - Type: Counter, Enterprise: 0, Format: 1003"""
 	sample_data = {} # Cache
 	sample_data["Queue Index"] = int(data.unpack_uint())
@@ -291,7 +317,9 @@ def queue_len_histogram_counters(data:"XDR Data"):
 	return sample_data
 
 # Host Description (Counter, Enterprise 0, Format 2000)
-def host_description(data:"XDR Data"):
+def host_description(
+	data # type: "XDR Data"
+	):
 	"""Host Description Counter - Type: Counter, Enterprise: 0, Format: 2000"""
 	sample_data = {} # Cache
 	sample_data["Hostname"] = data.unpack_string()
@@ -303,7 +331,11 @@ def host_description(data:"XDR Data"):
 	return sample_data
 
 # Host Adapter (Counter, Enterprise 0, Format 2001)
-def host_adapter(data,agent,subagent):
+def host_adapter(
+	data, # type: "XDR Data"
+	agent, # type: int
+	subagent # type: int
+	):
 	"""Host Adapter Counter - Type: Counter, Enterprise: 0, Format: 2001"""
 	mac_parser_class = mac_address() # MAC parser class
 	sample_data = {} # Cache
@@ -324,7 +356,9 @@ def host_adapter(data,agent,subagent):
 	return sample_data
 
 # Host Parent (Counter, Enterprise 0, Format 2002)
-def host_parent(data:"XDR Data"):
+def host_parent(
+	data # type: "XDR Data"
+	):
 	"""Host Parent Counter - Type: Counter, Enterprise: 0, Format: 2002"""
 	sample_data = {} # Cache
 	sample_data["Container Type"] = int(data.unpack_uint())
@@ -333,7 +367,9 @@ def host_parent(data:"XDR Data"):
 	return sample_data
 
 # Physical Server CPU (Counter, Enterprise 0, Format 2003)
-def physical_host_cpu(data:"XDR Data"):
+def physical_host_cpu(
+	data # type: "XDR Data"
+	):
 	"""Physical Host CPU Counter - Type: Counter, Enterprise: 0, Format: 2003"""
 	sample_data = {} # Cache
 	sample_data["Load One"] = float(data.unpack_float())
@@ -357,7 +393,9 @@ def physical_host_cpu(data:"XDR Data"):
 	return sample_data
 
 # Physical Server Memory (Counter, Enterprise 0, Format 2004)
-def physical_host_memory(data:"XDR Data"):
+def physical_host_memory(
+	data # type: "XDR Data"
+	):
 	"""Physical Host Memory Counter - Type: Counter, Enterprise: 0, Format: 2004"""
 	sample_data = {} # Cache
 	sample_data["Memory Total"] = data.unpack_hyper()
@@ -376,7 +414,9 @@ def physical_host_memory(data:"XDR Data"):
 	return sample_data
 
 # Physical Server Disk I/O (Counter, Enterprise 0, Format 2005)
-def physical_host_diskio(data:"XDR Data"):
+def physical_host_diskio(
+	data # type: "XDR Data"
+	):
 	"""Physical Host Disk IO Counter - Type: Counter, Enterprise: 0, Format: 2005"""
 	sample_data = {} # Cache
 	sample_data["Disk Total"] = data.unpack_hyper()
@@ -392,7 +432,9 @@ def physical_host_diskio(data:"XDR Data"):
 	return sample_data
 
 # Physical Server Network I/O (Counter, Enterprise 0, Format 2006)
-def physical_host_netio(data:"XDR Data"):
+def physical_host_netio(
+	data # type: "XDR Data"
+	):
 	"""Physical Host Network IO Counter - Type: Counter, Enterprise: 0, Format: 2006"""
 	sample_data = {} # Cache
 	sample_data["Bytes In"] = data.unpack_hyper()
@@ -407,7 +449,9 @@ def physical_host_netio(data:"XDR Data"):
 	return sample_data
 
 # MIB2 IP Group (Counter, Enterprise 0, Format 2007)
-def mib2_ip_group(data:"XDR Data"):
+def mib2_ip_group(
+	data # type: "XDR Data"
+	):
 	"""MIB2 IP Group Counter - Type: Counter, Enterprise: 0, Format: 2007"""
 	sample_data = {} # Cache
 	sample_data["IP Forwarding"] = int(data.unpack_uint())
@@ -433,7 +477,9 @@ def mib2_ip_group(data:"XDR Data"):
 	return sample_data
 
 # MIB2 ICMP Group (Counter, Enterprise 0, Format 2008)
-def mib2_icmp_group(data:"XDR Data"):
+def mib2_icmp_group(
+	data # type: "XDR Data"
+	):
 	"""MIB2 ICMP Group Counter - Type: Counter, Enterprise: 0, Format: 2008"""
 	sample_data = {} # Cache
 	sample_data["ICMP In Messages"] = int(data.unpack_uint())
@@ -465,7 +511,9 @@ def mib2_icmp_group(data:"XDR Data"):
 	return sample_data
 
 # MIB2 TCP Group (Counter, Enterprise 0, Format 2009)
-def mib2_tcp_group(data:"XDR Data"):
+def mib2_tcp_group(
+	data # type: "XDR Data"
+	):
 	"""MIB2 TCP Group Counter - Type: Counter, Enterprise: 0, Format: 2009"""
 	sample_data = {} # Cache
 	sample_data["TCP Retrasmission Timeout Algorithm"] = int(data.unpack_uint())
@@ -487,7 +535,9 @@ def mib2_tcp_group(data:"XDR Data"):
 	return sample_data
 
 # MIB2 UDP Group (Counter, Enterprise 0, Format 2010)
-def mib2_udp_group(data:"XDR Data"):
+def mib2_udp_group(
+	data # type: "XDR Data"
+	):
 	"""MIB2 UDP Group Counter - Type: Counter, Enterprise: 0, Format: 2010"""
 	sample_data = {} # Cache
 	sample_data["UDP In Datagrams"] = int(data.unpack_uint())
@@ -501,7 +551,9 @@ def mib2_udp_group(data:"XDR Data"):
 	return sample_data
 
 # Virtual Node Statistics (Counter, Enterprise 0, Format 2100)
-def virtual_node_stats(data:"XDR Data"):
+def virtual_node_stats(
+	data # type: "XDR Data"
+	):
 	"""Virtual Node Statistics Counter - Type: Counter, Enterprise: 0, Format: 2100"""
 	sample_data = {} # Cache
 	sample_data["CPU MHz"] = int(data.unpack_uint())
@@ -513,7 +565,9 @@ def virtual_node_stats(data:"XDR Data"):
 	return sample_data
 
 # Virtual Domain CPU statistics (Counter, Enterprise 0, Format 2101)
-def virtual_domain_cpu_stats(data:"XDR Data"):
+def virtual_domain_cpu_stats(
+	data # type: "XDR Data"
+	):
 	"""Virtual Domain CPU Statistics Counter - Type: Counter, Enterprise: 0, Format: 2101"""
 	sample_data = {} # Cache
 	sample_data["State"] = int(data.unpack_uint())
@@ -523,7 +577,9 @@ def virtual_domain_cpu_stats(data:"XDR Data"):
 	return sample_data
 
 # Virtual Domain Memory statistics (Counter, Enterprise 0, Format 2102)
-def virtual_domain_mem_stats(data:"XDR Data"):
+def virtual_domain_mem_stats(
+	data # type: "XDR Data"
+	):
 	"""Virtual Domain Memory Statistics Counter - Type: Counter, Enterprise: 0, Format: 2102"""
 	sample_data = {} # Cache
 	sample_data["Memory Used"] = data.unpack_uhyper()
@@ -532,7 +588,9 @@ def virtual_domain_mem_stats(data:"XDR Data"):
 	return sample_data
 
 # Virtual Domain Disk statistics (Counter, Enterprise 0, Format 2103)
-def virtual_domain_disk_stats(data:"XDR Data"):
+def virtual_domain_disk_stats(
+	data # type: "XDR Data"
+	):
 	"""Virtual Domain Disk Statistics Counter - Type: Counter, Enterprise: 0, Format: 2103"""
 	sample_data = {} # Cache
 	sample_data["Total Capacity"] = data.unpack_uhyper()
@@ -547,7 +605,9 @@ def virtual_domain_disk_stats(data:"XDR Data"):
 	return sample_data
 
 # Virtual Domain Network statistics (Counter, Enterprise 0, Format 2104)
-def virtual_domain_net_stats(data:"XDR Data"):
+def virtual_domain_net_stats(
+	data # type: "XDR Data"
+	):
 	"""Virtual Domain Network Statistics Counter - Type: Counter, Enterprise: 0, Format: 2104"""
 	sample_data = {} # Cache
 	sample_data["Bytes In"] = data.unpack_uhyper()
@@ -562,7 +622,9 @@ def virtual_domain_net_stats(data:"XDR Data"):
 	return sample_data
 
 # JVM Runtime Attributes (Counter, Enterprise 0, Format 2105)
-def jvm_runtime_attr(data:"XDR Data"):
+def jvm_runtime_attr(
+	data # type: "XDR Data"
+	):
 	"""JVM Runtime Attributes Counter - Type: Counter, Enterprise: 0, Format: 2105"""
 	sample_data = {} # Cache
 	sample_data["VM Name"] = data.unpack_string()
@@ -572,7 +634,9 @@ def jvm_runtime_attr(data:"XDR Data"):
 	return sample_data
 
 # JVM Statistics (Counter, Enterprise 0, Format 2106)
-def jvm_stats(data:"XDR Data"):
+def jvm_stats(
+	data # type: "XDR Data"
+	):
 	"""JVM Statistics Counter - Type: Counter, Enterprise: 0, Format: 2106"""
 	sample_data = {} # Cache
 	sample_data["Heap Initial Memory Requested"] = data.unpack_uhyper()
@@ -598,7 +662,9 @@ def jvm_stats(data:"XDR Data"):
 	return sample_data
 
 # Energy Consumption Statistics (Counter, Enterprise 0, Format 3000)
-def energy_consumption(data:"XDR Data"):
+def energy_consumption(
+	data # type: "XDR Data"
+	):
 	"""Energy Consumption Counter - Type: Counter, Enterprise: 0, Format: 3000"""
 	sample_data = {} # Cache
 	sample_data["Voltage mV"] = int(data.unpack_uint())
@@ -611,7 +677,9 @@ def energy_consumption(data:"XDR Data"):
 	return sample_data
 
 # Temperature Statistics (Counter, Enterprise 0, Format 3001)
-def temperature_counter(data:"XDR Data"):
+def temperature_counter(
+	data # type: "XDR Data"
+	):
 	"""Temperature Data Counter - Type: Counter, Enterprise: 0, Format: 3001"""
 	sample_data = {} # Cache
 	sample_data["Minimum Temperature"] = int(data.unpack_int())
@@ -621,7 +689,9 @@ def temperature_counter(data:"XDR Data"):
 	return sample_data
 
 # Humidity Statistics (Counter, Enterprise 0, Format 3002)
-def humidity_counter(data:"XDR Data"):
+def humidity_counter(
+	data # type: "XDR Data"
+	):
 	"""Humidity Data Counter - Type: Counter, Enterprise: 0, Format: 3002"""
 	sample_data = {} # Cache
 	sample_data["Relative Humidity"] = int(data.unpack_int())
@@ -629,7 +699,9 @@ def humidity_counter(data:"XDR Data"):
 	return sample_data
 
 # Cooling Statistics (Counter, Enterprise 0, Format 3003)
-def cooling_counter(data:"XDR Data"):
+def cooling_counter(
+	data # type: "XDR Data"
+	):
 	"""Cooling Data Counter - Type: Counter, Enterprise: 0, Format: 3003"""
 	sample_data = {} # Cache
 	sample_data["Total Fans"] = int(data.unpack_uint())
@@ -640,7 +712,9 @@ def cooling_counter(data:"XDR Data"):
 
 # Broadcom Switch Device Buffer Utilization (Counter, Enterprise 4413, Format 1)
 # http://www.sflow.org/sflow_broadcom_tables.txt
-def broad_switch_dev_buffer_util(data:"XDR Data"):
+def broad_switch_dev_buffer_util(
+	data # type: "XDR Data"
+	):
 	"""Broadcom Switch Device Buffer Utilization Counter - Type: Counter, Enterprise: 4413, Format: 1"""
 	sample_data = {} # Cache
 	sample_data["Unicast Buffers Utilization"] = int(data.unpack_uint())/100
@@ -650,7 +724,9 @@ def broad_switch_dev_buffer_util(data:"XDR Data"):
 
 # Broadcom Switch Port Level Buffer Utilization (Counter, Enterprise 4413, Format 2)
 # http://www.sflow.org/sflow_broadcom_tables.txt
-def broad_switch_port_buff_util(data:"XDR Data"):
+def broad_switch_port_buff_util(
+	data # type: "XDR Data"
+	):
 	"""Broadcom Switch Port Buffer Utilization Counter - Type: Counter, Enterprise: 4413, Format: 2"""
 	sample_data = {} # Cache
 	sample_data["Ingress Unicast Buffer Utilization"] = int(data.unpack_uint())/100
@@ -664,7 +740,9 @@ def broad_switch_port_buff_util(data:"XDR Data"):
 
 # Broadcom Switch ASIC Hardware Table Utilization (Counter, Enterprise 4413, Format 3)
 # http://www.sflow.org/sflow_broadcom_tables.txt
-def asic_hardware_tab_util(data:"XDR Data"):
+def asic_hardware_tab_util(
+	data # type: "XDR Data"
+	):
 	"""Broadcom ASIC Hardware Table Utilization Counter - Type: Counter, Enterprise: 4413, Format: 3"""
 	sample_data = {} # Cache
 	sample_data["Host Entries"] = int(data.unpack_uint())
@@ -707,7 +785,9 @@ def asic_hardware_tab_util(data:"XDR Data"):
 	return sample_data
 
 # NVIDIA GPU statistics (Counter, Enterprise 5703, Format 1)
-def nvidia_gpu_stats(data:"XDR Data"):
+def nvidia_gpu_stats(
+	data # type: "XDR Data"
+	):
 	"""NVIDIA GPU Statistics Counter - Type: Counter, Enterprise: 5703, Format: 1"""
 	sample_data = {} # Cache
 	sample_data["Device Count"] = int(data.unpack_uint())
