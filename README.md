@@ -152,8 +152,6 @@ See the [installation documentation](Install/README.md#kibana-authentication-opt
 
 # Limitations
 The following Netflow protocols or features are **NOT** supported by the Flow Analyzer project:
-
-- [Cisco Flexible Netflow](http://www.cisco.com/c/en/us/products/ios-nx-os-software/flexible-netflow/index.html)
 - [Cisco ASA Netflow Security Event Logging (NESL)](http://www.cisco.com/c/en/us/td/docs/security/asa/asa82/configuration/guide/config/monitor_nsel.html#wp1111174)
 - Cisco NAT Event Logging (NEL)
 
