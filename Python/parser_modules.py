@@ -30,7 +30,15 @@ class mac_address(object):
         self,
         mac # type: list
         ):
-        """Parse MAC addresses passed as Python list(6) that has already been unpacked"""
+        """
+        Parse MAC addresses passed as Python list(6) that has already been unpacked
+
+        Args:
+            mac (list): List with (6) elements
+
+        Returns:
+            tuple: (MAC Address:str, MAC OUI:str)
+        """
         mac_list = []
         for mac_item in mac:
             mac_item_hex = hex(mac_item).replace('0x','') # Strip leading characters
@@ -48,7 +56,17 @@ class mac_address(object):
         pointer, # type: int
         field_size # type: int
         ):
-        """Parse MAC addresses passed as packed bytes that first need to be unpacked"""
+        """
+        Parse MAC addresses passed as packed bytes that first need to be unpacked
+         
+        Args:
+            packed_data (xdr): Packed XDR data
+            pointer (int): Current location for unpacking
+            field_size (int): Size of the packed data
+
+        Returns:
+            tuple: (MAC Address:str, MAC OUI:str)
+        """
         mac_list = []
         mac_objects = self.struct.unpack('!%dB' % field_size,packed_data[pointer:pointer+field_size])
         for mac_item in mac_objects:
@@ -65,12 +83,19 @@ class mac_address(object):
         self,
         mac_oui_num # type: int
         ):
-        """Get MAC OUI (vendor,type) based on an OUI number formatted as '0011AA'"""
+        """
+        Get MAC OUI (vendor,type) based on an OUI number formatted as '0011AA'
+         
+        Args:
+            mac_oui_num (str): MAC OUI string eg 0011AA
+
+        Returns:
+            tuple: (Vendor, Type)
+        """
         try:
             return (self.mac_oui[mac_oui_num]["Vendor"],self.mac_oui[mac_oui_num]["Type"])
         except NameError,KeyError:
             return False
-
 
 # Class for parsing ICMP attributes like Type and Code
 class icmp_parse(object):
@@ -173,7 +198,15 @@ class icmp_parse(object):
         self,
         icmp_reported # type: int
         ):
-        """Parse ICMP integer to get the human ICMP Type and Code"""
+        """
+        Parse ICMP integer to get the human ICMP Type and Code 
+
+        Args:
+            icmp_reported (int): Exported ICMP code [(256 * ICMP Type)+ICMP Code]
+
+        Returns:
+            tuple: (ICMP Type: str, ICMP Code: str)
+        """
         icmp_num_type = icmp_reported//256 # ICMP Type
         icmp_num_code = icmp_reported%256 # ICMP Code
 
@@ -195,8 +228,189 @@ class icmp_parse(object):
         self,
         icmp_reported # type: int
         ):
-        """Parse ICMP integer to get the numeric ICMP Type and Code"""
+        """
+        Parse ICMP integer to get the numeric ICMP Type and Code
+        
+        Args:
+            icmp_reported (int): Exported ICMP code [(256 * ICMP Type)+ICMP Code]
+
+        Returns:
+            tuple: (ICMP Type: int, ICMP Code: int)
+        
+        """
         icmp_num_type = icmp_reported//256 # ICMP Type
         icmp_num_code = icmp_reported%256 # ICMP Code
         
         return (icmp_num_type,icmp_num_code)
+
+class http_parse(object):
+
+    def __init__(self):
+
+        return
+
+    def http_code_category(
+        self,
+        http_code # type: int
+        ):
+        """
+        Reconcile an HTTP code to it's overall category eg 404 - Client Error
+        
+        Args:
+            http_code (int): HTTP code eg 405
+
+        Returns:
+            str: HTTP Code Category eg "Client Error"
+        
+        """
+        if http_code in range(100,200):
+            return "Informational"
+        elif http_code in range(200,300):
+            return "Success"
+        elif http_code in range(300,400):
+            return "Redirection"
+        elif http_code in range(400,500):
+            return "Client Error"
+        elif http_code in range(500,600):
+            return "Server Error"
+        else:
+            return "Other"
+    
+    def http_code_parsed(
+        self,
+        http_code # type: int
+        ):
+        """
+        Parse HTTP codes to HTTP code names
+        
+        Args:
+            http_code (int): HTTP code number eg "404"
+
+        Returns:
+            str: Parsed HTTP code eg "Not Found"
+        
+        """
+        if http_code == 200:
+            return "OK"
+        elif http_code == 201:
+            return "Created"
+        elif http_code == 202:
+            return "Accepted"
+        elif http_code == 100:
+            return "Continue"
+        elif http_code == 101:
+            return "Switching Protocols"
+        elif http_code == 102:
+            return "Processing"
+        elif http_code == 203:
+            return "Non-Authoritative Information"
+        elif http_code == 204:
+            return "No Content"
+        elif http_code == 205:
+            return "Reset Content"
+        elif http_code == 206:
+            return "Partial Content"
+        elif http_code == 207:
+            return "Multi-Status"
+        elif http_code == 208:
+            return "Already Reported"
+        elif http_code == 226:
+            return "IM Used"
+        elif http_code == 300:
+            return "Multiple Choices"
+        elif http_code == 301:
+            return "Moved Permanently"
+        elif http_code == 302:
+            return "Found"
+        elif http_code == 303:
+            return "See Other"
+        elif http_code == 304:
+            return "Not Modified"
+        elif http_code == 305:
+            return "Use Proxy"
+        elif http_code == 306:
+            return "Switch Proxy"
+        elif http_code == 307:
+            return "Temporary Redirect"
+        elif http_code == 308:
+            return "Permanent Redirect"
+        elif http_code == 400:
+            return "Bad Request"
+        elif http_code == 401:
+            return "Unauthorized"
+        elif http_code == 402:
+            return "Payment Required"
+        elif http_code == 403:
+            return "Forbidden"
+        elif http_code == 404:
+            return "Not Found"
+        elif http_code == 405:
+            return "Method Not Allowed"
+        elif http_code == 406:
+            return "Not Acceptable"
+        elif http_code == 407:
+            return "Proxy Authentication Required"
+        elif http_code == 408:
+            return "Request Time-Out"
+        elif http_code == 409:
+            return "Conflict"
+        elif http_code == 410:
+            return "Gone"
+        elif http_code == 411:
+            return "Length Required"
+        elif http_code == 412:
+            return "Precondition Failed"
+        elif http_code == 413:
+            return "Payload Too Large"
+        elif http_code == 414:
+            return "URI Too Long"
+        elif http_code == 415:
+            return "Unsupported Media Type"
+        elif http_code == 416:
+            return "Range Not Satisfiable"
+        elif http_code == 417:
+            return "Expectation Failed"
+        elif http_code == 418:
+            return "Teapot"
+        elif http_code == 421:
+            return "Misdirected Request"
+        elif http_code == 422:
+            return "Unprocessable Entity"
+        elif http_code == 423:
+            return "Locked"
+        elif http_code == 424:
+            return "Failed Dependency"
+        elif http_code == 426:
+            return "Upgrade Required"
+        elif http_code == 428:
+            return "Precondition Required"
+        elif http_code == 429:
+            return "Too Many Requests"
+        elif http_code == 431:
+            return "Request Header Fields Too Large"
+        elif http_code == 451:
+            return "Unavailable For Legal Reasons"
+        elif http_code == 500:
+            return "Internal Server Error"
+        elif http_code == 501:
+            return "Not Implemented"
+        elif http_code == 502:
+            return "Bad Gateway"
+        elif http_code == 503:
+            return "Service Unavailable"
+        elif http_code == 504:
+            return "Gateway Time-Out"
+        elif http_code == 505:
+            return "HTTP Version Not Supported"
+        elif http_code == 506:
+            return "Variant Also Negotiates"
+        elif http_code == 507:
+            return "Insufficient Storage"
+        elif http_code == 508:
+            return "Loop Detected"
+        elif http_code == 510:
+            return "Not Extended"
+        elif http_code == 511:
+            return "Network Authentication Required"
+        else:
+            return "Other"
