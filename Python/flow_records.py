@@ -5,7 +5,7 @@ import struct
 import sys
 from xdrlib import Unpacker
 
-from parser_modules import mac_address # Field parsing functions
+from parser_modules import mac_address,http_parse # Field parsing functions
 from sflow_parsers import *  # Functions to parse headers and format numbers
 
 # Raw Packet Header (Flow, Enterprise 0, Format 1)
@@ -381,7 +381,12 @@ def extended_web_trans(
 	sample_data["Referer"] = data.unpack_string()
 	sample_data["User Agent"] = data.unpack_string()
 	sample_data["User"] = data.unpack_string()
-	sample_data["Status Code"] = int(data.unpack_uint())
+	reported_http_code = int(data.unpack_uint())
+
+	http_parser_class = http_parse()
+	sample_data["HTTP Status Code"] = reported_http_code
+	sample_data["HTTP Status"] = http_parser_class.http_code_parsed(reported_http_code)
+	sample_data["HTTP Status Category"] = http_parser_class.http_code_category(reported_http_code)
 	data.done() # Verify all data unpacked
 	return sample_data
 
@@ -418,6 +423,61 @@ def ipv6_socket(
 	# Need to add category based on source / dest port - FIX
 	data.done() # Verify all data unpacked
 	return sample_data
+
+# HTTP Request (Flow, Enterprise 0, Format 2206)
+def http_request(
+	data # type: "XDR Data"
+	):
+	"""HTTP Request Information - Type: Flow, Enterprise: 0, Format: 2206"""
+	datagram = {}
+	datagram["HTTP Method"] = inmon_http_method(int(data.unpack_int()))
+	datagram["HTTP Protocol Version"] = int(data.unpack_uint())
+	datagram["URI"] = int(data.unpack_string())
+	datagram["Host"] = int(data.unpack_string())
+	datagram["Referer"] = int(data.unpack_string())
+	datagram["User Agent"] = int(data.unpack_string())
+	datagram["XFF"] = int(data.unpack_string())
+	datagram["Authuser"] = int(data.unpack_string())
+	datagram["MIME Type"] = int(data.unpack_string())
+	datagram["Request Bytes"] = int(data.unpack_uhyper())
+	datagram["Response Bytes"] = int(data.unpack_uhyper())
+	datagram["Duration uSec"] = int(data.unpack_uint())
+	datagram["HTTP Status"] = int(data.unpack_int())
+	
+	data.done() # Verify all data unpacked
+	return datagram
+
+# Extended Navigation Timing (Flow, Enterprise 0, Format 2208)
+def extended_nav_timing(
+	data # type: "XDR Data"
+	):
+	"""Extended Navigation Timing Information - Type: Flow, Enterprise: 0, Format: 2208"""
+	datagram = {}
+	datagram["Type"] = int(data.unpack_uint())
+	datagram["Redirect Count"] = int(data.unpack_uint())
+	datagram["Navigation Start"] = int(data.unpack_uint())
+	datagram["Unload Event Start"] = int(data.unpack_uint())
+	datagram["Unload Event End"] = int(data.unpack_uint())
+	datagram["Redirect Start"] = int(data.unpack_uint())
+	datagram["Redirect End"] = int(data.unpack_uint())
+	datagram["Fetch Start"] = int(data.unpack_uint())
+	datagram["Domain Lookup Start"] = int(data.unpack_uint())
+	datagram["Domain Lookup End"] = int(data.unpack_uint())
+	datagram["Connect Start"] = int(data.unpack_uint())
+	datagram["Connect End"] = int(data.unpack_uint())
+	datagram["Secure Connection Start"] = int(data.unpack_uint())
+	datagram["Request Start"] = int(data.unpack_uint())
+	datagram["Response Start"] = int(data.unpack_uint())
+	datagram["Response End"] = int(data.unpack_uint())
+	datagram["DOM Loading"] = int(data.unpack_uint())
+	datagram["DOM Interactive"] = int(data.unpack_uint())
+	datagram["DOM Content Loaded Event Start"] = int(data.unpack_uint())
+	datagram["DOM Content Loaded Event End"] = int(data.unpack_uint())
+	datagram["DOM Complete"] = int(data.unpack_uint())
+	datagram["Load Event Start"] = int(data.unpack_uint())
+	datagram["Load Event End"] = int(data.unpack_uint())
+	data.done() # Verify all data unpacked
+	return datagram
 
 # Extended TCP Information (Flow, Enterprise 0, Format 2209)
 def extended_tcp_info(
