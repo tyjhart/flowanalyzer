@@ -4,7 +4,7 @@
 # Import what we need
 import time, datetime, socket, struct, sys, os, json, socket, collections, itertools, logging, logging.handlers, getopt
 from struct import *
-from socket import inet_ntoa#,inet_ntop
+from socket import inet_ntoa,inet_ntop
 from elasticsearch import Elasticsearch,helpers
 from IPy import IP
 from xdrlib import Unpacker

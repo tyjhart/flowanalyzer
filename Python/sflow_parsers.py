@@ -3,7 +3,7 @@
 
 import sys, struct
 from xdrlib import Unpacker
-from socket import inet_ntoa#,inet_ntop
+from socket import inet_ntoa,inet_ntop
 from protocol_numbers import *
 
 from parser_modules import mac_address
@@ -395,7 +395,7 @@ def datagram_parse(
 	if datagram["IP Version"] == 1:
 		datagram["Agent IP"] = inet_ntoa(data.unpack_fstring(4)) # sFlow Agent IP (IPv4)
 	else:
-		#datagram["Agent IP"] = inet_ntop(data.unpack_fstring(16)) # sFlow Agent IP (IPv6)
+		datagram["Agent IP"] = inet_ntop(data.unpack_fstring(16)) # sFlow Agent IP (IPv6)
 		pass
 	
 	datagram["Sub Agent"] = data.unpack_uint() # Sub Agent ID
