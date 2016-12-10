@@ -5,8 +5,7 @@
 import time, datetime, socket, struct, sys, json, socket, logging, logging.handlers, getopt
 from struct import *
 from socket import inet_ntoa
-from elasticsearch import Elasticsearch
-from elasticsearch import helpers
+from elasticsearch import Elasticsearch,helpers
 from IPy import IP
 
 # Protocol numbers and types of traffic for comparison
