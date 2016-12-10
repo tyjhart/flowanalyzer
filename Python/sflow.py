@@ -4,6 +4,13 @@
 # Import what we need
 import time, datetime, socket, struct, sys, os, json, socket, collections, itertools, logging, logging.handlers, getopt
 from struct import *
+
+# Windows socket.inet_ntop support via win_inet_pton
+try:
+	import win_inet_pton
+except ImportError:
+	pass
+
 from socket import inet_ntoa,inet_ntop
 from elasticsearch import Elasticsearch,helpers
 from IPy import IP
@@ -79,13 +86,7 @@ except ValueError as socket_error:
 	sys.exit("Could not open or bind a socket on port " + str(sflow_port))
 
 # Spin up ES instance
-try:
-	es = Elasticsearch([elasticsearch_host])
-	logging.warning("Connected to Elasticsearch at " + str(elasticsearch_host) + ' - OK')
-except ValueError as elasticsearch_connect_error:
-	logging.critical("Could not connect to Elasticsearch at " + str(elasticsearch_host))
-	logging.critical(str(elasticsearch_connect_error))
-	sys.exit("Could not connect to Elasticsearch at " + str(elasticsearch_host))
+es = Elasticsearch([elasticsearch_host])
 
 # sFlow collector
 if __name__ == "__main__":

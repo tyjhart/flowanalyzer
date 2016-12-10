@@ -3,6 +3,13 @@
 
 import sys, struct
 from xdrlib import Unpacker
+
+# Windows socket.inet_ntop support via win_inet_pton
+try:
+	import win_inet_pton
+except ImportError:
+	pass
+
 from socket import inet_ntoa,inet_ntop
 from protocol_numbers import *
 
