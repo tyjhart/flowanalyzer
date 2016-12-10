@@ -1,7 +1,7 @@
 # Release Notes
 The following release notes document the changes to the project over time, as well as breaking changes and anything that needs to be done to update functionality.
 
-## 2016.2 - sFlow, Elasticsearch and Kibana 5
+## v2.0.0 - sFlow, Elasticsearch and Kibana 5
 Big changes and upgrades in this release, including breaking changes:
 
 1. New sFlow Support
@@ -9,7 +9,7 @@ Big changes and upgrades in this release, including breaking changes:
 3. Kibana 5 Upgrade (Breaking)
 
 ### sFlow
-Added an sFlow collector and support for the [structures defined by InMon](http://www.sflow.org/developers/structures.php) (Enterprise 0) and a couple others. See the [sFlow document for more information](sFlow.md) about what is [currently supported and what is in development](sFlow.md#flow-data). This has added hugely to the codebase, but it's also added a wealth of information that we can build around to gain more insights into network and system performance.
+Added an sFlow collector and support for the [structures defined by InMon](http://www.sflow.org/developers/structures.php) (Enterprise 0) and a couple others. See the [sFlow document for more information](sFlow.md) about what is currently supported and what is in development. This has added hugely to the codebase, but it's also added a wealth of information that we can build around to gain more insights into network and system performance.
 
 ### Elasticsearch 5 Upgrade
 Elasticsearch has been updated to version 5 - see the [Elasticsearch release notes](https://www.elastic.co/guide/en/elasticsearch/reference/current/release-notes-5.0.0.html). There are a number of breaking changes that have occurred between the previous stable release and the current stable release:
@@ -26,5 +26,5 @@ Kibana has been updated to version 5 - see the [Kibana release notes](https://ww
 - The Kibana UI has changed dramatically.
 - sFlow Visualizations and Dashboards have been added, but they are fairly basic.
 
-## 2016.1 - Initial Release
+## v1.0.0 - Initial Release
 Initial release with Netflow v5, Netflow v9, and basic IPFIX functionality.
