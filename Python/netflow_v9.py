@@ -11,8 +11,7 @@ except ImportError:
 	pass
 
 from socket import inet_ntoa,inet_ntop
-from elasticsearch import Elasticsearch
-from elasticsearch import helpers
+from elasticsearch import Elasticsearch,helpers
 from IPy import IP
 
 # Field parsing functions
@@ -92,13 +91,7 @@ except ValueError as socket_error:
 	sys.exit()
 
 # Spin up ES instance
-try:
-	es = Elasticsearch([elasticsearch_host])
-	logging.warning("Connected to Elasticsearch at " + str(elasticsearch_host) + " - OK")
-except ValueError as elasticsearch_connect_error:
-	logging.critical("Could not connect to Elasticsearch at " + str(elasticsearch_host) + " - FAIL")
-	logging.critical(str(elasticsearch_connect_error))
-	sys.exit()
+es = Elasticsearch([elasticsearch_host])
 
 # Parsing template flowset
 def template_flowset_parse(packed_data,sensor,pointer,length):

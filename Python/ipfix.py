@@ -4,10 +4,19 @@
 # Import what we need
 import time, datetime, socket, struct, sys, json, socket, collections, itertools, logging, logging.handlers, getopt
 from struct import *
+
+# Windows socket.inet_ntop support via win_inet_pton
+try:
+	import win_inet_pton
+except ImportError:
+	pass
+
 from socket import inet_ntoa,inet_ntop
-from elasticsearch import Elasticsearch
-from elasticsearch import helpers
+from elasticsearch import Elasticsearch,helpers
 from IPy import IP
+
+# Field parsing functions
+from parser_modules import mac_address,icmp_parse
 
 # Field types, ports, etc
 from defined_ports import registered_ports,other_ports
@@ -30,9 +39,6 @@ try:
 				arg = arg.upper() # Uppercase for matching and logging.basicConfig() format
 				if arg in ["CRITICAL","ERROR","WARNING","INFO","DEBUG"]:
 					log_level = arg # Use what was passed in arguments
-				
-				else:
-					log_level = "WARNING" # Default logging level
 
 			elif opt in ('-h','--help'): # Help file
 				with open("./help.txt") as help_file:
@@ -43,8 +49,7 @@ try:
 				pass
 
 except Exception as argument_error:
-	logging.critical("Unsupported or badly formed options, see -h for available arguments - EXITING")
-	sys.exit("Unsupported or badly formed options, see -h for available arguments.") 
+	logging.exit("Unsupported or badly formed options, see -h for available arguments - EXITING")
 
 # Set the logging level per https://docs.python.org/2/howto/logging.html
 try: 
@@ -60,7 +65,14 @@ dns_base.init()
 logging.warning("Initialized the DNS reverse lookup cache - OK")
 
 if dns is False:
-	logging.warning("DNS reverse lookups disabled - OK")
+	logging.warning("DNS reverse lookups disabled - DISABLED")
+else:
+	logging.warning("DNS reverse lookups enabled - OK")
+
+if lookup_internal is False:
+	logging.warning("DNS local IP reverse lookups disabled - DISABLED")
+else:
+	logging.warning("DNS local IP reverse lookups enabled - OK")
 
 # Check if the IPFIX port is specified
 try:
@@ -80,13 +92,7 @@ except ValueError as socket_error:
 	sys.exit()
 
 # Spin up ES instance
-try:
-	es = Elasticsearch([elasticsearch_host])
-	logging.warning("Connected to Elasticsearch at " + str(elasticsearch_host) + " - OK")
-except Exception as elasticsearch_connect_error:
-	logging.critical("Could not connect to Elasticsearch at " + str(elasticsearch_host))
-	logging.critical(str(elasticsearch_connect_error))
-	sys.exit()
+es = Elasticsearch([elasticsearch_host])
 
 def mac_parse(mac):
 	mac_list = []
@@ -105,11 +111,17 @@ def mac_parse(mac):
 		return flow_payload
 
 # IPFIX server
-def ipfix_server():
+if __name__ == "__main__":
 	
 	flow_dic = [] # Stage the flows for the bulk API index operation
 	
 	template_list = {} # Cache the IPFIX templates, in order to decode the data flows
+	
+	# Class for parsing ICMP Types and Codes
+	icmp_parser = icmp_parse()
+
+	# Class for parsing MAC addresses and OUIs
+	mac = mac_address()
 	
 	while True: # Continually collect packets
 		
@@ -493,9 +505,3 @@ def ipfix_server():
 		else:
 			logging.info("Received a non-IPFIX packet from " + str(sensor_address[0]))
 			continue
-	
-	# End of ipfix_server()	
-	return
-
-# Start IPFIX listener	
-ipfix_server()
