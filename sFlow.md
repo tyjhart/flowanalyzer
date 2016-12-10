@@ -105,28 +105,28 @@ Flow    | 0 | 1030  | Extended VNI Ingress              | In Progress   | [sFlow
 Flow    | 0 | 1031  | Extended InfiniBand LRH           | Yes           | [sFlow InfiniBand Structures](http://sflow.org/draft_sflow_infiniband_2.txt) |
 Flow    | 0 | 1032  | Extended InfiniBand GRH           | In Progress   | [sFlow InfiniBand Structures](http://sflow.org/draft_sflow_infiniband_2.txt) |
 Flow    | 0 | 1033  | Extended InfiniBand BRH           | Yes           | [sFlow InfiniBand Structures](http://sflow.org/draft_sflow_infiniband_2.txt) |
-Flow    | 0 | 2000  | Transaction                       | Yes           | []() |
-Flow    | 0 | 2001  | Extended NFS Storage Transaction  | Yes           | []() |
-Flow    | 0 | 2002  | Extended SCSI Storage Transaction | Yes           | []() |
-Flow    | 0 | 2003  | Extended Web Transaction          | Yes           | []() |
+Flow    | 0 | 2000  | Transaction                       | Yes           | [Host Performance Statistics Thread, Peter Phaal](http://www.sflow.org/discussion/sflow-discussion/0282.html) |
+Flow    | 0 | 2001  | Extended NFS Storage Transaction  | Yes           | [Host Performance Statistics Thread, Peter Phaal](http://www.sflow.org/discussion/sflow-discussion/0282.html) |
+Flow    | 0 | 2002  | Extended SCSI Storage Transaction | Yes           | [Host Performance Statistics Thread, Peter Phaal](http://www.sflow.org/discussion/sflow-discussion/0282.html) |
+Flow    | 0 | 2003  | Extended Web Transaction          | Yes           | [Host Performance Statistics Thread, Peter Phaal](http://www.sflow.org/discussion/sflow-discussion/0282.html) |
 Flow    | 0 | 2100  | Extended Socket IPv4              | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Flow    | 0 | 2101  | Extended Socket IPv6              | Yes           | [sFlow Host Structures](http://www.sflow.org/sflow_host.txt) |
 Flow    | 0 | 2102  | Extended Proxy Socket IPv4        | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
 Flow    | 0 | 2103  | Extended Proxy Socket IPv6        | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
-Flow    | 0 | 2200  | Memcached Operation               | In Progress   | [http://www.sflow.org/sflow_memcache.txt](http://www.sflow.org/sflow_memcache.txt) |
-Flow    | 0 | 2201  | HTTP Request (deprecated)         | N/A           | []() |
+Flow    | 0 | 2200  | Memcached Operation               | In Progress   | [sFlow Memcache Structures](http://www.sflow.org/sflow_memcache.txt) |
+Flow    | 0 | 2201  | HTTP Request (deprecated)         | N/A           | N/A |
 Flow    | 0 | 2202  | App Operation                     | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
 Flow    | 0 | 2203  | App Parent Context                | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
 Flow    | 0 | 2204  | App Initiator                     | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
 Flow    | 0 | 2205  | App Target                        | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
 Flow    | 0 | 2206  | HTTP Request                      | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
 Flow    | 0 | 2207  | Extended Proxy Request            | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
-Flow    | 0 | 2208  | Extended Nav Timing               | In Progress   | []() |
+Flow    | 0 | 2208  | Extended Nav Timing               | Yes           | [Navigation Timing Thread](https://groups.google.com/forum/?fromgroups#!topic/sflow/FKzkvig32Tk) |
 Flow    | 0 | 2209  | Extended TCP Info                 | Yes           | [sFlow Google Group, Peter Phaal](https://groups.google.com/forum/#!topic/sflow/JCG9iwacLZA) |
 
 # Counter Data
 The default structures for counter data are shown below:
-Type | Enterprise | Format | Name | Supported | Link |
+Type        | Enterprise | Format | Name                                        | Supported     | Link |
 --          | --    | --    | --                                                | --            | -- |
 Counter     | 0     | 1     | Generic Interface Counters                        | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
 Counter     | 0     | 2     | Ethernet Interface Counters                       | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
@@ -175,7 +175,7 @@ Counter     | 0     | 3003  | Fans                                              
 Counter     | 4413  | 1     | Broadcom Switch Device Buffer Utilization         | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
 Counter     | 4413  | 2     | Broadcom Switch Port Level Buffer Utilization     | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
 Counter     | 4413  | 3     | Broadcom Switch ASIC Hardware Table Utilization   | Yes           | [sFlow Broadcom Switch ASIC Table Utilization Structures](http://www.sflow.org/sflow_broadcom_tables.txt) |
-Counter     | 5703  | 1     | NVIDIA GPU Statistics                             | In Progress   | [sFlow NVML GPU Structure](http://www.sflow.org/sflow_nvml.txt) |
+Counter     | 5703  | 1     | NVIDIA GPU Statistics                             | Yes           | [sFlow NVML GPU Structure](http://www.sflow.org/sflow_nvml.txt) |
 
 # Attributions
 See the [README Attributions section](README.md#attributions) for trademark attributions.
