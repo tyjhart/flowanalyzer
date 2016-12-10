@@ -7,7 +7,7 @@ curl -XPOST localhost:9200/_template/flow_template -d '
 "template":"flow*",
 "settings": {},
 
-"mapping": {"nested_fields": {"limit":"150"}},
+"mapping": {"nested_fields": {"limit":"200"}},
 
 "mappings": {
 
