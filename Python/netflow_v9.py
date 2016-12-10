@@ -3,6 +3,13 @@
 
 import time, datetime, socket, struct, sys, os, json, socket, collections, itertools, logging, logging.handlers, getopt
 from struct import *
+
+# Windows socket.inet_ntop support via win_inet_pton
+try:
+	import win_inet_pton
+except ImportError:
+	pass
+
 from socket import inet_ntoa,inet_ntop
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
