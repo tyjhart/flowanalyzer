@@ -4,9 +4,8 @@
 # Import what we need
 import time, datetime, socket, struct, sys, os, json, socket, collections, itertools, logging, logging.handlers, getopt
 from struct import *
-from socket import inet_ntoa,inet_ntop
-from elasticsearch import Elasticsearch
-from elasticsearch import helpers
+from socket import inet_ntoa#,inet_ntop
+from elasticsearch import Elasticsearch,helpers
 from IPy import IP
 from xdrlib import Unpacker
 
@@ -276,6 +275,12 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0,2101]: # IPv6 Socket
 							flow_index["_source"].update(ipv6_socket(unpacked_record_data))
 
+						elif record_ent_form_number == [0,2206]: # HTTP Request
+							flow_index["_source"].update(http_request(unpacked_record_data))
+						
+						elif record_ent_form_number == [0,2208]: # Extended Navigation Timing
+							flow_index["_source"].update(extended_nav_timing(unpacked_record_data))
+						
 						elif record_ent_form_number == [0,2209]: # Extended TCP Information
 							flow_index["_source"].update(extended_tcp_info(unpacked_record_data))
 
