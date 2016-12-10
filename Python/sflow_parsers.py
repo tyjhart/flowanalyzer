@@ -403,3 +403,29 @@ def datagram_parse(
 	datagram["Switch Uptime ms"] = int(data.unpack_uint()) # Switch Uptime (ms)
 	datagram["Sample Count"] = int(data.unpack_uint()) # Samples in datagram
 	return datagram
+
+# HTTP Methods
+def inmon_http_method(
+	method_int # type: int
+	):
+	"""Parse InMon-defined HTTP method numbers"""
+	if method_int == 0:
+		return "Other"
+	elif method_int == 1:
+		return "Options"
+	elif method_int == 2:
+		return "Get"
+	elif method_int == 3:
+		return "Head"
+	elif method_int == 4:
+		return "Post"
+	elif method_int == 5:
+		return "Put"
+	elif method_int == 6:
+		return "Delete"
+	elif method_int == 7:
+		return "Trace"
+	elif method_int == 8:
+		return "Connect"
+	else:
+		return "Other"
