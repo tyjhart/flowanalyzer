@@ -55,16 +55,16 @@ The Manito Networks Flow Analyzer supports the following flow data protocols:
 - Traffic Flow (Mikrotik, Netflow-equivalent)
 - Netstream (Huawei Technologies, Netflow-equivalent)
 
-If you're not familiar with Netflow or IPFIX that's alright - take a look at [Network Flow Basics](Network%20Flow%20Basics.md). For a description of sFlow and supported sFlow structures see the [Flow Analyzer sFlow document](sFlow.md).
+If you're not familiar with Netflow or IPFIX that's alright - take a look at the [Introduction to Netflow and IPFIX](Netflow.md). For a description of sFlow and supported sFlow structures see the [Flow Analyzer sFlow document](sFlow.md).
 
 Our software ingests Netflow (and Netflow-equivalents), IPFIX, and sFlow data then parses and tags it, and stores it in Elasticsearch for you to query and graph in Kibana.
 
 ## Fields
-The Flow Analyzer supports all defined Netflow v5 fields, all standard Netflow v9 fields, all IPFIX fields in the RFC, and almost all sFlow structures defined by InMon Corporation's enterprise ID. See the [Network Flow Basics document](Network%20Flow%20Basics.md) for a description of Netflow and IPFIX fields, and the [sFlow document](sFlow.md) for a description of supported structures.
+The Flow Analyzer supports all Netflow v5 fields, all standard non-proprietary Netflow v9 fields, all IPFIX fields in the RFC, and almost all sFlow structures defined by InMon Corporation's enterprise ID. See the [Fields document](Fields.md) for a description of Netflow (v5, v9) and IPFIX fields. The [sFlow document](sFlow.md) includes descriptions of supported Flow and Counter structures.
 
 Kibana Visualizations and Dashboards are included so you can leverage supported fields and structures right away. 
 
-Some limitations exist, mostly around proprietary or undocumented fields in Netflow or proprietary structures in sFlow - see the [Limitations](#limitations) section for details. Efforts are made to skip over unsupported or proprietary elements and continue parsing data uninterrupted.
+Some limitations exist, mostly around proprietary or undocumented fields in Netflow and proprietary structures in sFlow - see the [Limitations](#limitations) section for details. Efforts are made to skip over unsupported or proprietary elements and continue parsing data uninterrupted.
 
 ## Tags
 Our custom Netflow, IPFIX, and sFlow collectors ingest and tag flow data. We record not only the basic protocol and port numbers, but we also take it a step further and correlate the following:
