@@ -614,3 +614,95 @@ class netflowv9_parse(object):
         
         pointer += option_length
         return cache
+
+### Protocol and Port Parsers ###
+class ports_and_protocols(object):
+    # Field types, defined ports, etc
+    from defined_ports import registered_ports,other_ports
+    from protocol_numbers import protocol_type
+
+    def __init__(self):
+        return
+
+    # Tag "Traffic Category" by Protocol classification ("Routing", "ICMP", etc.)
+    def protocol_traffic_category(
+        self,
+        protocol_number # type: int
+        ):
+        """
+        Reconcile protocol numbers to a Category eg 89 to "Routing"
+        
+        Args:
+            protocol_number (int): Traffic type eg 89 to "Routing"
+
+        Returns:
+            str: Traffic Category eg "Routing"
+        
+        """
+        try:
+            return self.protocol_type[protocol_number]["Category"]
+        except (NameError,KeyError):
+            return "Other"
+    
+    # Tag traffic by SRC and DST port
+    def port_traffic_classifier(
+        self,
+        src_port, # type: int
+        dst_port # type: int
+        ):
+        """
+        Reconcile port numbers to services eg TCP/80 to HTTP, and services to categories eg HTTP to Web
+        
+        Args:
+            src_port (int): Port number eg "443"
+            dst_port (int): Port number eg "443"
+
+        Returns:
+            dict: ["Traffic":"HTTP","Traffic Category":"Web"], default value is "Other" for each.
+        
+        """
+        traffic = {}
+
+        # SRC Port
+        if src_port in self.registered_ports:
+            traffic["Traffic"] = self.registered_ports[src_port]["Name"]
+
+            if "Category" in self.registered_ports[src_port]:
+                traffic["Traffic Category"] = self.registered_ports[src_port]["Category"]
+
+        elif src_port in self.other_ports:
+            traffic["Traffic"] = self.other_ports[src_port]["Name"]
+
+            if "Category" in self.other_ports[src_port]:
+                traffic["Traffic Category"] = self.other_ports[src_port]["Category"]
+
+        else:
+            pass
+        
+        # DST Port
+        if dst_port in self.registered_ports:
+            traffic["Traffic"] = self.registered_ports[dst_port]["Name"]
+
+            if "Category" in self.registered_ports[dst_port]:
+                traffic["Traffic Category"] = self.registered_ports[dst_port]["Category"]
+
+        elif dst_port in self.other_ports:
+            traffic["Traffic"] = self.other_ports[dst_port]["Name"]
+
+            if "Category" in self.other_ports[dst_port]:
+                traffic["Traffic Category"] = self.other_ports[dst_port]["Category"]
+        
+        else:
+            pass
+        
+        try: # Set as "Other" if not already set
+            traffic["Traffic"]
+        except (NameError,KeyError):
+            traffic["Traffic"] = "Other"
+
+        try: # Set as "Other" if not already set
+            traffic["Traffic Category"]
+        except (NameError,KeyError):
+            traffic["Traffic Category"] = "Other"
+        
+        return traffic

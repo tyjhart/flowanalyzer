@@ -10,18 +10,18 @@ try:
 except ImportError:
 	pass
 
-from socket import inet_ntoa,inet_ntop
+#from socket import inet_ntoa,inet_ntop
 from elasticsearch import Elasticsearch,helpers
 from IPy import IP
 
 # Parsing functions
-from parser_modules import mac_address, icmp_parse, ip_parse, netflowv9_parse, int_parse
+from parser_modules import mac_address, icmp_parse, ip_parse, netflowv9_parse, int_parse, ports_and_protocols
 
 # Field types, defined ports, etc
-from defined_ports import registered_ports,other_ports
+###from defined_ports import registered_ports,other_ports
 from field_types import v9_fields
 from netflow_options import *
-from protocol_numbers import *
+###from protocol_numbers import *
 
 # DNS Resolution
 import dns_base
@@ -54,7 +54,7 @@ except Exception:
 try: 
 	log_level # Check if log level was passed in from command arguments
 except NameError:
-	log_level="WARNING" # Use default logging level
+	log_level="DEBUG" # Use default logging level
 
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.warning('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
@@ -106,6 +106,9 @@ flow_dic = []
 global template_list
 template_list = {}
 
+# Record counter for Elasticsearch bulk API upload trigger
+record_num = 0
+
 #IPv4 lookup
 def ipv4_dns():
 	# Resolve IPv4 Source IP
@@ -150,60 +153,6 @@ def ipv6_dns():
 				flow_index["_source"]["Content"] = dns_dict["Category"]
 	return
 
-# Tag "Traffic Category" by Protocol classification ("Routing", "ICMP", etc.)
-def protocol_traffic_category(protocol_number):
-	try:
-		return protocol_type[protocol_number]["Category"]
-	except (NameError,KeyError):
-		return "Other"
-
-# Tag traffic by SRC and DST port
-def port_traffic_classifier(src_port,dst_port):
-	traffic = {}
-
-	# SRC Port
-	if src_port in registered_ports:
-		traffic["Traffic"] = registered_ports[src_port]["Name"]
-
-		if "Category" in registered_ports[src_port]:
-			traffic["Traffic Category"] = registered_ports[src_port]["Category"]
-
-	elif src_port in other_ports:
-		traffic["Traffic"] = other_ports[src_port]["Name"]
-
-		if "Category" in other_ports[src_port]:
-			traffic["Traffic Category"] = other_ports[src_port]["Category"]
-
-	else:
-		pass
-	
-	# DST Port
-	if dst_port in registered_ports:
-		traffic["Traffic"] = registered_ports[dst_port]["Name"]
-
-		if "Category" in registered_ports[dst_port]:
-			traffic["Traffic Category"] = registered_ports[dst_port]["Category"]
-
-	elif dst_port in other_ports:
-		traffic["Traffic"] = other_ports[dst_port]["Name"]
-
-		if "Category" in other_ports[dst_port]:
-			traffic["Traffic Category"] = other_ports[dst_port]["Category"]
-	
-	else:
-		pass
-	
-	try: # Set as "Other" if not already set
-		traffic["Traffic"]
-	except (NameError,KeyError):
-		traffic["Traffic"] = "Other"
-
-	try: # Set as "Other" if not already set
-		traffic["Traffic Category"]
-	except (NameError,KeyError):
-		traffic["Traffic Category"] = "Other"
-	
-	return traffic
 
 ### Netflow v9 server ###
 if __name__ == "__main__":
@@ -213,6 +162,7 @@ if __name__ == "__main__":
 	mac = mac_address() # Class for parsing MAC addresses and OUIs
 	netflow_v9_parser = netflowv9_parse() # Class for parsing Netflow v9 structures
 	int_un = int_parse() # Class for parsing integers
+	ports_protocols_parser = ports_and_protocols() # Class for parsing ports and protocols
 	
 	# Continually run
 	while True:
@@ -278,6 +228,7 @@ if __name__ == "__main__":
 				logging.info("Finished, position " + str(pointer))
 
 				flow_counter += 1
+				record_num += 1
 									
 			elif flow_set_id == 1: # Options template set
 				logging.warning("Unpacking Options template set, position " + str(pointer))
@@ -290,6 +241,7 @@ if __name__ == "__main__":
 				logging.info("Finished, position " + str(pointer))
 
 				flow_counter += 1
+				record_num += 1
 
 			# Flow data set
 			elif flow_set_id > 255:
@@ -320,6 +272,8 @@ if __name__ == "__main__":
 							}
 							
 							flow_counter += 1
+							record_num += 1
+
 							flow_index["_source"]["Flow Type"] = "Netflow v9" # Note the type
 
 							logging.info("Data flow number " + str(flow_counter) + ", set ID " + str(flow_set_id) + " from " + str(sensor_address[0])) 
@@ -425,13 +379,12 @@ if __name__ == "__main__":
 								
 							# Tag "Traffic" and "Traffic Category" for TCP/UDP:
 							if int(flow_index["_source"]['Protocol Number']) in (6, 17, 33, 132):
-								traffic_tags = port_traffic_classifier(flow_index["_source"]["Source Port"],flow_index["_source"]["Destination Port"])
+								traffic_tags = ports_protocols_parser.port_traffic_classifier(flow_index["_source"]["Source Port"],flow_index["_source"]["Destination Port"])
 								flow_index["_source"]["Traffic"] = traffic_tags["Traffic"]
 								flow_index["_source"]["Traffic Category"] = traffic_tags["Traffic Category"]
 							
-							
 							else:
-								flow_index["_source"]["Traffic"] = None # No tagged traffic types for non-TCP/UDP protocols
+								flow_index["_source"]["Traffic"] = None # No tagged traffic types for non-transport protocols
 								flow_index["_source"]["Source Port"] = None # Not a transport protocol
 								flow_index["_source"]["Destination Port"] = None # Not a transport protocol
 								
@@ -439,9 +392,7 @@ if __name__ == "__main__":
 								try: 
 									flow_index["_source"]["Traffic Category"]
 								except (NameError,KeyError):
-									flow_index["_source"]["Traffic Category"] = protocol_traffic_category(flow_index["_source"]['Protocol Number'])
-							
-							#logging.critical(str({"Protocol":flow_index["_source"]['Protocol Number'],"Traffic":flow_index["_source"]["Traffic"],"Traffic Category":flow_index["_source"]["Traffic Category"]}))
+									flow_index["_source"]["Traffic Category"] = ports_protocols_parser.protocol_traffic_category(flow_index["_source"]['Protocol Number'])
 							
 							# Tag the flow with Source and Destination FQDN and Domain info (if enabled and available)
 							if dns is True:
@@ -462,6 +413,8 @@ if __name__ == "__main__":
 					
 					elif template_list[hashed_id]["Type"] == "Options Template":
 						flow_counter += 1
+						record_num += 1
+						
 						logging.info("Creating Netflow v9 Options flow number " + str(flow_counter) + ", set ID " + str(flow_set_id) + " from " + str(sensor_address[0]))
 						flow_index["_source"]["Flow Type"] = "Netflow v9 Options" # Note the type
 
@@ -476,7 +429,7 @@ if __name__ == "__main__":
 					else:
 						pass
 
-				# No template, drop the flow per the standard and advanced the byte position
+				# No template, drop the flow and advanced the byte position
 				else:
 					logging.warning("Missing template for flow set " + 	str(flow_set_id) + " from " + str(sensor_address[0]) + ", sequence " + str(packet["sequence_number"]) + " - DROPPING")
 					
@@ -496,18 +449,19 @@ if __name__ == "__main__":
 		logging.debug("Cached templates: " + str(template_list)) # Dump active templates for debug
 
 		# Have enough flows to do a bulk index to Elasticsearch
-		if len(flow_dic) >= bulk_insert_count:
+		if record_num >= bulk_insert_count:
 							
 			# Perform the bulk upload to the index
 			try:
 				helpers.bulk(es,flow_dic)
-				logging.info(str(len(flow_dic)) + " flow(s) uploaded to Elasticsearch - OK")
+				logging.info(str(record_num) + " flow(s) uploaded to Elasticsearch - OK")
+			
 			except ValueError as bulk_index_error:
-				logging.critical(str(len(flow_dic)) + " flow(s) DROPPED, unable to index flows - FAIL")
 				logging.critical(bulk_index_error)
+				logging.critical(str(record_num) + " flow(s) DROPPED, unable to index flows - FAIL")
 				
-			# Reset flow_dic
-			flow_dic = []
+			flow_dic = [] # Reset flow_dic
+			record_num = 0 # Reset the record counter
 			
 			# Prune DNS to remove stale records
 			if dns is True:	
