@@ -108,7 +108,8 @@ MPLS Label 10 | --- | --- | In Progress | Requires special parsing |
 
 # IPFIX (aka Netflow v10)
 **Field table documentation in progress**
-Flows exported by IPFIX are based on templates, and may or may not include the following fields depending on the vendor and configured templates:
+
+Flows exported by IPFIX are based on templates, and include templates specified in the Netflow v9 standard for backward compatibility. Flows may or may not include the following fields depending on the vendor and configured templates:
 
 Field                     | Description   | Measurement Units     | Supported     | Notes |
 ---                       | ---           | ---                   | ---           | ---   |
