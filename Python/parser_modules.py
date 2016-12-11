@@ -1,6 +1,101 @@
 # Copyright (c) 2016, Manito Networks, LLC
 # All rights reserved.
 
+
+### Packed Integer Parsers ###
+class int_parse(object):
+    from struct import unpack
+
+    def __init__(self):
+        return
+    
+    def integer_unpack(
+        self,
+        packed_data, # type: struct
+        pointer, # type: int
+        field_size # type: int
+        ):
+        """
+        Unpack an Integer
+        
+        Args:
+            packed_data (struct): Packed data
+            pointer (int): Current unpack location
+            field_size (int): Length of data to unpack
+
+        Returns:
+            str: IPv4 address
+        """
+        if field_size == 1:
+            return self.unpack('!B',packed_data[pointer:pointer+field_size])[0]
+        elif field_size == 2:
+            return self.unpack('!H',packed_data[pointer:pointer+field_size])[0]	
+        elif field_size == 4:
+            return self.unpack('!I',packed_data[pointer:pointer+field_size])[0]
+        elif field_size == 8:
+            return self.unpack('!Q',packed_data[pointer:pointer+field_size])[0]
+        else:
+            return False
+
+### Packed IP Parsers (Netflow v5, Netflow v9, IPFIX) ###
+class ip_parse(object):
+    
+    # Windows socket.inet_ntop support via win_inet_pton
+    try:
+        import win_inet_pton
+    except ImportError:
+        pass
+
+    # Unpackers for IPv4 and IPv6
+    from socket import inet_ntoa, inet_ntop
+    
+    def __init__(self):
+        return
+
+    # Unpack IPv4
+    def parse_ipv4(
+        self,
+        packed_data, # type: struct
+        pointer, # type: int
+        field_size # type: int
+        ):
+        """
+        Unpack an IPv4 address
+        
+        Args:
+            packed_data (struct): Packed data
+            pointer (int): Current unpack location
+            field_size (int): Length of data to unpack
+
+        Returns:
+            str: IPv4 address
+        """
+        payload = self.inet_ntoa(packed_data[pointer:pointer+field_size])
+        return payload
+
+    # Unpack IPv6
+    def parse_ipv6(
+        self,
+        packed_data, # type: struct
+        pointer, # type: int
+        field_size # type: int
+        ):
+        """
+        Unpack an IPv6 address
+        
+        Args:
+            packed_data (struct): Packed data
+            pointer (int): Current unpack location
+            field_size (int): Length of data to unpack
+
+        Returns:
+            str: IPv4 address
+        """
+        payload = self.inet_ntop(socket.AF_INET6,packed_data[pointer:pointer+field_size])
+        return payload
+
+
+### Generic MAC Address Parsers ###
 class mac_address(object):
     import struct
     
@@ -97,7 +192,7 @@ class mac_address(object):
         except NameError,KeyError:
             return False
 
-# Class for parsing ICMP attributes like Type and Code
+### Generic ICMP Parsers ###
 class icmp_parse(object):
 
     def __init__(self):
@@ -243,10 +338,10 @@ class icmp_parse(object):
         
         return (icmp_num_type,icmp_num_code)
 
+### Generic HTTP Parsers ###
 class http_parse(object):
 
     def __init__(self):
-
         return
 
     def http_code_category(
@@ -414,3 +509,108 @@ class http_parse(object):
             return "Network Authentication Required"
         else:
             return "Other"
+
+### Netflow v9 Parsers ###
+class netflowv9_parse(object):
+    from struct import unpack
+    from collections import OrderedDict
+    from field_types import v9_fields
+    
+    def __init__(self):
+        return
+
+    # Parsing template flowset
+    def template_flowset_parse(
+        self,
+        packed_data, # type: struct
+        sensor, # type: str
+        pointer, # type: int
+        length # type: int
+        ):
+        """
+        Unpack a Netflow v9 template
+        
+        Args:
+            packed_data (struct): Packed data
+            sensor (str): Netflow v9 sensor
+            pointer (int): Current unpack location
+            length (int): Length of data to unpack
+
+        Returns:
+            dict[Hashed ID]: {Sensor: str, Template ID: int, Length: int, Type: int, Definitions: dict}
+        
+        """
+        cache = {}
+        while pointer < length:
+            (template_id, template_field_count) = self.unpack('!HH',packed_data[pointer:pointer+4])
+            pointer += 4 # Advance the field
+            
+            #logging.info("Template number " + str(template_id) + ", field count " + str(template_field_count) + ", position " + str(pointer))
+
+            hashed_id = hash(str(sensor)+str(template_id))
+            cache[hashed_id] = {}
+            cache[hashed_id]["Sensor"] = str(sensor)
+            cache[hashed_id]["Template ID"] = template_id
+            cache[hashed_id]["Length"] = template_field_count # Field count
+            cache[hashed_id]["Type"] = "Flow Data"
+            cache[hashed_id]["Definitions"] = self.OrderedDict()
+
+            for _ in range(0,template_field_count): # Iterate through each line in the template
+                (element, element_length) = self.unpack('!HH',packed_data[pointer:pointer+4])
+                
+                if element in self.v9_fields: # Fields we know about and support
+                    cache[hashed_id]["Definitions"][element] = element_length
+                
+                else: # Proprietary or undocumented field
+                    logging.warning("Unsupported field " + str(element) + " in template ID " + str(template_id) + " from " + str(sensor))
+                
+                pointer += 4 # Advance the field
+
+            #logging.debug(str(cache[hashed_id]))
+            #logging.info(str(hashed_id) + " hash added to cache, template ID " + str(template_id))
+            
+        return cache
+
+    # Parsing option template
+    def option_template_parse(
+        self,
+        packed_data, # type: struct
+        sensor, # type: str
+        pointer # type: int
+        ):	
+        """
+        Unpack a Netflow v9 option template
+        
+        Args:
+            packed_data (struct): Packed data
+            sensor (str): Netflow v9 sensor
+            pointer (int): Current unpack location
+
+        Returns:
+            dict[Hashed ID]: {Sensor: str, Template ID: int, Type: str, Scope Fields: dict, Option Fields: dict}
+        
+        """
+        (option_template_id,option_scope_length,option_length) = self.unpack('!HHH',packed_data[pointer:pointer+6])
+        pointer += 6 # Move ahead 6 bytes
+        
+        cache = {}
+        hashed_id = hash(str(sensor)+str(option_template_id)) # Hash for individual sensor and template ID
+        cache[hashed_id] = {}
+        cache[hashed_id]["Sensor"] = str(sensor)
+        cache[hashed_id]["Template ID"] = option_template_id
+        cache[hashed_id]["Type"] = "Options Template"
+        cache[hashed_id]["Scope Fields"] = self.OrderedDict()
+        cache[hashed_id]["Option Fields"] = self.OrderedDict()
+
+        for x in range(pointer,pointer+option_scope_length,4):
+            (scope_field_type,scope_field_length) = self.unpack('!HH',packed_data[x:x+4])
+            cache[hashed_id]["Scope Fields"][scope_field_type] = scope_field_length
+        
+        pointer += option_scope_length
+
+        for x in range(pointer,pointer+option_length,4):
+            (option_field_type,option_field_length) = self.unpack('!HH',packed_data[x:x+4])
+            cache[hashed_id]["Option Fields"][option_field_type] = option_field_length
+        
+        pointer += option_length
+        return cache

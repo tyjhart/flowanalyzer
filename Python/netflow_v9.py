@@ -14,10 +14,10 @@ from socket import inet_ntoa,inet_ntop
 from elasticsearch import Elasticsearch,helpers
 from IPy import IP
 
-# Field parsing functions
-from parser_modules import mac_address,icmp_parse
+# Parsing functions
+from parser_modules import mac_address, icmp_parse, ip_parse, netflowv9_parse, int_parse
 
-# Field types, ports, etc
+# Field types, defined ports, etc
 from defined_ports import registered_ports,other_ports
 from field_types import v9_fields
 from netflow_options import *
@@ -93,85 +93,18 @@ except ValueError as socket_error:
 # Spin up ES instance
 es = Elasticsearch([elasticsearch_host])
 
-# Parsing template flowset
-def template_flowset_parse(packed_data,sensor,pointer,length):
-	cache = {}
-	while pointer < length:
-		(template_id, template_field_count) = struct.unpack('!HH',packed_data[pointer:pointer+4])
-		pointer += 4 # Advance the field
-		
-		logging.info("Template number " + str(template_id) + ", field count " + str(template_field_count) + ", position " + str(pointer))
+# Stage individual flow
+global flow_index
+flow_index = {}
+flow_index["_source"] = {}
 
-		hashed_id = hash(str(sensor)+str(template_id))
-		cache[hashed_id] = {}
-		cache[hashed_id]["Sensor"] = str(sensor)
-		cache[hashed_id]["Template ID"] = template_id
-		cache[hashed_id]["Length"] = template_field_count # Field count
-		cache[hashed_id]["Type"] = "Flow Data"
-		cache[hashed_id]["Definitions"] = collections.OrderedDict()
+# Stage multiple flows for the bulk Elasticsearch API index operation
+global flow_dic
+flow_dic = []
 
-		for _ in range(0,template_field_count): # Iterate through each line in the template
-			(element, element_length) = struct.unpack('!HH',packed_data[pointer:pointer+4])
-			
-			if element in v9_fields: # Fields we know about and support
-				cache[hashed_id]["Definitions"][element] = element_length
-			
-			else: # Proprietary or undocumented field
-				logging.warning("Unsupported field " + str(element) + " in template ID " + str(template_id) + " from " + str(sensor))
-			
-			pointer += 4 # Advance the field
-
-		logging.debug(str(cache[hashed_id]))
-		logging.info(str(hashed_id) + " hash added to cache, template ID " + str(template_id))
-		
-	return cache
-
-# Parsing option template
-def option_template_parse(packed_data,sensor,pointer):	
-	(option_template_id,option_scope_length,option_length) = struct.unpack('!HHH',packed_data[pointer:pointer+6])
-	pointer += 6 # Move ahead 6 bytes
-	
-	cache = {}
-	hashed_id = hash(str(sensor)+str(option_template_id)) # Hash for individual sensor and template ID
-	cache[hashed_id] = {}
-	cache[hashed_id]["Sensor"] = str(sensor)
-	cache[hashed_id]["Template ID"] = option_template_id
-	cache[hashed_id]["Type"] = "Options Template"
-	cache[hashed_id]["Scope Fields"] = collections.OrderedDict()
-	cache[hashed_id]["Option Fields"] = collections.OrderedDict()
-
-	for x in range(pointer,pointer+option_scope_length,4):
-		(scope_field_type,scope_field_length) = struct.unpack('!HH',packed_data[x:x+4])
-		cache[hashed_id]["Scope Fields"][scope_field_type] = scope_field_length
-	
-	pointer += option_scope_length
-
-	for x in range(pointer,pointer+option_length,4):
-		(option_field_type,option_field_length) = struct.unpack('!HH',packed_data[x:x+4])
-		cache[hashed_id]["Option Fields"][option_field_type] = option_field_length
-	
-	pointer += option_length
-	return cache
-
-def parse_ipv4(packed_data,pointer,field_size):
-	payload = inet_ntoa(packed_data[pointer:pointer+field_size])
-	return payload
-
-def parse_ipv6(packed_data,pointer,field_size):
-	payload = inet_ntop(socket.AF_INET6,packed_data[pointer:pointer+field_size])
-	return payload
-
-def integer_unpack(packed_data,pointer,field_size):
-	if field_size == 1:
-		return struct.unpack('!B',packed_data[pointer:pointer+field_size])[0]
-	elif field_size == 2:
-		return struct.unpack('!H',packed_data[pointer:pointer+field_size])[0]	
-	elif field_size == 4:
-		return struct.unpack('!I',packed_data[pointer:pointer+field_size])[0]
-	elif field_size == 8:
-		return struct.unpack('!Q',packed_data[pointer:pointer+field_size])[0]
-	else:
-		return False
+# Cache the Netflow v9 templates in received order to decode the data flows. ORDER MATTERS FOR TEMPLATES.
+global template_list
+template_list = {}
 
 #IPv4 lookup
 def ipv4_dns():
@@ -275,24 +208,11 @@ def port_traffic_classifier(src_port,dst_port):
 ### Netflow v9 server ###
 if __name__ == "__main__":
 	
-	# Stage individual flow
-	global flow_index
-	flow_index = {}
-	flow_index["_source"] = {}
-	
-	# Stage multiple flows for the bulk Elasticsearch API index operation
-	global flow_dic
-	flow_dic = []
-	
-	# Cache the Netflow v9 templates in received order to decode the data flows. ORDER MATTERS FOR TEMPLATES.
-	global template_list
-	template_list = {}
-
-	# Class for parsing ICMP Types and Codes
-	icmp_parser = icmp_parse()
-
-	# Class for parsing MAC addresses and OUIs
-	mac = mac_address()
+	icmp_parser = icmp_parse() # Class for parsing ICMP Types and Codes
+	ip_parser = ip_parse() # Class for unpacking IPv4 and IPv6 addresses
+	mac = mac_address() # Class for parsing MAC addresses and OUIs
+	netflow_v9_parser = netflowv9_parse() # Class for parsing Netflow v9 structures
+	int_un = int_parse() # Class for parsing integers
 	
 	# Continually run
 	while True:
@@ -348,7 +268,7 @@ if __name__ == "__main__":
 			if flow_set_id == 0: # Template flowset
 				logging.info("Unpacking template flowset " + str(flow_set_id) + ", position " + str(pointer))
 				
-				parsed_templates = template_flowset_parse(flow_packet_contents,sensor_address[0],pointer,flow_set_length) # Parse templates
+				parsed_templates = netflow_v9_parser.template_flowset_parse(flow_packet_contents,sensor_address[0],pointer,flow_set_length) # Parse templates
 				template_list.update(parsed_templates) # Add the new template(s) to the working template list					
 
 				logging.debug(str(parsed_templates))
@@ -362,7 +282,7 @@ if __name__ == "__main__":
 			elif flow_set_id == 1: # Options template set
 				logging.warning("Unpacking Options template set, position " + str(pointer))
 				
-				option_templates = option_template_parse(flow_packet_contents,sensor_address[0],pointer)
+				option_templates = netflow_v9_parser.option_template_parse(flow_packet_contents,sensor_address[0],pointer)
 				template_list.update(option_templates) # Add the new Option template(s) to the working template list
 
 				logging.debug(str(template_list))
@@ -387,7 +307,7 @@ if __name__ == "__main__":
 						while data_position+4 <= (flow_set_length + (pointer-4)):
 							
 							# Cache the flow data, to be appended to flow_dic[]	
-							global flow_index					
+							#global flow_index					
 							flow_index = {
 							"_index": str("flow-" + now.strftime("%Y-%m-%d")),
 							"_type": "Flow",
@@ -409,18 +329,18 @@ if __name__ == "__main__":
 								
 								# IPv4 Address type field
 								if v9_fields[template_key]["Type"] == "IPv4":
-									flow_payload = parse_ipv4(flow_packet_contents,data_position,field_size)
+									flow_payload = ip_parser.parse_ipv4(flow_packet_contents,data_position,field_size)
 									flow_index["_source"]["IP Protocol Version"] = 4
 									
 								# IPv6 Address type field
 								elif v9_fields[template_key]["Type"] == "IPv6":
-									flow_payload = parse_ipv6(flow_packet_contents,data_position,field_size)
+									flow_payload = ip_parser.parse_ipv6(flow_packet_contents,data_position,field_size)
 									flow_index["_source"]["IP Protocol Version"] = 6
 									
 								# Integer type field, parse further
 								elif v9_fields[template_key]["Type"] == "Integer":
 
-									flow_payload = integer_unpack(flow_packet_contents,data_position,field_size) # Unpack the integer
+									flow_payload = int_un.integer_unpack(flow_packet_contents,data_position,field_size) # Unpack the integer
 										
 									# IANA protocol number in case the customer wants to sort by protocol number
 									if template_key == 4:							
