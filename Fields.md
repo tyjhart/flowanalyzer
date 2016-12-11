@@ -10,6 +10,7 @@ Here are the commonly used fields supported out-of-the-box for each respective p
 
 # Netflow v5
 Flows exported by Netflow v5 are static, include the following fields in this order, and do not require templates:
+
 Field                     | Description   | Measurement Units     | Supported     | Notes |
 ---                       | ---           | ---                   | ---           | ---   |
 Source IP Address         | ---           | --- | Yes | IPv4 only, combine with Source Mask |
