@@ -10,26 +10,26 @@ Here are the commonly used fields supported out-of-the-box for each respective p
 
 # Netflow v5
 Flows exported by Netflow v5 are static, include the following fields in this order, and do not require templates:
-| Field                     | Description   | Measurement Units     | Supported     | Notes |
-| ---                       | ---           | ---                   | ---           | ---   |
-| Source IP Address         | ---           | --- | Yes | IPv4 only, combine with Source Mask |
-| Destination IP Address    | ---           | --- | Yes |  IPv4 only, combine with Source Mask |
-| Next Hop IP Address       | Next hope router IP | --- | Yes |  IPv4 only |
-| Input Interface<sup>2</sup> | SNMP interface index | --- | Yes |  --- |
-| Output Interface<sup>2</sup> | SNMP interface index | --- | Yes |  --- |
-| Packets | Total packets in the flow | --- | Yes |  --- |
-| Bytes In | Total L3 bytes in the flow | Bytes | Yes |  Referred to in the standard as "Octets" |
-| First Switched | System uptime at start of the flow | Milliseconds | Yes |  --- |
-| Last Switched  | System uptime at end of the flow | Milliseconds | Yes |  --- |
-| Source Port  | TCP / UDP source port | --- | Yes |  Only applicable for TCP / UDP transport protocols |
-| Destination Port  | TCP / UDP destination port | --- | Yes |  Only applicable for TCP / UDP transport protocols|
-| TCP Flags | Cumulative OR of TCP flags | --- | Yes |  Must be parsed using math defined in the standard |
-| Protocol | IANA protocol number | --- | Yes |  [IANA Protocol List](http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml) |
-| TOS | TOS number | --- | Yes |  Must be parsed using math defined in the standard |
-| Source AS<sup>1</sup>         | BGP source Autonomous System number | --- | Yes |  --- |
-| Destination AS<sup>1</sup>   | BGP destination Autonomous System number | --- | Yes |  --- |
-| Source Mask<sup>1</sup>      | IP CIDR mask | --- | Yes |  Eg /30 is reported as "30" |
-| Destination Mask<sup>1</sup> | IP CIDR mask | --- | Yes |  Eg /30 is reported as "30" |
+Field                     | Description   | Measurement Units     | Supported     | Notes |
+---                       | ---           | ---                   | ---           | ---   |
+Source IP Address         | ---           | --- | Yes | IPv4 only, combine with Source Mask |
+Destination IP Address    | ---           | --- | Yes |  IPv4 only, combine with Source Mask |
+Next Hop IP Address       | Next hope router IP | --- | Yes |  IPv4 only |
+Input Interface<sup>2</sup> | SNMP interface index | --- | Yes |  --- |
+Output Interface<sup>2</sup> | SNMP interface index | --- | Yes |  --- |
+Packets | Total packets in the flow | --- | Yes |  --- |
+Bytes In | Total L3 bytes in the flow | Bytes | Yes |  Referred to in the standard as "Octets" |
+First Switched | System uptime at start of the flow | Milliseconds | Yes |  --- |
+Last Switched  | System uptime at end of the flow | Milliseconds | Yes |  --- |
+Source Port  | TCP / UDP source port | --- | Yes |  Only applicable for TCP / UDP transport protocols |
+Destination Port  | TCP / UDP destination port | --- | Yes |  Only applicable for TCP / UDP transport protocols|
+TCP Flags | Cumulative OR of TCP flags | --- | Yes |  Must be parsed using math defined in the standard |
+Protocol | IANA protocol number | --- | Yes |  [IANA Protocol List](http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml) |
+TOS | TOS number | --- | Yes |  Must be parsed using math defined in the standard |
+Source AS<sup>1</sup>         | BGP source Autonomous System number | --- | Yes |  --- |
+Destination AS<sup>1</sup>   | BGP destination Autonomous System number | --- | Yes |  --- |
+Source Mask<sup>1</sup>      | IP CIDR mask | --- | Yes |  Eg /30 is reported as "30" |
+Destination Mask<sup>1</sup> | IP CIDR mask | --- | Yes |  Eg /30 is reported as "30" |
 
 # Netflow v9
 Flows exported by Netflow v9 are based on templates, and fields are defined in [RFC 3954](https://www.ietf.org/rfc/rfc3954.txt). Flows may or may not include the following fields depending on the vendor and configured templates:
