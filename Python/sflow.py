@@ -279,6 +279,8 @@ if __name__ == "__main__":
 						elif record_ent_form_number == [0,2206]: # HTTP Request
 							flow_index["_source"].update(http_request(unpacked_record_data))
 						
+						# 2207 Extended Proxy Request
+						
 						elif record_ent_form_number == [0,2208]: # Extended Navigation Timing
 							flow_index["_source"].update(extended_nav_timing(unpacked_record_data))
 						
