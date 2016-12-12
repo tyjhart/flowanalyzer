@@ -121,7 +121,7 @@ Flow    | 0 | 2202  | App Operation                     | In Progress   | [sFlow
 Flow    | 0 | 2203  | App Parent Context                | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
 Flow    | 0 | 2204  | App Initiator                     | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
 Flow    | 0 | 2205  | App Target                        | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
-Flow    | 0 | 2206  | HTTP Request                      | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
+Flow    | 0 | 2206  | HTTP Request                      | Yes           | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
 Flow    | 0 | 2207  | Extended Proxy Request            | In Progress   | [sFlow HTTP Structures](http://www.sflow.org/sflow_http.txt) |
 Flow    | 0 | 2208  | Extended Nav Timing               | Yes           | [Navigation Timing Thread](https://groups.google.com/forum/?fromgroups#!topic/sflow/FKzkvig32Tk) |
 Flow    | 0 | 2209  | Extended TCP Info                 | Yes           | [sFlow Google Group, Peter Phaal](https://groups.google.com/forum/#!topic/sflow/JCG9iwacLZA) |
