@@ -67,8 +67,9 @@ The Expanded Counter Sample does for [Counter Samples](#counter-samples) what [E
 
 # Flow Data
 The default structures for flow data are shown below:
+
 Type | Enterprise | Format | Name | Supported | Link |
----     | --- | ---     | ---                                | ---            | --- |
+---     | --- | --- | ---                               | ---           | --- |
 Flow    | 0 | 1     | Raw Packet Header                 | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
 Flow    | 0 | 2     | Ethernet Frame Data               | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
 Flow    | 0 | 3     | Packet IPv4 Data                  | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
@@ -127,6 +128,7 @@ Flow    | 0 | 2209  | Extended TCP Info                 | Yes           | [sFlow
 
 # Counter Data
 The default structures for counter data are shown below:
+
 Type        | Enterprise | Format | Name                                        | Supported     | Link |
 ---         | ---   | ---   | ---                                               | ---           | --- |
 Counter     | 0     | 1     | Generic Interface Counters                        | Yes           | [sFlow Version 5](http://sflow.org/sflow_version_5.txt) |
@@ -168,7 +170,7 @@ Counter     | 0     | 2202  | App Operations                                    
 Counter     | 0     | 2203  | App Resources                                     | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
 Counter     | 0     | 2204  | Memcache Counters                                 | In Progress   | [sFlow Memcache Structures](http://www.sflow.org/sflow_memcache.txt) |
 Counter     | 0     | 2206  | App Workers                                       | In Progress   | [sFlow Application Structures](http://www.sflow.org/sflow_application.txt) |
-Counter     | 0     | 2207  | OVS DP Statistics                                 | In Progress   | []() |
+Counter     | 0     | 2207  | OVS DP Statistics                                 | In Progress   | -- |
 Counter     | 0     | 3000  | Energy                                            | Yes           | [Energy Management Thread](https://groups.google.com/forum/#!topic/sflow/gN3nxSi2SBs) |
 Counter     | 0     | 3001  | Temperature                                       | Yes           | [Energy Management Thread](https://groups.google.com/forum/#!topic/sflow/gN3nxSi2SBs) |
 Counter     | 0     | 3002  | Humidity                                          | Yes           | [Energy Management Thread](https://groups.google.com/forum/#!topic/sflow/gN3nxSi2SBs) |
