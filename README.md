@@ -194,6 +194,8 @@ _"sFlow"_ is a registered trademark of InMon Corporation.
 
 "_NVIDIA_" is a trademark of NVIDIA Corporation.
 
+"_Broadcom_" is a trademark of AVAGO TECHNOLOGIES GENERAL IP (SINGAPORE) PTE. LTD.
+
 # ---
 **Copyright (c) 2016, Manito Networks, LLC**
 **All rights reserved.**
