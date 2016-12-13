@@ -149,10 +149,10 @@ def ipv6_dns():
 if __name__ == "__main__":
 	
 	icmp_parser = icmp_parse() # Class for parsing ICMP Types and Codes
-	ip_parser = ip_parse() # Class for unpacking IPv4 and IPv6 addresses
-	mac = mac_address() # Class for parsing MAC addresses and OUIs
-	netflow_v9_parser = netflowv9_parse() # Class for parsing Netflow v9 structures
-	int_un = int_parse() # Class for parsing integers
+	ip_parser = ip_parse() # Class for unpacking and parsing IPv4 and IPv6 addresses
+	mac = mac_address() # Class for unpacking and parsing MAC addresses and OUIs
+	netflow_v9_parser = netflowv9_parse() # Class for parsing specific Netflow v9 structures
+	int_un = int_parse() # Class for unpacking and parsing integers
 	ports_protocols_parser = ports_and_protocols() # Class for parsing ports and protocols
 	
 	# Continually collect packets
@@ -270,20 +270,30 @@ if __name__ == "__main__":
 
 							logging.info("Data flow number " + str(flow_counter) + ", set ID " + str(flow_set_id) + " from " + str(sensor_address[0])) 
 							
-							# Iterate through fields in the matching template
+							### Iterate through the template ###
 							for template_key, field_size in template_list[hashed_id]["Definitions"].iteritems():
 								
-								# IPv4 Address type field
+								# Check if the template key is defined in the Netflow v9 standard fields
+								#
+								# Skip this field if it's not defined, even though it's in the template
+								try:
+									v9_fields[template_key]
+								except (KeyError):
+									logging.info("Skipping undefined field (template_key,field_size) - " + str((template_key, field_size)))
+									data_position += field_size
+									continue # Skip this undefined field
+								
+								### IPv4 field ###
 								if v9_fields[template_key]["Type"] == "IPv4":
 									flow_payload = ip_parser.parse_ipv4(flow_packet_contents,data_position,field_size)
 									flow_index["_source"]["IP Protocol Version"] = 4
 									
-								# IPv6 Address type field
+								### IPv6 field ###
 								elif v9_fields[template_key]["Type"] == "IPv6":
 									flow_payload = ip_parser.parse_ipv6(flow_packet_contents,data_position,field_size)
 									flow_index["_source"]["IP Protocol Version"] = 6
 									
-								# Integer type field, parse further
+								### Integer field ###
 								elif v9_fields[template_key]["Type"] == "Integer":
 
 									flow_payload = int_un.integer_unpack(flow_packet_contents,data_position,field_size) # Unpack the integer
@@ -306,7 +316,7 @@ if __name__ == "__main__":
 									else:
 										pass
 										
-								# MAC Address
+								### MAC Address field ###
 								elif v9_fields[template_key]["Type"] == "MAC":
 									
 									# Returns (Parsed MAC, MAC OUI)
@@ -348,14 +358,14 @@ if __name__ == "__main__":
 									else:
 										pass
 
-								# Something we haven't accounted for yet						
+								### Something Else ###						
 								else:
 									logging.warning("Unsupported field number " + str(template_key) + ", size " + str(field_size) + " from " + str(sensor_address[0]) + " in sequence " + str(packet["sequence_number"]))
 
 									data_position += field_size
 									continue # Bail out of this field, either undefined or proprietary
 								
-								# Add the friendly Index ID and value (flow_payload) to flow_index
+								### Special parsed fields with pre-defined values ###
 								if "Options" in v9_fields[template_key]: # Integer fields with pre-defined values in the v9 standard	
 									try:
 										flow_index["_source"][v9_fields[template_key]["Index ID"]] = v9_fields[template_key]['Options'][int(flow_payload)]
@@ -363,18 +373,22 @@ if __name__ == "__main__":
 										logging.warning("Failed to parse human option, template key " + str(template_key) + ", option key " + str(flow_payload) + ", from " + str(sensor_address[0]) + " - USING INTEGER VALUE")
 										flow_index["_source"][v9_fields[template_key]["Index ID"]] = flow_payload
 
-								else: # Some other field with a human-friendly name
+								### Typical non-parsed field ###
+								else: 
 									flow_index["_source"][v9_fields[template_key]["Index ID"]] = flow_payload
 
 								# Move the byte position the number of bytes in the field we just parsed
 								data_position += field_size
 								
-							# Tag "Traffic" and "Traffic Category" for TCP/UDP:
+							### Traffic and Traffic Category tagging ###
+							#
+							# Transport-type protocols eg TCP, UDP, etc
 							if int(flow_index["_source"]['Protocol Number']) in (6, 17, 33, 132):
 								traffic_tags = ports_protocols_parser.port_traffic_classifier(flow_index["_source"]["Source Port"],flow_index["_source"]["Destination Port"])
 								flow_index["_source"]["Traffic"] = traffic_tags["Traffic"]
 								flow_index["_source"]["Traffic Category"] = traffic_tags["Traffic Category"]
 							
+							# Non-transport protocols eg OSPF, VRRP, etc
 							else:
 								flow_index["_source"]["Traffic"] = None # No tagged traffic types for non-transport protocols
 								flow_index["_source"]["Source Port"] = None # Not a transport protocol
@@ -386,7 +400,7 @@ if __name__ == "__main__":
 								except (NameError,KeyError):
 									flow_index["_source"]["Traffic Category"] = ports_protocols_parser.protocol_traffic_category(flow_index["_source"]['Protocol Number'])
 							
-							# Tag the flow with Source and Destination FQDN and Domain info (if enabled and available)
+							### DNS Domain and FQDN tagging ###
 							if dns is True:
 
 								if flow_index["_source"]['IP Protocol Version'] == 4: 
@@ -398,11 +412,12 @@ if __name__ == "__main__":
 								else:
 									pass
 
-							# Append this parsed flow to the flow_dic[] for bulk upload
+							### Append flow to the cache ###
 							flow_dic.append(flow_index)
 							logging.debug(str(flow_index))	
 							logging.info("Ending data flow " + str(flow_counter))	
 					
+					### Options Template ###
 					elif template_list[hashed_id]["Type"] == "Options Template":
 						flow_counter += 1
 						record_num += 1
@@ -421,7 +436,7 @@ if __name__ == "__main__":
 					else:
 						pass
 
-				# No template, drop the flow and advanced the byte position
+				### Missing template, drop ###
 				else:
 					logging.warning("Missing template for flow set " + 	str(flow_set_id) + " from " + str(sensor_address[0]) + ", sequence " + str(packet["sequence_number"]) + " - DROPPING")
 					
