@@ -73,7 +73,7 @@ Our custom Netflow, IPFIX, and sFlow collectors ingest and tag flow data. We rec
 - IANA-registered port numbers to services (eg port 80 to "HTTP", 53 to "DNS")
 - Services to categories (eg HTTP, HTTPS, Alt-HTTP to "Web")
 
-This tagging functionality is running by default and happens transparently in the background.
+This tagging functionality is running by default and happens transparently in the background. For more information on tagging functionality see the [Tagging documentation](Tagging.md).
 
 ## DNS Reverse Lookups
 A reverse lookup against observed IPs is done if DNS lookups are enabled. Resolved domains are cached for 30 minutes to reduce
