@@ -1,16 +1,9 @@
 # Copyright (c) 2016, Manito Networks, LLC
 # All rights reserved.
 
+### Imports ###
 import time, datetime, socket, struct, sys, os, json, socket, collections, itertools, logging, logging.handlers, getopt
 from struct import *
-
-# Windows socket.inet_ntop support via win_inet_pton
-try:
-	import win_inet_pton
-except ImportError:
-	pass
-
-#from socket import inet_ntoa,inet_ntop
 from elasticsearch import Elasticsearch,helpers
 from IPy import IP
 
@@ -18,10 +11,8 @@ from IPy import IP
 from parser_modules import mac_address, icmp_parse, ip_parse, netflowv9_parse, int_parse, ports_and_protocols
 
 # Field types, defined ports, etc
-###from defined_ports import registered_ports,other_ports
 from field_types import v9_fields
 from netflow_options import *
-###from protocol_numbers import *
 
 # DNS Resolution
 import dns_base
@@ -54,7 +45,7 @@ except Exception:
 try: 
 	log_level # Check if log level was passed in from command arguments
 except NameError:
-	log_level="DEBUG" # Use default logging level
+	log_level="WARNING" # Use default logging level
 
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.warning('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
@@ -164,19 +155,18 @@ if __name__ == "__main__":
 	int_un = int_parse() # Class for parsing integers
 	ports_protocols_parser = ports_and_protocols() # Class for parsing ports and protocols
 	
-	# Continually run
+	# Continually collect packets
 	while True:
 
 		pointer = 0 # Tracking location in the packet
 		flow_packet_contents, sensor_address = netflow_sock.recvfrom(65565) # Listen for packets inbound
 		
-		# Get the Netflow version and flow size, or just continue listening
+		### Unpack the flow packet header ###
 		try:
-			# Unpack the header
 			logging.info("Unpacking header from " + str(sensor_address[0]))
 			
-			# Flow attributes in the Netflow packet header
-			packet = {}			
+			packet = {}	# Flow header attributes cache	
+
 			(
 			packet["netflow_version"],
 			packet["total_flow_count"],
@@ -184,10 +174,12 @@ if __name__ == "__main__":
 			packet["unix_secs"],
 			packet["sequence_number"],
 			packet["source_id"]
-			) = struct.unpack('!HHLLLL',flow_packet_contents[0:20])	
+			) = struct.unpack('!HHLLLL',flow_packet_contents[0:20])	# Unpack header
 
 			packet["Sensor"] = str(sensor_address[0])
 			pointer += 20 # Move past the packet header
+
+			logging.info(str(packet))
 		
 		# Something went wrong unpacking the header, bail out
 		except Exception as flow_header_error:
