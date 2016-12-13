@@ -108,7 +108,6 @@ if __name__ == "__main__":
 	icmp_parser = icmp_parse() # Class for parsing ICMP Types and Codes
 	ip_parser = ip_parse() # Class for unpacking IPv4 and IPv6 addresses
 	mac = mac_address() # Class for parsing MAC addresses and OUIs
-	#netflow_v9_parser = netflowv9_parse() # Class for parsing Netflow v9 structures
 	int_un = int_parse() # Class for parsing integers
 	ports_protocols_parser = ports_and_protocols() # Class for parsing ports and protocols
 	
