@@ -271,12 +271,16 @@ Perform the following steps below on the following sFlow index fields:
 8. Click **Update Field**
 
 ## Import Kibana Visualizations and Dashboards
-1. Download the [Visualization and Dashboard](../Kibana/kibana_elk5.json) JSON file
-2. In Kibana perform the following steps:
-    1. Click Management on the left navigation bar
-    2. Click Saved Objects at the top of the window
-    3. Click the Import button
+1. Download the Netflow JSON file for Netflow and IPFIX. There are two versions:
+    - [Netflow JSON file for Kibana v5](../Kibana/netflow_elk5.json) (default, use this for fresh installs)
+    - [Netflow JSON file for Kibana v2 (legacy)](../Kibana/netflow_elk2_legacy.json) for legacy installations based on ELK v2
+2. Download the [sFlow JSON file](../Kibana/sflow_elk5.json) for sFlow (ELK v5 or latest version only)
+3. In Kibana perform the following steps:
+    1. Click **Management** on the left navigation bar
+    2. Click **Saved Objects** at the top of the window
+    3. Click the **Import** button
     4. Browse to the downloaded JSON file
+    5. Repeat as necessary for additional JSON files
 
 # Tuning
 There are additional features that you can utilize, but they have to be enabled by you. This includes:
