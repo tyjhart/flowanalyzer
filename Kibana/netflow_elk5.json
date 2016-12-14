@@ -1,14 +1,99 @@
 [
   {
-    "_id": "Traffic-Overview",
+    "_id": "Autonomous-Systems",
     "_type": "dashboard",
     "_source": {
-      "title": "Traffic Overview",
+      "title": "Autonomous Systems",
       "hits": 0,
       "description": "",
-      "panelsJSON": "[{\"col\":1,\"id\":\"Data-Area\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":5,\"type\":\"visualization\"},{\"id\":\"Protocols-by-Type\",\"type\":\"visualization\",\"panelIndex\":3,\"size_x\":4,\"size_y\":3,\"col\":1,\"row\":6},{\"id\":\"Total-Traffic-Metric\",\"type\":\"visualization\",\"panelIndex\":4,\"size_x\":8,\"size_y\":3,\"col\":5,\"row\":6}]",
+      "panelsJSON": "[{\"id\":\"Total-Traffic-Over-Time\",\"type\":\"visualization\",\"panelIndex\":1,\"size_x\":12,\"size_y\":3,\"col\":1,\"row\":1},{\"id\":\"Destination-AS\",\"type\":\"visualization\",\"panelIndex\":2,\"size_x\":4,\"size_y\":5,\"col\":5,\"row\":4},{\"id\":\"Source-AS\",\"type\":\"visualization\",\"panelIndex\":3,\"size_x\":4,\"size_y\":5,\"col\":1,\"row\":4},{\"id\":\"Total-Traffic-Metric\",\"type\":\"visualization\",\"panelIndex\":4,\"size_x\":4,\"size_y\":5,\"col\":9,\"row\":4}]",
       "optionsJSON": "{\"darkTheme\":false}",
       "uiStateJSON": "{}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "Flows",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Flows",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"id\":\"Flow-Types-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":4,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Flows-by-Type\",\"panelIndex\":2,\"row\":5,\"size_x\":4,\"size_y\":4,\"type\":\"visualization\"},{\"col\":9,\"id\":\"Flow-Sensors-Metric\",\"panelIndex\":3,\"row\":5,\"size_x\":4,\"size_y\":4,\"type\":\"visualization\"},{\"col\":5,\"id\":\"Flows-Per-Sensor\",\"panelIndex\":4,\"row\":5,\"size_x\":4,\"size_y\":4,\"type\":\"visualization\"}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "Web-Traffic",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Web Traffic",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"id\":\"Web-Traffic-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":4,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Web-Traffic-By-Protocol\",\"panelIndex\":2,\"row\":5,\"size_x\":4,\"size_y\":3,\"type\":\"visualization\"},{\"col\":9,\"id\":\"Web-Traffic-Total-Metric\",\"panelIndex\":3,\"row\":5,\"size_x\":4,\"size_y\":3,\"type\":\"visualization\"},{\"id\":\"Web-Top-Downloaders\",\"type\":\"visualization\",\"panelIndex\":4,\"size_x\":4,\"size_y\":3,\"col\":5,\"row\":5}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "Facebook-Traffic",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Facebook Traffic",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"id\":\"Facebook-Traffic-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":4,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Facebook-Destination-IPs\",\"panelIndex\":2,\"row\":5,\"size_x\":5,\"size_y\":4,\"type\":\"visualization\"},{\"id\":\"Facebook-Traffic-Metrics\",\"type\":\"visualization\",\"panelIndex\":3,\"size_x\":7,\"size_y\":4,\"col\":6,\"row\":5}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{\"P-1\":{\"vis\":{\"legendOpen\":false}}}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "Streaming-Traffic",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Streaming Traffic",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"id\":\"Streaming-Traffic-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":3,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Streaming-Top-Domains\",\"panelIndex\":2,\"row\":4,\"size_x\":4,\"size_y\":5,\"type\":\"visualization\"},{\"col\":5,\"id\":\"Streaming-Destinations\",\"panelIndex\":3,\"row\":4,\"size_x\":4,\"size_y\":5,\"type\":\"visualization\"},{\"id\":\"Streaming-Traffic-Metric\",\"type\":\"visualization\",\"panelIndex\":4,\"size_x\":4,\"size_y\":5,\"col\":9,\"row\":4}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "TCP-slash-IP",
+    "_type": "dashboard",
+    "_source": {
+      "title": "TCP/IP",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"id\":\"TCP-slash-IP-Traffic-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":3,\"type\":\"visualization\"},{\"col\":9,\"id\":\"TCP-slash-IP-Total-Traffic-Metric\",\"panelIndex\":2,\"row\":4,\"size_x\":4,\"size_y\":5,\"type\":\"visualization\"},{\"col\":1,\"id\":\"TCP-slash-IP-Top-Sources-slash-Destinations\",\"panelIndex\":3,\"row\":4,\"size_x\":8,\"size_y\":5,\"type\":\"visualization\"}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{\"P-1\":{\"vis\":{\"legendOpen\":true}},\"P-3\":{\"spy\":{\"mode\":{\"fill\":false,\"name\":null}}}}",
       "version": 1,
       "timeRestore": false,
       "kibanaSavedObjectMeta": {
@@ -51,30 +136,13 @@
     }
   },
   {
-    "_id": "TCP-slash-IP",
+    "_id": "Traffic-Overview",
     "_type": "dashboard",
     "_source": {
-      "title": "TCP/IP",
+      "title": "Traffic Overview",
       "hits": 0,
       "description": "",
-      "panelsJSON": "[{\"col\":1,\"id\":\"TCP-slash-IP-Traffic-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":3,\"type\":\"visualization\"},{\"col\":9,\"id\":\"TCP-slash-IP-Total-Traffic-Metric\",\"panelIndex\":2,\"row\":4,\"size_x\":4,\"size_y\":5,\"type\":\"visualization\"},{\"col\":1,\"id\":\"TCP-slash-IP-Top-Sources-slash-Destinations\",\"panelIndex\":3,\"row\":4,\"size_x\":8,\"size_y\":5,\"type\":\"visualization\"}]",
-      "optionsJSON": "{\"darkTheme\":false}",
-      "uiStateJSON": "{\"P-1\":{\"vis\":{\"legendOpen\":true}},\"P-3\":{\"spy\":{\"mode\":{\"fill\":false,\"name\":null}}}}",
-      "version": 1,
-      "timeRestore": false,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
-      }
-    }
-  },
-  {
-    "_id": "Flows",
-    "_type": "dashboard",
-    "_source": {
-      "title": "Flows",
-      "hits": 0,
-      "description": "",
-      "panelsJSON": "[{\"col\":1,\"id\":\"Flow-Types-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":4,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Flows-by-Type\",\"panelIndex\":2,\"row\":5,\"size_x\":4,\"size_y\":4,\"type\":\"visualization\"},{\"col\":9,\"id\":\"Flow-Sensors-Metric\",\"panelIndex\":3,\"row\":5,\"size_x\":4,\"size_y\":4,\"type\":\"visualization\"},{\"col\":5,\"id\":\"Flows-Per-Sensor\",\"panelIndex\":4,\"row\":5,\"size_x\":4,\"size_y\":4,\"type\":\"visualization\"}]",
+      "panelsJSON": "[{\"col\":1,\"id\":\"Data-Area\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":5,\"type\":\"visualization\"},{\"id\":\"Protocols-by-Type\",\"type\":\"visualization\",\"panelIndex\":3,\"size_x\":4,\"size_y\":3,\"col\":1,\"row\":6},{\"id\":\"Total-Traffic-Metric\",\"type\":\"visualization\",\"panelIndex\":4,\"size_x\":8,\"size_y\":3,\"col\":5,\"row\":6}]",
       "optionsJSON": "{\"darkTheme\":false}",
       "uiStateJSON": "{}",
       "version": 1,
@@ -102,74 +170,6 @@
     }
   },
   {
-    "_id": "Web-Traffic",
-    "_type": "dashboard",
-    "_source": {
-      "title": "Web Traffic",
-      "hits": 0,
-      "description": "",
-      "panelsJSON": "[{\"col\":1,\"id\":\"Web-Traffic-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":4,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Web-Traffic-By-Protocol\",\"panelIndex\":2,\"row\":5,\"size_x\":4,\"size_y\":3,\"type\":\"visualization\"},{\"col\":9,\"id\":\"Web-Traffic-Total-Metric\",\"panelIndex\":3,\"row\":5,\"size_x\":4,\"size_y\":3,\"type\":\"visualization\"},{\"id\":\"Web-Top-Downloaders\",\"type\":\"visualization\",\"panelIndex\":4,\"size_x\":4,\"size_y\":3,\"col\":5,\"row\":5}]",
-      "optionsJSON": "{\"darkTheme\":false}",
-      "uiStateJSON": "{}",
-      "version": 1,
-      "timeRestore": false,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
-      }
-    }
-  },
-  {
-    "_id": "Streaming-Traffic",
-    "_type": "dashboard",
-    "_source": {
-      "title": "Streaming Traffic",
-      "hits": 0,
-      "description": "",
-      "panelsJSON": "[{\"col\":1,\"id\":\"Streaming-Traffic-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":3,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Streaming-Top-Domains\",\"panelIndex\":2,\"row\":4,\"size_x\":4,\"size_y\":5,\"type\":\"visualization\"},{\"col\":5,\"id\":\"Streaming-Destinations\",\"panelIndex\":3,\"row\":4,\"size_x\":4,\"size_y\":5,\"type\":\"visualization\"},{\"id\":\"Streaming-Traffic-Metric\",\"type\":\"visualization\",\"panelIndex\":4,\"size_x\":4,\"size_y\":5,\"col\":9,\"row\":4}]",
-      "optionsJSON": "{\"darkTheme\":false}",
-      "uiStateJSON": "{}",
-      "version": 1,
-      "timeRestore": false,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
-      }
-    }
-  },
-  {
-    "_id": "Autonomous-Systems",
-    "_type": "dashboard",
-    "_source": {
-      "title": "Autonomous Systems",
-      "hits": 0,
-      "description": "",
-      "panelsJSON": "[{\"id\":\"Total-Traffic-Over-Time\",\"type\":\"visualization\",\"panelIndex\":1,\"size_x\":12,\"size_y\":3,\"col\":1,\"row\":1},{\"id\":\"Destination-AS\",\"type\":\"visualization\",\"panelIndex\":2,\"size_x\":4,\"size_y\":5,\"col\":5,\"row\":4},{\"id\":\"Source-AS\",\"type\":\"visualization\",\"panelIndex\":3,\"size_x\":4,\"size_y\":5,\"col\":1,\"row\":4},{\"id\":\"Total-Traffic-Metric\",\"type\":\"visualization\",\"panelIndex\":4,\"size_x\":4,\"size_y\":5,\"col\":9,\"row\":4}]",
-      "optionsJSON": "{\"darkTheme\":false}",
-      "uiStateJSON": "{}",
-      "version": 1,
-      "timeRestore": false,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}}}]}"
-      }
-    }
-  },
-  {
-    "_id": "Facebook-Traffic",
-    "_type": "dashboard",
-    "_source": {
-      "title": "Facebook Traffic",
-      "hits": 0,
-      "description": "",
-      "panelsJSON": "[{\"col\":1,\"id\":\"Facebook-Traffic-Over-Time\",\"panelIndex\":1,\"row\":1,\"size_x\":12,\"size_y\":4,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Facebook-Destination-IPs\",\"panelIndex\":2,\"row\":5,\"size_x\":5,\"size_y\":4,\"type\":\"visualization\"},{\"id\":\"Facebook-Traffic-Metrics\",\"type\":\"visualization\",\"panelIndex\":3,\"size_x\":7,\"size_y\":4,\"col\":6,\"row\":5}]",
-      "optionsJSON": "{\"darkTheme\":false}",
-      "uiStateJSON": "{\"P-1\":{\"vis\":{\"legendOpen\":false}}}",
-      "version": 1,
-      "timeRestore": false,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
-      }
-    }
-  },
-  {
     "_id": "At-A-Glance",
     "_type": "dashboard",
     "_source": {
@@ -183,6 +183,146 @@
       "timeRestore": false,
       "kibanaSavedObjectMeta": {
         "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "DNS-Traffic",
+    "_type": "search",
+    "_source": {
+      "title": "DNS Traffic",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "_source"
+      ],
+      "sort": [
+        "Time",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Traffic: DNS\",\"analyze_wildcard\":true}}}"
+      }
+    }
+  },
+  {
+    "_id": "DNS-Servers",
+    "_type": "search",
+    "_source": {
+      "title": "DNS Servers",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "_source"
+      ],
+      "sort": [
+        "Time",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Source\\\\ Port: 53\",\"analyze_wildcard\":true}}}"
+      }
+    }
+  },
+  {
+    "_id": "Streaming-Traffic",
+    "_type": "search",
+    "_source": {
+      "title": "Streaming Traffic",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "_source"
+      ],
+      "sort": [
+        "Time",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Content: Streaming\",\"analyze_wildcard\":true}}}"
+      }
+    }
+  },
+  {
+    "_id": "Web-Traffic",
+    "_type": "search",
+    "_source": {
+      "title": "Web Traffic",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "_source"
+      ],
+      "sort": [
+        "Time",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Traffic\\\\ Category: Web\",\"analyze_wildcard\":true}}}"
+      }
+    }
+  },
+  {
+    "_id": "DNS-Clients",
+    "_type": "search",
+    "_source": {
+      "title": "DNS Clients",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "_source"
+      ],
+      "sort": [
+        "Time",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Destination\\\\ Port: 53\",\"analyze_wildcard\":true}}}"
+      }
+    }
+  },
+  {
+    "_id": "Facebook-Traffic",
+    "_type": "search",
+    "_source": {
+      "title": "Facebook Traffic",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "_source"
+      ],
+      "sort": [
+        "Time",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"Content: Facebook\",\"analyze_wildcard\":true}},\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647}}"
+      }
+    }
+  },
+  {
+    "_id": "Web-Downloads",
+    "_type": "search",
+    "_source": {
+      "title": "Web Downloads",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "_source"
+      ],
+      "sort": [
+        "Time",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"(Source\\\\ Port: 80) OR (Source\\\\ Port: 443) OR (Source\\\\ Port: 8080)\",\"analyze_wildcard\":true}}}"
       }
     }
   },
@@ -227,142 +367,16 @@
     }
   },
   {
-    "_id": "Streaming-Traffic",
-    "_type": "search",
+    "_id": "Protocols-by-Type",
+    "_type": "visualization",
     "_source": {
-      "title": "Streaming Traffic",
+      "title": "Protocols by Type",
+      "visState": "{\"title\":\"Protocols by Type\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Protocol\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
       "description": "",
-      "hits": 0,
-      "columns": [
-        "_source"
-      ],
-      "sort": [
-        "Time",
-        "desc"
-      ],
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Content: Streaming\",\"analyze_wildcard\":true}}}"
-      }
-    }
-  },
-  {
-    "_id": "Facebook-Traffic",
-    "_type": "search",
-    "_source": {
-      "title": "Facebook Traffic",
-      "description": "",
-      "hits": 0,
-      "columns": [
-        "_source"
-      ],
-      "sort": [
-        "Time",
-        "desc"
-      ],
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"Content: Facebook\",\"analyze_wildcard\":true}},\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647}}"
-      }
-    }
-  },
-  {
-    "_id": "DNS-Servers",
-    "_type": "search",
-    "_source": {
-      "title": "DNS Servers",
-      "description": "",
-      "hits": 0,
-      "columns": [
-        "_source"
-      ],
-      "sort": [
-        "Time",
-        "desc"
-      ],
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Source\\\\ Port: 53\",\"analyze_wildcard\":true}}}"
-      }
-    }
-  },
-  {
-    "_id": "Web-Traffic",
-    "_type": "search",
-    "_source": {
-      "title": "Web Traffic",
-      "description": "",
-      "hits": 0,
-      "columns": [
-        "_source"
-      ],
-      "sort": [
-        "Time",
-        "desc"
-      ],
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Traffic\\\\ Category: Web\",\"analyze_wildcard\":true}}}"
-      }
-    }
-  },
-  {
-    "_id": "DNS-Traffic",
-    "_type": "search",
-    "_source": {
-      "title": "DNS Traffic",
-      "description": "",
-      "hits": 0,
-      "columns": [
-        "_source"
-      ],
-      "sort": [
-        "Time",
-        "desc"
-      ],
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Traffic: DNS\",\"analyze_wildcard\":true}}}"
-      }
-    }
-  },
-  {
-    "_id": "DNS-Clients",
-    "_type": "search",
-    "_source": {
-      "title": "DNS Clients",
-      "description": "",
-      "hits": 0,
-      "columns": [
-        "_source"
-      ],
-      "sort": [
-        "Time",
-        "desc"
-      ],
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"Destination\\\\ Port: 53\",\"analyze_wildcard\":true}}}"
-      }
-    }
-  },
-  {
-    "_id": "Web-Downloads",
-    "_type": "search",
-    "_source": {
-      "title": "Web Downloads",
-      "description": "",
-      "hits": 0,
-      "columns": [
-        "_source"
-      ],
-      "sort": [
-        "Time",
-        "desc"
-      ],
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647},\"query\":{\"query_string\":{\"query\":\"(Source\\\\ Port: 80) OR (Source\\\\ Port: 443) OR (Source\\\\ Port: 8080)\",\"analyze_wildcard\":true}}}"
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
       }
     }
   },
@@ -381,11 +395,39 @@
     }
   },
   {
-    "_id": "Protocols-Over-Time",
+    "_id": "Flow-Sensors-Metric",
     "_type": "visualization",
     "_source": {
-      "title": "Protocols Over Time",
-      "visState": "{\"title\":\"Protocols Over Time\",\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"Protocol\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "title": "Flow Sensors Metric",
+      "visState": "{\"aggs\":[{\"id\":\"1\",\"params\":{\"customLabel\":\"Total Sensors\",\"field\":\"Sensor\"},\"schema\":\"metric\",\"type\":\"cardinality\"}],\"listeners\":{},\"params\":{\"fontSize\":60,\"handleNoResults\":true},\"title\":\"Flow Sensors Metric\",\"type\":\"metric\"}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Destination-AS",
+    "_type": "visualization",
+    "_source": {
+      "title": "Destination AS",
+      "visState": "{\"title\":\"Destination AS\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Destination AS\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Destination AS\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Sensors",
+    "_type": "visualization",
+    "_source": {
+      "title": "Sensors",
+      "visState": "{\"title\":\"Sensors\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Sensor\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -409,11 +451,11 @@
     }
   },
   {
-    "_id": "Flows-by-Type",
+    "_id": "Protocols-Over-Time",
     "_type": "visualization",
     "_source": {
-      "title": "Flows by Type",
-      "visState": "{\"title\":\"Flows by Type\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Flow Type\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "title": "Protocols Over Time",
+      "visState": "{\"title\":\"Protocols Over Time\",\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"Protocol\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -423,11 +465,11 @@
     }
   },
   {
-    "_id": "Protocols-by-Type",
+    "_id": "Flows-by-Type",
     "_type": "visualization",
     "_source": {
-      "title": "Protocols by Type",
-      "visState": "{\"title\":\"Protocols by Type\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Protocol\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "title": "Flows by Type",
+      "visState": "{\"title\":\"Flows by Type\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Flow Type\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -451,20 +493,6 @@
     }
   },
   {
-    "_id": "Data-Area",
-    "_type": "visualization",
-    "_source": {
-      "title": "Data Area",
-      "visState": "{\"title\":\"Data Area\",\"type\":\"area\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"smoothLines\":false,\"scale\":\"linear\",\"interpolate\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"Sensor\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
-      }
-    }
-  },
-  {
     "_id": "Total-Traffic-Metric",
     "_type": "visualization",
     "_source": {
@@ -475,6 +503,34 @@
       "version": 1,
       "kibanaSavedObjectMeta": {
         "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Source-AS",
+    "_type": "visualization",
+    "_source": {
+      "title": "Source AS",
+      "visState": "{\"title\":\"Source AS\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Source AS\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Data-Area",
+    "_type": "visualization",
+    "_source": {
+      "title": "Data Area",
+      "visState": "{\"title\":\"Data Area\",\"type\":\"area\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"smoothLines\":false,\"scale\":\"linear\",\"interpolate\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"Sensor\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
       }
     }
   },
@@ -494,11 +550,70 @@
     }
   },
   {
-    "_id": "ICMP-Traffic-By-Protocol",
+    "_id": "Total-Traffic-Over-Time",
     "_type": "visualization",
     "_source": {
-      "title": "ICMP Traffic By Protocol",
-      "visState": "{\"title\":\"ICMP Traffic By Protocol\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total Traffic\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Protocol\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "title": "Total Traffic Over Time",
+      "visState": "{\"title\":\"Total Traffic Over Time\",\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "TCP-slash-IP-Total-Traffic-Metric",
+    "_type": "visualization",
+    "_source": {
+      "title": "TCP/IP Total Traffic Metric",
+      "visState": "{\"title\":\"TCP/IP Total Traffic Metric\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total TCP/IP Traffic\"}},{\"id\":\"2\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Average Flow Size\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "savedSearchId": "TCP-IP-Traffic",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Web-Traffic-Total-Metric",
+    "_type": "visualization",
+    "_source": {
+      "title": "Web Traffic Total Metric",
+      "visState": "{\"title\":\"Web Traffic Total Metric\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total Web Traffic\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "savedSearchId": "Web-Traffic",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Facebook-Traffic-Metrics",
+    "_type": "visualization",
+    "_source": {
+      "title": "Facebook Traffic Metrics",
+      "visState": "{\"title\":\"Facebook Traffic Metrics\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total Facebook Traffic\"}},{\"id\":\"2\",\"type\":\"cardinality\",\"schema\":\"metric\",\"params\":{\"field\":\"IPv4 Destination\",\"customLabel\":\"IPs Communicating\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "savedSearchId": "Facebook-Traffic",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "ICMP-Total-Traffic-Metric",
+    "_type": "visualization",
+    "_source": {
+      "title": "ICMP Total Traffic Metric",
+      "visState": "{\"title\":\"ICMP Total Traffic Metric\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total ICMP Traffic\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "savedSearchId": "ICMP-Traffic",
@@ -524,11 +639,11 @@
     }
   },
   {
-    "_id": "ICMP-Total-Traffic-Metric",
+    "_id": "ICMP-Traffic-By-Protocol",
     "_type": "visualization",
     "_source": {
-      "title": "ICMP Total Traffic Metric",
-      "visState": "{\"title\":\"ICMP Total Traffic Metric\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total ICMP Traffic\"}}],\"listeners\":{}}",
+      "title": "ICMP Traffic By Protocol",
+      "visState": "{\"title\":\"ICMP Traffic By Protocol\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total Traffic\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Protocol\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "savedSearchId": "ICMP-Traffic",
@@ -539,14 +654,29 @@
     }
   },
   {
-    "_id": "TCP-slash-IP-Traffic-Over-Time",
+    "_id": "TCP-slash-IP-Top-Sources-slash-Destinations",
     "_type": "visualization",
     "_source": {
-      "title": "TCP/IP Traffic Over Time",
-      "visState": "{\"title\":\"TCP/IP Traffic Over Time\",\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"Protocol\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "title": "TCP/IP Top Sources / Destinations",
+      "visState": "{\"title\":\"TCP/IP Top Sources / Destinations\",\"type\":\"table\",\"params\":{\"perPage\":10,\"showPartialRows\":true,\"showMeticsAtAllLevels\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Traffic Observed\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"IPv4 Source\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"IPv4 Source\"}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"IPv4 Destination\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"IPv4 Destination\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "savedSearchId": "TCP-IP-Traffic",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Facebook-Destination-IPs",
+    "_type": "visualization",
+    "_source": {
+      "title": "Facebook Destination IPs",
+      "visState": "{\"title\":\"Facebook Destination IPs\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"IPv4 Destination\",\"size\":50,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "savedSearchId": "Facebook-Traffic",
       "version": 1,
       "kibanaSavedObjectMeta": {
         "searchSourceJSON": "{\"filter\":[]}"
@@ -599,59 +729,44 @@
     }
   },
   {
-    "_id": "TCP-slash-IP-Total-Traffic-Metric",
+    "_id": "Streaming-Top-Domains",
     "_type": "visualization",
     "_source": {
-      "title": "TCP/IP Total Traffic Metric",
-      "visState": "{\"title\":\"TCP/IP Total Traffic Metric\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total TCP/IP Traffic\"}},{\"id\":\"2\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Average Flow Size\"}}],\"listeners\":{}}",
+      "title": "Streaming Top Domains",
+      "visState": "{\"title\":\"Streaming Top Domains\",\"type\":\"pie\",\"params\":{\"addLegend\":true,\"addTooltip\":true,\"isDonut\":false,\"shareYAxis\":true},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Source Domain\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "savedSearchId": "Streaming-Traffic",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Streaming-Traffic-Over-Time",
+    "_type": "visualization",
+    "_source": {
+      "title": "Streaming Traffic Over Time",
+      "visState": "{\"title\":\"Streaming Traffic Over Time\",\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Streaming Traffic\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "savedSearchId": "Streaming-Traffic",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "TCP-slash-IP-Traffic-Over-Time",
+    "_type": "visualization",
+    "_source": {
+      "title": "TCP/IP Traffic Over Time",
+      "visState": "{\"title\":\"TCP/IP Traffic Over Time\",\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"Protocol\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "savedSearchId": "TCP-IP-Traffic",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "Web-Traffic-Over-Time",
-    "_type": "visualization",
-    "_source": {
-      "title": "Web Traffic Over Time",
-      "visState": "{\"title\":\"Web Traffic Over Time\",\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Web Traffic\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"Traffic\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "savedSearchId": "Web-Traffic",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "Web-Traffic-By-Protocol",
-    "_type": "visualization",
-    "_source": {
-      "title": "Web Traffic By Protocol",
-      "visState": "{\"title\":\"Web Traffic By Protocol\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Traffic\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "savedSearchId": "Web-Traffic",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "Web-Traffic-Total-Metric",
-    "_type": "visualization",
-    "_source": {
-      "title": "Web Traffic Total Metric",
-      "visState": "{\"title\":\"Web Traffic Total Metric\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total Web Traffic\"}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "savedSearchId": "Web-Traffic",
       "version": 1,
       "kibanaSavedObjectMeta": {
         "searchSourceJSON": "{\"filter\":[]}"
@@ -674,14 +789,29 @@
     }
   },
   {
-    "_id": "Streaming-Traffic-Over-Time",
+    "_id": "Web-Traffic-Over-Time",
     "_type": "visualization",
     "_source": {
-      "title": "Streaming Traffic Over Time",
-      "visState": "{\"title\":\"Streaming Traffic Over Time\",\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Streaming Traffic\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "title": "Web Traffic Over Time",
+      "visState": "{\"title\":\"Web Traffic Over Time\",\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Web Traffic\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"Traffic\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
-      "savedSearchId": "Streaming-Traffic",
+      "savedSearchId": "Web-Traffic",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "DNS-Traffic-Over-Time",
+    "_type": "visualization",
+    "_source": {
+      "title": "DNS Traffic Over Time",
+      "visState": "{\"title\":\"DNS Traffic Over Time\",\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"DNS Traffic\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "savedSearchId": "DNS-Traffic",
       "version": 1,
       "kibanaSavedObjectMeta": {
         "searchSourceJSON": "{\"filter\":[]}"
@@ -719,55 +849,11 @@
     }
   },
   {
-    "_id": "Facebook-Destination-IPs",
+    "_id": "Protocol-Tag-Cloud",
     "_type": "visualization",
     "_source": {
-      "title": "Facebook Destination IPs",
-      "visState": "{\"title\":\"Facebook Destination IPs\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"IPv4 Destination\",\"size\":50,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "savedSearchId": "Facebook-Traffic",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "Streaming-Top-Domains",
-    "_type": "visualization",
-    "_source": {
-      "title": "Streaming Top Domains",
-      "visState": "{\"title\":\"Streaming Top Domains\",\"type\":\"pie\",\"params\":{\"addLegend\":true,\"addTooltip\":true,\"isDonut\":false,\"shareYAxis\":true},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Source Domain\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "savedSearchId": "Streaming-Traffic",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "Flow-Sensors-Metric",
-    "_type": "visualization",
-    "_source": {
-      "title": "Flow Sensors Metric",
-      "visState": "{\"aggs\":[{\"id\":\"1\",\"params\":{\"customLabel\":\"Total Sensors\",\"field\":\"Sensor\"},\"schema\":\"metric\",\"type\":\"cardinality\"}],\"listeners\":{},\"params\":{\"fontSize\":60,\"handleNoResults\":true},\"title\":\"Flow Sensors Metric\",\"type\":\"metric\"}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}},\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "Sensors",
-    "_type": "visualization",
-    "_source": {
-      "title": "Sensors",
-      "visState": "{\"title\":\"Sensors\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Sensor\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "title": "Protocol Tag Cloud",
+      "visState": "{\"title\":\"Protocol Tag Cloud\",\"type\":\"tagcloud\",\"params\":{\"scale\":\"linear\",\"orientation\":\"single\",\"minFontSize\":18,\"maxFontSize\":72},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Protocol\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Protocol\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -777,71 +863,14 @@
     }
   },
   {
-    "_id": "Destination-AS",
+    "_id": "Web-Traffic-By-Protocol",
     "_type": "visualization",
     "_source": {
-      "title": "Destination AS",
-      "visState": "{\"title\":\"Destination AS\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Destination AS\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Destination AS\"}}],\"listeners\":{}}",
+      "title": "Web Traffic By Protocol",
+      "visState": "{\"title\":\"Web Traffic By Protocol\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Traffic\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "Source-AS",
-    "_type": "visualization",
-    "_source": {
-      "title": "Source AS",
-      "visState": "{\"title\":\"Source AS\",\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Source AS\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "DNS-Traffic-Over-Time",
-    "_type": "visualization",
-    "_source": {
-      "title": "DNS Traffic Over Time",
-      "visState": "{\"title\":\"DNS Traffic Over Time\",\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"DNS Traffic\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "savedSearchId": "DNS-Traffic",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "Total-Traffic-Over-Time",
-    "_type": "visualization",
-    "_source": {
-      "title": "Total Traffic Over Time",
-      "visState": "{\"title\":\"Total Traffic Over Time\",\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"Time\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
-      }
-    }
-  },
-  {
-    "_id": "Facebook-Traffic-Metrics",
-    "_type": "visualization",
-    "_source": {
-      "title": "Facebook Traffic Metrics",
-      "visState": "{\"title\":\"Facebook Traffic Metrics\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Total Facebook Traffic\"}},{\"id\":\"2\",\"type\":\"cardinality\",\"schema\":\"metric\",\"params\":{\"field\":\"IPv4 Destination\",\"customLabel\":\"IPs Communicating\"}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "savedSearchId": "Facebook-Traffic",
+      "savedSearchId": "Web-Traffic",
       "version": 1,
       "kibanaSavedObjectMeta": {
         "searchSourceJSON": "{\"filter\":[]}"
@@ -864,17 +893,44 @@
     }
   },
   {
-    "_id": "TCP-slash-IP-Top-Sources-slash-Destinations",
+    "_id": "Sensor-Tag-Cloud",
     "_type": "visualization",
     "_source": {
-      "title": "TCP/IP Top Sources / Destinations",
-      "visState": "{\"title\":\"TCP/IP Top Sources / Destinations\",\"type\":\"table\",\"params\":{\"perPage\":10,\"showPartialRows\":true,\"showMeticsAtAllLevels\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"Bytes In\",\"customLabel\":\"Traffic Observed\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"IPv4 Source\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"IPv4 Source\"}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"IPv4 Destination\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"IPv4 Destination\"}}],\"listeners\":{}}",
+      "title": "Sensor Tag Cloud",
+      "visState": "{\"title\":\"Sensor Tag Cloud\",\"type\":\"tagcloud\",\"params\":{\"scale\":\"linear\",\"orientation\":\"single\",\"minFontSize\":18,\"maxFontSize\":72},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Sensor\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Sensor\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
-      "savedSearchId": "TCP-IP-Traffic",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[]}"
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Source-AS-Tag-Cloud",
+    "_type": "visualization",
+    "_source": {
+      "title": "Source AS Tag Cloud",
+      "visState": "{\"title\":\"Source AS Tag Cloud\",\"type\":\"tagcloud\",\"params\":{\"scale\":\"linear\",\"orientation\":\"single\",\"minFontSize\":18,\"maxFontSize\":72},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Source AS\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Source AS\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Destination-AS-Tag-Cloud",
+    "_type": "visualization",
+    "_source": {
+      "title": "Destination AS Tag Cloud",
+      "visState": "{\"title\":\"Destination AS Tag Cloud\",\"type\":\"tagcloud\",\"params\":{\"scale\":\"linear\",\"orientation\":\"single\",\"minFontSize\":18,\"maxFontSize\":72},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"Destination AS\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"flow*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
       }
     }
   }
