@@ -19,7 +19,7 @@ Protocol Number | Protocol |
 89  | OSPF  |
 
 # Protocol Number
-Flows are tagged with both the [Protocol] and the IANA Protocol Number so you can query and graph by both. The Protocol Number is provided by the flow software on your routers, switches, and servers and is not parsed any further.
+Flows are tagged with both the Protocol and the IANA Protocol Number so you can query and graph by both. The Protocol Number is provided by the flow software on your routers, switches, and servers and is not parsed any further.
 
 # Protocol Category
 The Protocol Category is used to further categorize Protocols in terms of their purpose. Not all protocols are tagged with a Category, but some examples are shown below. For the full list see [Python/protocol_numbers.py](Python/protocol_numbers.py):
@@ -49,7 +49,7 @@ Port | Traffic | Traffic Category |
 --- | --- | --- |
 80   | HTTP  | Web |
 443  | HTTPS   | Web |
-22  | SSH   | Remote Administrations |
+22  | SSH   | Remote Administration |
 25  | SMTP  | Email |
 110  | POP3  | Email |
 
