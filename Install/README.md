@@ -271,7 +271,7 @@ Perform the following steps below on the following sFlow index fields:
 8. Click **Update Field**
 
 ## Import Kibana Visualizations and Dashboards
-1. Download the [Visualization and Dashboard](../Kibana/Default.json) JSON file
+1. Download the [Visualization and Dashboard](../Kibana/kibana_elk5.json) JSON file
 2. In Kibana perform the following steps:
     1. Click Management on the left navigation bar
     2. Click Saved Objects at the top of the window
