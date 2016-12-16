@@ -130,6 +130,8 @@ if __name__ == "__main__":
 			packet_attributes["observation_id"]
 			) = struct.unpack('!HHLLL',flow_packet_contents[0:16]) # Unpack header
 
+			packet_attributes["sensor"] = sensor_address[0] # For debug purposes
+
 			logging.info(str(packet_attributes))
 		
 		# Error unpacking the header
@@ -139,7 +141,7 @@ if __name__ == "__main__":
 		
 		### Check IPFIX version ###
 		if int(packet_attributes["netflow_version"]) != 10:
-			logging.warning("Received a non-IPFIX packet from " + str(sensor_address[0]) - " DROPPING")
+			logging.warning("Received a non-IPFIX packet from " + str(sensor_address[0]) + " - DROPPING")
 			continue
 			
 		byte_position = 16 # Position after the standard protocol header
@@ -171,38 +173,51 @@ if __name__ == "__main__":
 			
 			# IPFIX template set (ID 2)
 			if flow_set_id == 2:
+				template_position = byte_position
+				final_template_position = (byte_position + flow_set_length)-4
+
+				# Cache for the following templates
 				temp_template_cache = {}
 
-				logging.info("Unpacking template set at " + str(byte_position))
-				(template_id, template_id_length) = struct.unpack('!HH',flow_packet_contents[byte_position:byte_position+4])
-				logging.debug("Template " + str((template_id, template_id_length)))
-				
-				byte_position += 4 # Advance
-
-				# Template for flow data set
-				if template_id > 255:
-										
-					# Produce unique hash to identify unique template ID and sensor
-					hashed_id = hash(str(sensor_address[0])+str(template_id)) 
+				while template_position < final_template_position:
+					logging.info("Unpacking template set at " + str(template_position))
+					(template_id, template_id_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
+					logging.info("Found (ID, Elements) of " + str((template_id, template_id_length)))
 					
-					# Cache to upload to template store
-					temp_template_cache[hashed_id] = {}
-					temp_template_cache[hashed_id]["Sensor"] = str(sensor_address[0])
-					temp_template_cache[hashed_id]["Template ID"] = template_id
-					temp_template_cache[hashed_id]["Length"] = template_id_length
-					temp_template_cache[hashed_id]["Definitions"] = collections.OrderedDict() # ORDER MATTERS
-					
-					# Iterate through template lines
-					for _ in range(0,template_id_length):
+					template_position += 4 # Advance
 
-						# Unpack template element number and length
-						(template_element, template_element_length) = struct.unpack('!HH',flow_packet_contents[byte_position:byte_position+4])
-						temp_template_cache[hashed_id]["Definitions"][template_element] = template_element_length # Cache each line
-						byte_position += 4 # Advance
+					# Template for flow data set
+					if template_id > 255:
+											
+						# Produce unique hash to identify unique template ID and sensor
+						hashed_id = hash(str(sensor_address[0])+str(template_id)) 
+						
+						# Cache to upload to template store
+						temp_template_cache[hashed_id] = {}
+						temp_template_cache[hashed_id]["Sensor"] = str(sensor_address[0])
+						temp_template_cache[hashed_id]["Template ID"] = template_id
+						temp_template_cache[hashed_id]["Length"] = template_id_length
+						temp_template_cache[hashed_id]["Definitions"] = collections.OrderedDict() # ORDER MATTERS
+						
+						# Iterate through template lines
+						for _ in range(0,template_id_length):
+
+							# Unpack template element number and length
+							(template_element, template_element_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
+							
+							# Cache each Element and its Length
+							temp_template_cache[hashed_id]["Definitions"][template_element] = template_element_length 
+							
+							# Advance
+							template_position += 4 
+					
+					template_list.update(temp_template_cache) # Add template to the template cache	
+					logging.debug(str(template_list))
+					logging.info("Template " + str(template_id) + " parsed successfully")
 				
-				template_list.update(temp_template_cache) # Add template to the template cache	
-				logging.debug(str(template_list))
-				logging.info("Finished at " + str(byte_position))
+				logging.info("Finished parsing templates at byte " + str(template_position) + " of " + str(final_template_position))
+				
+				byte_position = (flow_set_length + byte_position)-4 # Advance to the end of the flow
 				
 			# IPFIX options template set (ID 3)
 			elif flow_set_id == 3:
@@ -214,22 +229,25 @@ if __name__ == "__main__":
 
 			# Received an IPFIX flow data set, corresponding with a template
 			elif flow_set_id > 255:
-				logging.info("Parsing data flow " + str(flow_set_id) + " at byte " + str(byte_position))
 				
 				# Compute the template hash ID
 				hashed_id = hash(str(sensor_address[0])+str(flow_set_id))
 				
 				# Check if there is a template
 				if hashed_id in template_list.keys():
-					logging.info("Using template hash " + str(hashed_id) + " at byte " + str(byte_position))
+
+					logging.info("Parsing data flow " + str(flow_set_id) + " at byte " + str(byte_position))
 					
 					# Get the current UTC time for the flows
 					now = datetime.datetime.utcnow()
+					
+					# Temporary counter	
+					data_position = byte_position 
+					
+					# Iterate through the bytes until we run out
+					while data_position+4 <= (flow_set_length + (byte_position-4)):						
 						
-					data_position = byte_position # Temporary counter
-					while data_position+4 <= (flow_set_length + (byte_position-4)):
-						
-						logging.info("Building flow_index dictionary at byte " + str(data_position))
+						logging.info("Parsing flow " + str(flow_set_id) + " at " + str(data_position) + ", sequence " + str(packet_attributes["sequence_number"]))
 
 						# Cache the flow data, to be appended to flow_dic[]						
 						flow_index = {
@@ -244,7 +262,7 @@ if __name__ == "__main__":
 						}
 						}
 
-						# Iterate through lines in the template to parse flow payloads
+						# Iterate through the template
 						for template_key, field_size in template_list[hashed_id]["Definitions"].iteritems():
 							
 							# IPv4 Address
@@ -465,23 +483,22 @@ if __name__ == "__main__":
 						logging.debug(str(flow_index))
 						flow_dic.append(flow_index)
 
+						logging.info("Finished sequence " + str(packet_attributes["sequence_number"]) + " at byte " + str(data_position))
+
 						record_num += 1 # Increment record counter
+						packet_attributes["sequence_number"] += 1 # Increment sequence number, per IPFIX standard
 
-						logging.info("Finished flow at byte " + str(data_position))
-
-				#logging.debug("Finished flow " + str(flow_set_id) + " at byte position " + str(byte_position))
-					
 				# No template, drop the flow per the standard and advanced the byte position
 				else:
 					byte_position += flow_set_length
 					logging.warning(
-					"Missing template for flow set " + 
+					"Missing template " + 
 					str(flow_set_id) + 
 					" from " + 
 					str(sensor_address[0]) + 
 					", sequence " + 
 					str(packet_attributes["sequence_number"]) + 
-					" - dropping per IPFIX standard"
+					" - DROPPING"
 					)
 					break
 				
