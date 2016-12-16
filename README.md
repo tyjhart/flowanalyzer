@@ -151,11 +151,15 @@ You can access your flow data in a few different ways - graphically via Kibana, 
 See the [installation documentation](Install/README.md#kibana-authentication-optional) for more information.
 
 # Limitations
-The following Netflow protocols or features are **NOT** supported by the Flow Analyzer project:
+The following protocols or vendor features are **NOT** supported by the Flow Analyzer project.
+
+## Vendor Features and Protocols
+These technologies may use a supported protocol for transport but there are proprietary fields, codes, or structures in use. Some protocols may require parsing that is undocumented or proprietary to the vendor.
 - [Cisco ASA Netflow Security Event Logging (NESL)](http://www.cisco.com/c/en/us/td/docs/security/asa/asa82/configuration/guide/config/monitor_nsel.html#wp1111174)
 - Cisco NAT Event Logging (NEL)
 
-These technologies may use Netflow as a transport protocol, but there are proprietary fields, codes, and structures in use that require additional parsing to handle.
+## Protocol Limitations
+- Netflow v5 does not support IPv6.
 
 # Debugging
 If you run into any issues during or after installation check out the [Debugging page](Debug.md) for helpful commands and debugging options.
