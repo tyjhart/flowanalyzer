@@ -39,15 +39,13 @@ class int_parse(object):
 
 ### Packed IP Parsers (Netflow v5, Netflow v9, IPFIX) ###
 class ip_parse(object):
+    import socket
     
     # Windows socket.inet_ntop support via win_inet_pton
     try:
         import win_inet_pton
     except ImportError:
         pass
-
-    # Unpackers for IPv4 and IPv6
-    from socket import inet_ntoa, inet_ntop
     
     def __init__(self):
         return
@@ -70,7 +68,7 @@ class ip_parse(object):
         Returns:
             str: IPv4 address
         """
-        payload = self.inet_ntoa(packed_data[pointer:pointer+field_size])
+        payload = self.socket.inet_ntoa(packed_data[pointer:pointer+field_size])
         return payload
 
     # Unpack IPv6
@@ -91,7 +89,7 @@ class ip_parse(object):
         Returns:
             str: IPv4 address
         """
-        payload = self.inet_ntop(socket.AF_INET6,packed_data[pointer:pointer+field_size])
+        payload = self.socket.inet_ntop(self.socket.AF_INET6,packed_data[pointer:pointer+field_size])
         return payload
 
 
