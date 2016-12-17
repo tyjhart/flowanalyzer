@@ -145,7 +145,7 @@ def ipv6_dns():
 	return
 
 
-### Netflow v9 server ###
+### Netflow v9 Collector ###
 if __name__ == "__main__":
 	
 	icmp_parser = icmp_parse() # Class for parsing ICMP Types and Codes
@@ -159,6 +159,7 @@ if __name__ == "__main__":
 	while True:
 
 		pointer = 0 # Tracking location in the packet
+		
 		flow_packet_contents, sensor_address = netflow_sock.recvfrom(65565) # Listen for packets inbound
 		
 		### Unpack the flow packet header ###
