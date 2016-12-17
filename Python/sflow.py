@@ -85,10 +85,10 @@ except ValueError as socket_error:
 	logging.critical(str(socket_error))
 	sys.exit("Could not open or bind a socket on port " + str(sflow_port))
 
-# Spin up ES instance
+### Elasticsearch ###
 es = Elasticsearch([elasticsearch_host])
 
-# sFlow collector
+### sFlow Collector ###
 if __name__ == "__main__":
 	from counter_records import * 	# Functions to parse counter record structures
 	from flow_records import * 		# Functions to parse flow record structures
@@ -514,17 +514,12 @@ if __name__ == "__main__":
 		### sFlow Samples End ###
 
 		# Elasticsearch bulk upload
-		if record_num > bulk_insert_count:
+		if record_num >= bulk_insert_count:
 
 			# Perform the bulk upload to the index
 			try:
 				helpers.bulk(es,sflow_data) # Call Elasticsearch bulk upload API
-
-				# Debug output to a file
-				#with open('data.txt', 'w') as outfile:
-					#json.dump(sflow_data, outfile)
-				
-				logging.warning(str(record_num) + " record(s) uploaded to Elasticsearch - OK")
+				logging.info(str(record_num) + " record(s) uploaded to Elasticsearch - OK")
 			
 			except ValueError as bulk_index_error:
 				logging.critical(bulk_index_error)
