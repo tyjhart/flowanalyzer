@@ -157,6 +157,7 @@ The following protocols or vendor features are **NOT** supported by the Flow Ana
 These technologies may use a supported protocol for transport but there are proprietary fields, codes, or structures in use. Some protocols may require parsing that is undocumented or proprietary to the vendor.
 - [Cisco ASA Netflow Security Event Logging (NESL)](http://www.cisco.com/c/en/us/td/docs/security/asa/asa82/configuration/guide/config/monitor_nsel.html#wp1111174)
 - Cisco NAT Event Logging (NEL)
+- [Cisco Streaming Telemetry](http://blogs.cisco.com/sp/streaming-telemetry-with-google-protocol-buffers)
 
 ## Protocol Limitations
 - Netflow v5 does not support IPv6.
