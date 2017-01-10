@@ -41,6 +41,10 @@ site_categories = {
 'edgesuite.net':'CDN',
 'llnw.net':'CDN',
 
+# Coding
+'github.com':'Coding',
+'gitlab.com':'Coding',
+
 # Email
 'outlook.com':'Email',
 'hotmail.com':'Email',

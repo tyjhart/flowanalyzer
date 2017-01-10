@@ -1,6 +1,135 @@
 # Copyright (c) 2016, Manito Networks, LLC
 # All rights reserved.
 
+### Packed Integer Parsers ###
+class name_lookups(object):
+    import socket, time
+    from site_category import site_categories
+
+    dns_cache = {} # Name cache
+
+    # Multicast per http://www.iana.org/assignments/multicast-addresses/multicast-addresses.xhtml
+    special_ips = {
+        "255.255.255.255":"Broadcast",
+        "127.0.0.1":"Localhost",
+        "224.0.0.0":"Multicast",
+        "224.0.0.1":"All Hosts Multicast",
+        "224.0.0.2":"All Routers Multicast",
+        "224.0.0.4":"DVMRP Multicast",
+        "224.0.0.5":"OSPF Router Multicast",
+        "224.0.0.6":"OSPF Designated Router Multicast",
+        "224.0.0.9":"RIPv2 Multicast",
+        "224.0.0.10":"EIGRP Multicast",
+        "224.0.0.12":"DHCP Server / Relay",
+        "224.0.0.13":"PIMv2 Multicast",
+        "224.0.0.14":"RSVP Encapsulation Multicast",
+        "224.0.0.18":"VRRP Multicast",
+        "224.0.0.19":"IS-IS Multicast",
+        "224.0.0.20":"IS-IS Multicast",
+        "224.0.0.21":"IS-IS Multicast",
+        "224.0.0.22":"IGMPv3 Multicast",
+        "224.0.0.102":"HSRPv2 Multicast",
+        "224.0.0.252":"Link-local Multicast Name Resolution",
+        "224.0.0.252":"Teredo Multicast"
+        }
+    
+    # Add special IPs to dns_cache
+    for key in special_ips:
+        dns_cache[key] = {}
+        dns_cache[key]["FQDN"] = special_ips[key]
+        dns_cache[key]["Domain"] = special_ips[key]
+        dns_cache[key]["Content"] = "Uncategorized"
+
+    second_level_domains = {
+    "co.id", # Indonesia
+    "co.in", # India
+    "co.jp", # Japan
+    "co.nz", # New Zealand
+    "co.uk", # United Kingdom
+    "co.za", # South Africa
+    "com.ar", # Argentina
+    "com.au", # Australia
+    "com.bn", # Brunei
+    "com.br", # Brazil
+    "com.cn", # People's Republic of China
+    "com.gh", # Ghana
+    "com.hk", # Hong Kong
+    "com.mx", # Mexico
+    "com.sg", # Singapore
+    "edu.au", # Australia
+    "net.au", # Australia
+    "net.il", # Israel
+    "org.au" # Australia
+    }
+
+    def __init__(self):
+        return
+
+    def ip_names(
+        self,
+        ip_version, # type: int
+        ip_addr # type: str
+        ):
+        """
+        DNS reverse lookups for SRC and DST IP addresses
+        
+        Args:
+            ip_version (int): Internet Protocol version
+            ip_addr (str): IP address for lookup
+
+        Returns:
+            dict: {Content, Domain, Expires, FQDN}
+        """
+
+        #if ip_version == 4: # IPv4 lookups
+                
+        if ip_addr not in self.dns_cache: # Not already cached
+            
+            # Record cache
+            self.dns_cache[ip_addr] = {}
+            self.dns_cache[ip_addr]["Expires"] = int(self.time.time())+1800
+            
+            try:
+                ip_lookup = str(self.socket.getfqdn(ip_addr)) # Run reverse lookup
+            except Exception as lookup_message: # DNS lookup failed
+                print(lookup_message)
+                return False
+            
+            # Successful lookup
+            if ip_lookup != ip_addr:
+                
+                # Update the local cache
+                self.dns_cache[ip_addr]["FQDN"] = ip_lookup # FQDN
+                
+                # Parse the FQDN for Domain information
+                if "." in ip_lookup:
+                    fqdn_exploded = ip_lookup.split('.') # Blow it up
+
+                    # Grab TLD and second-level domain
+                    domain = str(fqdn_exploded[-2]) + "." + str(fqdn_exploded[-1])
+                        
+                    # Check for .co.uk, .com.jp, etc...
+                    if domain in self.second_level_domains:
+                        domain = str(fqdn_exploded[-3]) + "." + str(domain) 
+                                        
+                # Hostname, no domain
+                else:
+                    domain = ip_lookup
+                
+                self.dns_cache[ip_addr]["Domain"] = domain # Domain
+
+                if self.dns_cache[ip_addr]["Domain"] in self.site_categories: # Documented site with Content
+                    self.dns_cache[ip_addr]["Content"] = self.site_categories[self.dns_cache[ip_addr]["Domain"]]
+                else:
+                    self.dns_cache[ip_addr]["Content"] = "Uncategorized" # Default content; Normalize graphs
+            
+            # No DNS record, use IP instead
+            else:
+                self.dns_cache[ip_addr]["FQDN"] = ip_addr # Normalize graphs
+                self.dns_cache[ip_addr]["Domain"] = ip_addr # Normalize graphs
+                self.dns_cache[ip_addr]["Content"] = "Uncategorized" # Default content; Normalize graphs
+        
+        return self.dns_cache[ip_addr]
 
 ### Packed Integer Parsers ###
 class int_parse(object):

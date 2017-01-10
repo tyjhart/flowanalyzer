@@ -8,15 +8,11 @@ from elasticsearch import Elasticsearch,helpers
 from IPy import IP
 
 # Parsing functions
-from parser_modules import mac_address, icmp_parse, ip_parse, netflowv9_parse, int_parse, ports_and_protocols
+from parser_modules import mac_address, icmp_parse, ip_parse, netflowv9_parse, int_parse, ports_and_protocols, name_lookups
 
 # Field types, defined ports, etc
 from field_types import v9_fields
 from netflow_options import *
-
-# DNS Resolution
-import dns_base
-import dns_ops
 
 ### Get the command line arguments ###
 try:
@@ -49,10 +45,6 @@ except NameError:
 
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.warning('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
-
-# Initialize the DNS global reverse lookup cache
-dns_base.init()
-logging.warning("Initialized the DNS reverse lookup cache - OK")
 
 if dns is False:
 	logging.warning("DNS reverse lookups disabled - DISABLED")
@@ -100,65 +92,22 @@ template_list = {}
 # Record counter for Elasticsearch bulk API upload trigger
 record_num = 0
 
-#IPv4 lookup
-def ipv4_dns():
-	# Resolve IPv4 Source IP
-	if "IPv4 Source" in flow_index["_source"]:
-		dns_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Source"])
-		if dns_dict == False:
-			pass
-		else:
-			flow_index["_source"]["Source FQDN"] = dns_dict["FQDN"]
-			flow_index["_source"]["Source Domain"] = dns_dict["Domain"]
-			if "Content" not in flow_index["_source"] or dns_dict["Category"] == "Uncategorized":
-				flow_index["_source"]["Content"] = dns_dict["Category"]	
-	
-	# Resolve IPv4 Destination IP
-	if "IPv4 Destination" in flow_index["_source"]:
-		dns_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Destination"])
-		if dns_dict == False:
-			pass
-		else:
-			flow_index["_source"]["Destination FQDN"] = dns_dict["FQDN"]
-			flow_index["_source"]["Destination Domain"] = dns_dict["Domain"]
-			if "Content" not in flow_index["_source"] or dns_dict["Category"] == "Uncategorized":
-				flow_index["_source"]["Content"] = dns_dict["Category"]
-	return
-
-# IPv6 lookup
-def ipv6_dns():
-	# Resolve IPv6 Source IP
-	if "IPv6 Source" in flow_index["_source"]:
-		dns_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv6 Source"])
-		flow_index["_source"]["Source FQDN"] = dns_dict["FQDN"]
-		flow_index["_source"]["Source Domain"] = dns_dict["Domain"]
-		if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-				flow_index["_source"]["Content"] = dns_dict["Category"]
-	
-	# Resolve IPv6 Destination IP
-	if "IPv6 Destination" in flow_index["_source"]:
-		dns_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv6 Destination"])
-		flow_index["_source"]["Destination FQDN"] = dns_dict["FQDN"]
-		flow_index["_source"]["Destination Domain"] = dns_dict["Domain"]
-		if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-				flow_index["_source"]["Content"] = dns_dict["Category"]
-	return
-
-
 ### Netflow v9 Collector ###
 if __name__ == "__main__":
 	
-	icmp_parser = icmp_parse() # Class for parsing ICMP Types and Codes
-	ip_parser = ip_parse() # Class for unpacking and parsing IPv4 and IPv6 addresses
-	mac = mac_address() # Class for unpacking and parsing MAC addresses and OUIs
-	netflow_v9_parser = netflowv9_parse() # Class for parsing specific Netflow v9 structures
-	int_un = int_parse() # Class for unpacking and parsing integers
-	ports_protocols_parser = ports_and_protocols() # Class for parsing ports and protocols
+	icmp_parser = icmp_parse() # ICMP Types and Codes
+	ip_parser = ip_parse() # Unpacking and parsing IPv4 and IPv6 addresses
+	mac = mac_address() # Unpacking and parsing MAC addresses and OUIs
+	netflow_v9_parser = netflowv9_parse() # Parsing Netflow v9 structures
+	int_un = int_parse() # Unpacking and parsing integers
+	ports_protocols_parser = ports_and_protocols() # Ports and Protocols
+	name_lookups = name_lookups() # DNS reverse lookups
 	
 	# Continually collect packets
 	while True:
 
 		pointer = 0 # Tracking location in the packet
+		flow_counter = 0 # For debug purposes only
 		
 		flow_packet_contents, sensor_address = netflow_sock.recvfrom(65565) # Listen for packets inbound
 		
@@ -191,8 +140,6 @@ if __name__ == "__main__":
 		if int(packet["netflow_version"]) != 9:
 			logging.warning("Received a non-Netflow v9 packet from " + str(sensor_address[0]) + " - SKIPPING PACKET")
 			continue # Bail out
-
-		flow_counter = 0 # For debug purposes only
 		
 		while True: # Iterate through all flows in the packet
 			
@@ -271,7 +218,7 @@ if __name__ == "__main__":
 
 							logging.info("Data flow number " + str(flow_counter) + ", set ID " + str(flow_set_id) + " from " + str(sensor_address[0])) 
 							
-							### Iterate through the template ###
+							### Iterate through the ordered template ###
 							for template_key, field_size in template_list[hashed_id]["Definitions"].iteritems():
 								
 								# Check if the template key is defined in the Netflow v9 standard fields
@@ -320,10 +267,12 @@ if __name__ == "__main__":
 								### MAC Address field ###
 								elif v9_fields[template_key]["Type"] == "MAC":
 									
-									# Returns (Parsed MAC, MAC OUI)
+									# Parse MAC
 									parsed_mac = mac.mac_packed_parse(flow_packet_contents,data_position,field_size)
 									flow_payload = parsed_mac[0] # Parsed MAC address
 									
+									### MAC Address OUIs ###
+									#
 									# Incoming Source MAC
 									if template_key == 56:							
 										flow_index["_source"]['Incoming Source MAC OUI'] = parsed_mac[1]
@@ -364,7 +313,7 @@ if __name__ == "__main__":
 									logging.warning("Unsupported field number " + str(template_key) + ", size " + str(field_size) + " from " + str(sensor_address[0]) + " in sequence " + str(packet["sequence_number"]))
 
 									data_position += field_size
-									continue # Bail out of this field, either undefined or proprietary
+									continue # Bail out of this field, either undefined or proprietary - skip
 								
 								### Special parsed fields with pre-defined values ###
 								if "Options" in v9_fields[template_key]: # Integer fields with pre-defined values in the v9 standard	
@@ -374,7 +323,7 @@ if __name__ == "__main__":
 										logging.warning("Failed to parse human option, template key " + str(template_key) + ", option key " + str(flow_payload) + ", from " + str(sensor_address[0]) + " - USING INTEGER VALUE")
 										flow_index["_source"][v9_fields[template_key]["Index ID"]] = flow_payload
 
-								### Typical non-parsed field ###
+								### Typical field with human-friendly name ###
 								else: 
 									flow_index["_source"][v9_fields[template_key]["Index ID"]] = flow_payload
 
@@ -389,29 +338,48 @@ if __name__ == "__main__":
 								flow_index["_source"]["Traffic"] = traffic_tags["Traffic"]
 								flow_index["_source"]["Traffic Category"] = traffic_tags["Traffic Category"]
 							
-							# Non-transport protocols eg OSPF, VRRP, etc
+							# Tag Non-transport protocols eg OSPF, VRRP, etc
 							else:
-								flow_index["_source"]["Traffic"] = None # No tagged traffic types for non-transport protocols
-								flow_index["_source"]["Source Port"] = None # Not a transport protocol
-								flow_index["_source"]["Destination Port"] = None # Not a transport protocol
-								
-								# Tag the protocol's "Category" if defined, otherwise tag "Other"
 								try: 
-									flow_index["_source"]["Traffic Category"]
-								except (NameError,KeyError):
 									flow_index["_source"]["Traffic Category"] = ports_protocols_parser.protocol_traffic_category(flow_index["_source"]['Protocol Number'])
+								except:
+									flow_index["_source"]["Traffic Category"] = "Uncategorized"
 							
 							### DNS Domain and FQDN tagging ###
 							if dns is True:
 
-								if flow_index["_source"]['IP Protocol Version'] == 4: 
-									ipv4_dns() # IPv4 hosts
+								# Source DNS
+								if "IPv4 Source" in flow_index["_source"]:
+									source_lookups = name_lookups.ip_names(4,flow_index["_source"]["IPv4 Source"])
+								elif "IPv6 Source" in flow_index["_source"]:
+									source_lookups = name_lookups.ip_names(6,flow_index["_source"]["IPv6 Source"])
 								
-								elif flow_index["_source"]['IP Protocol Version'] == 6:
-									ipv6_dns() # IPv6 hosts
+								flow_index["_source"]["Source FQDN"] = source_lookups["FQDN"]
+								flow_index["_source"]["Source Domain"] = source_lookups["Domain"]
+
+								# Destination DNS
+								if "IPv4 Destination" in flow_index["_source"]:
+									destination_lookups = name_lookups.ip_names(4,flow_index["_source"]["IPv4 Destination"])
+								elif "IPv6 Destination" in flow_index["_source"]:
+									destination_lookups = name_lookups.ip_names(6,flow_index["_source"]["IPv6 Destination"])
+
+								flow_index["_source"]["Destination FQDN"] = destination_lookups["FQDN"]
+								flow_index["_source"]["Destination Domain"] = destination_lookups["Domain"]
+
+								# Content
+								src_dest_categories = [source_lookups["Content"],destination_lookups["Content"]]
 								
-								else:
-									pass
+								try: # Pick unique domain Content != "Uncategorized"
+									unique_content = [category for category in src_dest_categories if category != "Uncategorized"]
+									flow_index["_source"]["Content"] = unique_content[0]
+								except: # No unique domain Content
+									flow_index["_source"]["Content"] = "Uncategorized"
+								
+								try: # Pick unique domain Content != "Uncategorized"
+									unique_content = [category for category in src_dest_categories if category != "Uncategorized"]
+									flow_index["_source"]["Content"] = unique_content[0]
+								except: # No unique domain Content
+									flow_index["_source"]["Content"] = "Uncategorized"
 
 							### Append flow to the cache ###
 							flow_dic.append(flow_index)
@@ -470,7 +438,3 @@ if __name__ == "__main__":
 				
 			flow_dic = [] # Reset flow_dic
 			record_num = 0 # Reset the record counter
-			
-			# Prune DNS to remove stale records
-			if dns is True:	
-				dns_ops.dns_prune() # Check if the DNS records need to be pruned
