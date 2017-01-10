@@ -16,6 +16,7 @@ from netflow_options import *
 # DNS Resolution
 import dns_base
 import dns_ops
+import parser_modules
 
 ### Get the command line arguments ###
 try:
@@ -28,9 +29,6 @@ try:
 				arg = arg.upper() # Uppercase for matching and logging.basicConfig() format
 				if arg in ["CRITICAL","ERROR","WARNING","INFO","DEBUG"]:
 					log_level = arg # Use what was passed in arguments
-				
-				else:
-					log_level = "WARNING" # Default logging level
 
 			elif opt in ('-h','--help'):
 				with open("./help.txt") as help_file:
@@ -82,8 +80,14 @@ except Exception as socket_error:
 	logging.critical(str(socket_error))
 	sys.exit()
 
-# Spin up ES instance connection
+# ElasticSearch class
 es = Elasticsearch([elasticsearch_host])
+
+# DNS lookup class
+name_lookups = parser_modules.name_lookups()
+
+# TCP / UDP identification class
+tcp_udp = parser_modules.ports_and_protocols()
 
 ### Netflow v5 Collector ###
 if __name__ == "__main__":
@@ -186,56 +190,32 @@ if __name__ == "__main__":
 				flow_index["_source"]['Traffic Category'] = protocol_type[protocol_num]["Category"]
 			
 			# If the protocol is TCP or UDP try to apply traffic labels
-			if flow_index["_source"]["Protocol Number"] == 6 or flow_index["_source"]["Protocol Number"] == 17:
-				
-				source_port = flow_index["_source"]["Source Port"]
-				destination_port = flow_index["_source"]["Destination Port"]
-
-				if source_port in registered_ports:
-					flow_index["_source"]['Traffic'] = registered_ports[source_port]["Name"]
-					if "Category" in registered_ports[source_port]:
-						flow_index["_source"]['Traffic Category'] = registered_ports[source_port]["Category"]
-				
-				elif source_port in other_ports:
-					flow_index["_source"]['Traffic'] = other_ports[source_port]["Name"]
-					if "Category" in other_ports[source_port]:
-						flow_index["_source"]['Traffic Category'] = other_ports[source_port]["Category"]			
-				
-				elif destination_port in registered_ports:
-					flow_index["_source"]['Traffic'] = registered_ports[destination_port]["Name"]
-					if "Category" in registered_ports[destination_port]:
-						flow_index["_source"]['Traffic Category'] = registered_ports[destination_port]["Category"]
-				
-				elif destination_port in other_ports:
-					flow_index["_source"]['Traffic'] = other_ports[destination_port]["Name"]
-					if "Category" in other_ports[destination_port]:
-						flow_index["_source"]['Traffic Category'] = other_ports[destination_port]["Category"]
-				
-				else:
-					# To normalize graphs
-					flow_index["_source"]['Traffic'] = "Other"
-
-				# Tag Traffic Category as "Other" to normalize graphs
-				if "Traffic Category" not in flow_index["_source"]:
-					flow_index["_source"]['Traffic Category'] = "Other"		
+			if flow_index["_source"]["Protocol Number"] in [6,17]:		
+				traffic_and_category = tcp_udp.port_traffic_classifier(src_port,dest_port)
+				flow_index["_source"]["Traffic"] = traffic_and_category["Traffic"]
+				flow_index["_source"]["Traffic Category"] = traffic_and_category["Traffic Category"]
 			
 			# Perform DNS lookups if enabled
 			if dns is True:	
 				
-				# Tag the flow with Source FQDN and Domain info (if available)
-				resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Source"])
-				if resolved_fqdn_dict:
-					flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
-					flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-					flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
+				# Source DNS
+				source_lookups = name_lookups.ip_names(4,flow_index["_source"]["IPv4 Source"])
+				flow_index["_source"]["Source FQDN"] = source_lookups["FQDN"]
+				flow_index["_source"]["Source Domain"] = source_lookups["Domain"]
+
+				# Destination DNS
+				destination_lookups = name_lookups.ip_names(4,flow_index["_source"]["IPv4 Destination"])
+				flow_index["_source"]["Destination FQDN"] = destination_lookups["FQDN"]
+				flow_index["_source"]["Destination Domain"] = destination_lookups["Domain"]
+
+				# Content
+				src_dest_categories = [source_lookups["Content"],destination_lookups["Content"]]
 				
-				# Tag the flow with Source FQDN and Domain info (if available)	
-				resolved_fqdn_dict = dns_ops.dns_add_address(flow_index["_source"]["IPv4 Destination"])
-				if resolved_fqdn_dict:
-					flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
-					flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-					if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-						flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]	
+				try: # Pick unique domain Content != "Uncategorized"
+					unique_content = [category for category in src_dest_categories if category != "Uncategorized"]
+					flow_index["_source"]["Content"] = unique_content[0]
+				except: # No unique domain Content
+					flow_index["_source"]["Content"] = "Uncategorized"
 			
 			logging.debug("Current flow data: " + str(flow_index))
 			logging.info("Finished flow " + str(flow_num+1) + " of " + str(packet_contents["flow_count"]))		
@@ -246,6 +226,7 @@ if __name__ == "__main__":
 			# Increment the record counter
 			record_num += 1
 				
+			# Elasticsearch bulk insert
 			if record_num >= bulk_insert_count:
 				
 				try:
