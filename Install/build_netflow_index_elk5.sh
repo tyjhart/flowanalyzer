@@ -95,3 +95,7 @@ curl -XPOST localhost:9200/_template/flow_template?pretty -d '
 }
 }
 }'
+
+# Dummy record to make Kibana play nice when adding the Index Pattern
+index_name="flow-"`date +'%Y-%m-%d'`
+curl -XPOST localhost:9200/$index_name/Flow -d '{"Bytes In" : "0"}'
