@@ -18,10 +18,6 @@ from xdrlib import Unpacker
 
 from netflow_options import * # Flow Options
 
-# DNS Resolution
-import dns_base
-import dns_ops
-
 ### Get the command line arguments ###
 try:
 	arguments = getopt.getopt(sys.argv[1:],"hl:",["--help","log="])
@@ -54,19 +50,33 @@ except NameError:
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.warning('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
 
-# Initialize the DNS global reverse lookup cache
-dns_base.init()
-logging.warning("Initialized the DNS reverse lookup cache - OK")
+### DNS Lookups ###
+#
+# Reverse lookups
+try:
+	if dns is False:
+		logging.warning("DNS reverse lookups disabled - DISABLED")
+	elif dns is True:
+		logging.warning("DNS reverse lookups enabled - OK")
+	else:
+		logging.warning("DNS enable option incorrectly set - DISABLING")
+		dns = False
+except:
+	logging.warning("DNS enable option not set - DISABLING")
+	dns = False
 
-if dns is False:
-	logging.warning("DNS reverse lookups disabled - DISABLED")
-else:
-	logging.warning("DNS reverse lookups enabled - OK")
-
-if lookup_internal is False:
-	logging.warning("DNS local IP reverse lookups disabled - DISABLED")
-else:
-	logging.warning("DNS local IP reverse lookups enabled - OK")
+# RFC-1918 reverse lookups
+try:
+	if lookup_internal is False:
+		logging.warning("DNS local IP reverse lookups disabled - DISABLED")
+	elif lookup_internal is True:
+		logging.warning("DNS local IP reverse lookups enabled - OK")
+	else:
+		logging.warning("DNS local IP reverse lookups incorrectly set - DISABLING")
+		lookup_internal = False
+except:
+	logging.warning("DNS local IP reverse lookups not set - DISABLING")
+	lookup_internal = False
 
 # Check if the sFlow port is specified
 try:
@@ -163,7 +173,20 @@ if __name__ == "__main__":
 					current_position = int(unpacked_sample_data.get_position()) # Current unpack buffer position
 					skip_position = current_position + counter_data_length # Bail out position if unpack fails for skipping
 					
-					logging.info("Flow record " + str(record_counter_num+1) + " of " + str(flow_sample_cache["Record Count"]) + ", type " + str(record_ent_form_number) + ", length " + str(counter_data_length) + ", XDR position " + str(current_position) + ", skip position " + str(skip_position))
+					logging.info(
+						"Flow record " + 
+						str(record_counter_num+1) + 
+						" of " + 
+						str(flow_sample_cache["Record Count"]) + 
+						", type " + 
+						str(record_ent_form_number) + 
+						", length " + 
+						str(counter_data_length) + 
+						", XDR position " + 
+						str(current_position) + 
+						", skip position " + 
+						str(skip_position)
+						)
 					
 					# Unpack the opaque flow record
 					unpacked_record_data = Unpacker(unpacked_sample_data.unpack_fopaque(counter_data_length))
@@ -481,7 +504,7 @@ if __name__ == "__main__":
 
 					except Exception as flow_unpack_error:
 						flow_index = False
-						unpacked_sample_data.set_position(skip_position) # Skip the unknown type
+						unpacked_sample_data.set_position(skip_position) # Skip it
 						logging.warning(str(flow_unpack_error))
 						logging.warning("Failed to unpack Counter record " + str(record_ent_form_number) + " - FAIL")
 

@@ -2,7 +2,7 @@
 # All rights reserved.
 
 # Import what we need
-import time, datetime, socket, struct, sys, json, socket, logging, logging.handlers, getopt
+import time, datetime, socket, struct, sys, json, socket, logging, logging.handlers, getopt, parser_modules
 from struct import *
 from socket import inet_ntoa
 from elasticsearch import Elasticsearch,helpers
@@ -12,11 +12,6 @@ from IPy import IP
 from protocol_numbers import protocol_type
 from defined_ports import registered_ports,other_ports
 from netflow_options import *
-
-# DNS Resolution
-import dns_base
-import dns_ops
-import parser_modules
 
 ### Get the command line arguments ###
 try:
@@ -50,12 +45,33 @@ except NameError:
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.critical('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
 
-# Initialize the DNS global reverse lookup cache
-dns_base.init()
-logging.warning("Initialized the DNS reverse lookup cache - OK")
+### DNS Lookups ###
+#
+# Reverse lookups
+try:
+	if dns is False:
+		logging.warning("DNS reverse lookups disabled - DISABLED")
+	elif dns is True:
+		logging.warning("DNS reverse lookups enabled - OK")
+	else:
+		logging.warning("DNS enable option incorrectly set - DISABLING")
+		dns = False
+except:
+	logging.warning("DNS enable option not set - DISABLING")
+	dns = False
 
-if dns is False:
-	logging.warning("DNS reverse lookups disabled - OK")
+# RFC-1918 reverse lookups
+try:
+	if lookup_internal is False:
+		logging.warning("DNS local IP reverse lookups disabled - DISABLED")
+	elif lookup_internal is True:
+		logging.warning("DNS local IP reverse lookups enabled - OK")
+	else:
+		logging.warning("DNS local IP reverse lookups incorrectly set - DISABLING")
+		lookup_internal = False
+except:
+	logging.warning("DNS local IP reverse lookups not set - DISABLING")
+	lookup_internal = False
 
 # Set packet information variables
 #
@@ -241,7 +257,3 @@ if __name__ == "__main__":
 
 				# Reset the record counter
 				record_num = 0
-				
-				# Prune DNS to remove stale records
-				if dns is True:	
-					dns_ops.dns_prune() # Check if the DNS records need to be pruned

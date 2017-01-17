@@ -16,17 +16,12 @@ from elasticsearch import Elasticsearch,helpers
 from IPy import IP
 
 # Parsing functions
-from parser_modules import mac_address, icmp_parse, ip_parse, int_parse, ports_and_protocols
+from parser_modules import mac_address, icmp_parse, ip_parse, netflowv9_parse, int_parse, ports_and_protocols, name_lookups
 
 # Field types, ports, etc
-from defined_ports import registered_ports,other_ports
 from field_types import ipfix_fields
 from netflow_options import *
 from protocol_numbers import *
-
-# DNS Resolution
-import dns_base
-import dns_ops
 
 ### Get command line arguments ###
 try:
@@ -61,19 +56,33 @@ except NameError:
 logging.basicConfig(level=str(log_level)) # Set the logging level
 logging.critical('Log level set to ' + str(log_level) + " - OK") # Show the logging level for debug
 
-# Initialize the DNS global reverse lookup cache
-dns_base.init()
-logging.warning("Initialized the DNS reverse lookup cache - OK")
+### DNS Lookups ###
+#
+# Reverse lookups
+try:
+	if dns is False:
+		logging.warning("DNS reverse lookups disabled - DISABLED")
+	elif dns is True:
+		logging.warning("DNS reverse lookups enabled - OK")
+	else:
+		logging.warning("DNS enable option incorrectly set - DISABLING")
+		dns = False
+except:
+	logging.warning("DNS enable option not set - DISABLING")
+	dns = False
 
-if dns is False:
-	logging.warning("DNS reverse lookups disabled - DISABLED")
-else:
-	logging.warning("DNS reverse lookups enabled - OK")
-
-if lookup_internal is False:
-	logging.warning("DNS local IP reverse lookups disabled - DISABLED")
-else:
-	logging.warning("DNS local IP reverse lookups enabled - OK")
+# RFC-1918 reverse lookups
+try:
+	if lookup_internal is False:
+		logging.warning("DNS local IP reverse lookups disabled - DISABLED")
+	elif lookup_internal is True:
+		logging.warning("DNS local IP reverse lookups enabled - OK")
+	else:
+		logging.warning("DNS local IP reverse lookups incorrectly set - DISABLING")
+		lookup_internal = False
+except:
+	logging.warning("DNS local IP reverse lookups not set - DISABLING")
+	lookup_internal = False
 
 ### IPFIX port ###
 try:
@@ -110,6 +119,7 @@ if __name__ == "__main__":
 	mac = mac_address() # Class for parsing MAC addresses and OUIs
 	int_un = int_parse() # Class for parsing integers
 	ports_protocols_parser = ports_and_protocols() # Class for parsing ports and protocols
+	name_lookups = name_lookups() # Class for DNS lookups
 	
 	while True: # Continually collect packets
 		
@@ -117,9 +127,6 @@ if __name__ == "__main__":
 		
 		### Unpack the flow packet header ###
 		try:
-			
-			logging.info("Unpacking header from " + str(sensor_address[0])) 
-			
 			packet_attributes = {} # Flow header attributes cache	
 			
 			(
@@ -132,11 +139,12 @@ if __name__ == "__main__":
 
 			packet_attributes["sensor"] = sensor_address[0] # For debug purposes
 
-			logging.info(str(packet_attributes))
+			logging.info("Unpacking header: " + str(packet_attributes))
 		
 		# Error unpacking the header
 		except Exception as flow_header_error:
 			logging.warning("Failed unpacking flow header from " + str(sensor_address[0]) + " - FAIL")
+			logging.warning(flow_header_error)
 			continue
 		
 		### Check IPFIX version ###
@@ -165,11 +173,11 @@ if __name__ == "__main__":
 			# Advance past the initial header of ID and length
 			byte_position += 4 
 			
-			### Parse sets based on ID ###
-			# Set ID 0 and 1 are not used
-			# Set ID 2 is a Template
-			# Set ID 3 is an Options Template
-			# Set IDs > 255 are flow data
+			### Parse sets based on Set ID ###
+			# ID 0 and 1 are not used
+			# ID 2 is a Template
+			# ID 3 is an Options Template
+			# IDs > 255 are flow data
 			
 			# IPFIX template set (ID 2)
 			if flow_set_id == 2:
@@ -177,12 +185,12 @@ if __name__ == "__main__":
 				final_template_position = (byte_position + flow_set_length)-4
 
 				# Cache for the following templates
-				temp_template_cache = {}
+				template_cache = {}
 
 				while template_position < final_template_position:
 					logging.info("Unpacking template set at " + str(template_position))
 					(template_id, template_id_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
-					logging.info("Found (ID, Elements) of " + str((template_id, template_id_length)))
+					logging.info("Found (ID, Elements) -- " + str((template_id, template_id_length)))
 					
 					template_position += 4 # Advance
 
@@ -193,11 +201,11 @@ if __name__ == "__main__":
 						hashed_id = hash(str(sensor_address[0])+str(template_id)) 
 						
 						# Cache to upload to template store
-						temp_template_cache[hashed_id] = {}
-						temp_template_cache[hashed_id]["Sensor"] = str(sensor_address[0])
-						temp_template_cache[hashed_id]["Template ID"] = template_id
-						temp_template_cache[hashed_id]["Length"] = template_id_length
-						temp_template_cache[hashed_id]["Definitions"] = collections.OrderedDict() # ORDER MATTERS
+						template_cache[hashed_id] = {}
+						template_cache[hashed_id]["Sensor"] = str(sensor_address[0])
+						template_cache[hashed_id]["Template ID"] = template_id
+						template_cache[hashed_id]["Length"] = template_id_length
+						template_cache[hashed_id]["Definitions"] = collections.OrderedDict() # ORDER MATTERS
 						
 						# Iterate through template lines
 						for _ in range(0,template_id_length):
@@ -206,12 +214,12 @@ if __name__ == "__main__":
 							(template_element, template_element_length) = struct.unpack('!HH',flow_packet_contents[template_position:template_position+4])
 							
 							# Cache each Element and its Length
-							temp_template_cache[hashed_id]["Definitions"][template_element] = template_element_length 
+							template_cache[hashed_id]["Definitions"][template_element] = template_element_length 
 							
 							# Advance
 							template_position += 4 
 					
-					template_list.update(temp_template_cache) # Add template to the template cache	
+					template_list.update(template_cache) # Add template to the template cache	
 					logging.debug(str(template_list))
 					logging.info("Template " + str(template_id) + " parsed successfully")
 				
@@ -238,13 +246,10 @@ if __name__ == "__main__":
 
 					logging.info("Parsing data flow " + str(flow_set_id) + " at byte " + str(byte_position))
 					
-					# Get the current UTC time for the flows
-					now = datetime.datetime.utcnow()
+					now = datetime.datetime.utcnow() # Get the current UTC time for the flows
+					data_position = byte_position # Temporary counter
 					
-					# Temporary counter	
-					data_position = byte_position 
-					
-					# Iterate through the bytes until we run out
+					# Iterate through flow bytes until we run out
 					while data_position+4 <= (flow_set_length + (byte_position-4)):						
 						
 						logging.info("Parsing flow " + str(flow_set_id) + " at " + str(data_position) + ", sequence " + str(packet_attributes["sequence_number"]))
@@ -262,105 +267,28 @@ if __name__ == "__main__":
 						}
 						}
 
-						# Iterate through the template
+						# Iterate through template elements
 						for template_key, field_size in template_list[hashed_id]["Definitions"].iteritems():
 							
 							# IPv4 Address
 							if ipfix_fields[template_key]["Type"] == "IPv4":
-								flow_payload = inet_ntoa(flow_packet_contents[data_position:(data_position+field_size)])
+								flow_payload = ip_parser.parse_ipv4(flow_packet_contents,data_position,field_size)
 								flow_index["_source"]["IP Protocol Version"] = 4
-
-								# Domain and FQDN lookups for IPv4
-								if dns is True:
-
-									# IPv4 Source IP
-									if template_key == 8:
-										if flow_payload == "255.255.255.255": # Ignore broadcast traffic
-											pass
-										else:
-											source_ip = IP(str(flow_payload)+"/32")
-											if lookup_internal is False and source_ip.iptype() == 'PRIVATE':
-												pass
-											else:
-												resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-												flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
-												flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-												if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-													flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
-									
-									# IPv4 Destination IP
-									elif template_key == 12:
-										if flow_payload == "255.255.255.255": # Ignore broadcast traffic
-											pass
-										else: 
-											destination_ip = IP(str(flow_payload)+"/32")
-											if lookup_internal is False and destination_ip.iptype() == 'PRIVATE':
-												pass
-											else:
-												resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-												flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
-												flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-												if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-													flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
-
-									# Not source or destination IP, don't resolve it
-									else:
-										pass
 								
 							# IPv6 Address
 							elif ipfix_fields[template_key]["Type"] == "IPv6":
-								flow_payload = inet_ntop(socket.AF_INET6,flow_packet_contents[data_position:(data_position+field_size)])
-								flow_index["_source"]["IP Protocol Version"] = 6
-
-								# Domain and FQDN lookups for IPv6
-								if dns is True:
-
-									# IPv6 Source IP
-									if template_key == 27:
-										resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-										flow_index["_source"]["Source FQDN"] = resolved_fqdn_dict["FQDN"]
-										flow_index["_source"]["Source Domain"] = resolved_fqdn_dict["Domain"]
-										if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
-									
-									# IPv6 Destination IP
-									elif template_key == 28:
-										resolved_fqdn_dict = dns_ops.dns_add_address(flow_payload)
-										flow_index["_source"]["Destination FQDN"] = resolved_fqdn_dict["FQDN"]
-										flow_index["_source"]["Destination Domain"] = resolved_fqdn_dict["Domain"]
-										if "Content" not in flow_index["_source"] or flow_index["_source"]["Content"] == "Uncategorized":
-												flow_index["_source"]["Content"] = resolved_fqdn_dict["Category"]
-
-									# Not source or destination IP, don't resolve it
-									else:
-										pass	
+								flow_payload = ip_parser.parse_ipv6(flow_packet_contents,data_position,field_size)
+								flow_index["_source"]["IP Protocol Version"] = 6	
 							
 							# Integer type field, parse further
 							elif ipfix_fields[template_key]["Type"] == "Integer":
 								
-								# Unpack the integer so we can process it
-								if field_size == 1:
-									flow_payload = struct.unpack('!B',flow_packet_contents[data_position:(data_position+field_size)])[0]
-								elif field_size == 2:
-									flow_payload = struct.unpack('!H',flow_packet_contents[data_position:(data_position+field_size)])[0]	
-								elif field_size == 4:
-									flow_payload = struct.unpack('!I',flow_packet_contents[data_position:(data_position+field_size)])[0]
-								elif field_size == 8:
-									flow_payload = struct.unpack('!Q',flow_packet_contents[data_position:(data_position+field_size)])[0]
-								else:
-									logging.warning("Failed to unpack an integer for " + str(ipfix_fields[template_key]["Index ID"]) + " - SKIPPING")
-									data_position += field_size
-									continue # Bail out	
+								# Unpack the integer
+								flow_payload = int_un.integer_unpack(flow_packet_contents,data_position,field_size)
 								
-								# Set the IANA protocol number for the index, in case the customer wants to sort by protocol number instead of name
+								# IANA protocol number
 								if template_key == 4:
 									flow_index["_source"]['Protocol Number'] = flow_payload
-									
-									# Add "Category" of the protocol if there is one ("Routing", "ICMP", etc.)
-									if "Category" in protocol_type[flow_payload]:
-										flow_index["_source"]['Traffic Category'] = protocol_type[flow_payload]["Category"] 
-									else:
-										flow_index["_source"]['Traffic Category'] = "Other" # To normalize graphs
 								
 								# Do the special calculations for ICMP Code and Type (% operator)
 								elif template_key in [32,139]:
@@ -385,16 +313,10 @@ if __name__ == "__main__":
 									
 							# MAC Address
 							elif ipfix_fields[template_key]["Type"] == "MAC":
-								try:
-									mac_objects = struct.unpack('!%dB' % field_size,flow_packet_contents[data_position:(data_position+field_size)])
-									mac_address = mac.mac_parse(mac_objects)
-									if mac_address is False:
-										data_position += field_size
-										continue
-									else:
-										flow_payload = mac_address[0]	
-								except Exception as mac_parse_error:
-									logging.warning("Unable to parse MAC field, number " + str(template_key) + " from " + str(sensor_address[0]))
+								
+								# Parse MAC
+								parsed_mac = mac.mac_packed_parse(flow_packet_contents,data_position,field_size)
+								flow_payload = parsed_mac[0] # Parsed MAC address
 							
 							# Check if we've been passed a "Vendor Proprietary" field, and if so log it and skip it
 							elif ipfix_fields[template_key]["Type"] == "Vendor Proprietary":
@@ -425,59 +347,50 @@ if __name__ == "__main__":
 							# Move the byte position the number of bytes we just parsed
 							data_position += field_size
 						
-						# If TCP, UDP, DCCP, or SCTP (transport) try to classify the service based on IANA port numbers
-						# http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
-						if flow_index["_source"]['Protocol Number'] in [6,17,33,132]: 						
-
-							# Registered IANA ports < 1024 - Source Port
-							if flow_index["_source"]['Source Port'] in registered_ports:
-
-								# Tag the service
-								flow_index["_source"]['Traffic'] = registered_ports[flow_index["_source"]['Source Port']]["Name"]
-								
-								# Tag the service category
-								if "Category" in registered_ports[flow_index["_source"]['Source Port']]:
-									flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_index["_source"]['Source Port'])]["Category"]
-							
-							# Not a registered port, check if it's a popular port - Source Port
-							elif flow_index["_source"]['Source Port'] in other_ports:
-								
-								# Tag the service
-								flow_index["_source"]['Traffic'] = other_ports[flow_index["_source"]['Source Port']]["Name"]
-								
-								# Tag the service category
-								if "Category" in other_ports[flow_index["_source"]['Source Port']]:
-									flow_index["_source"]['Traffic Category'] = other_ports[int(flow_index["_source"]['Source Port'])]["Category"]
-							
-							# Registered IANA ports < 1024 - Destination Port
-							elif flow_index["_source"]['Destination Port'] in registered_ports:
-
-								# Tag the service
-								flow_index["_source"]['Traffic'] = registered_ports[flow_index["_source"]['Destination Port']]["Name"]
-								
-								# Tag the service category
-								if "Category" in registered_ports[flow_index["_source"]['Destination Port']]:
-									flow_index["_source"]['Traffic Category'] = registered_ports[int(flow_index["_source"]['Destination Port'])]["Category"]
-							
-							# Not a registered port, check if it's a popular port - Destination Port
-							elif flow_index["_source"]['Destination Port'] in other_ports:
-								
-								# Tag the service
-								flow_index["_source"]['Traffic'] = other_ports[flow_index["_source"]['Destination Port']]["Name"]
-								
-								# Tag the service category
-								if "Category" in other_ports[flow_index["_source"]['Destination Port']]:
-									flow_index["_source"]['Traffic Category'] = other_ports[int(flow_index["_source"]['Destination Port'])]["Category"]
-							
-							# Not a categorized port
-							else:
-								pass
+						### Traffic and Traffic Category tagging ###
+						#
+						# Transport protocols eg TCP, UDP, etc
+						if int(flow_index["_source"]['Protocol Number']) in (6, 17, 33, 132):
+							traffic_tags = ports_protocols_parser.port_traffic_classifier(flow_index["_source"]["Source Port"],flow_index["_source"]["Destination Port"])
+							flow_index["_source"]["Traffic"] = traffic_tags["Traffic"]
+							flow_index["_source"]["Traffic Category"] = traffic_tags["Traffic Category"]
 						
-						# Set Traffic and Traffic Category to "Other" if not already defined, to normalize graphs
-						if "Traffic" not in flow_index["_source"]:
-							flow_index["_source"]["Traffic"] = "Other"
-						if "Traffic Category" not in flow_index["_source"]:
-							flow_index["_source"]["Traffic Category"] = "Other"
+						# Non-transport protocols eg OSPF, VRRP, etc
+						else:
+							try: 
+								flow_index["_source"]["Traffic Category"] = ports_protocols_parser.protocol_traffic_category(flow_index["_source"]['Protocol Number'])
+							except:
+								flow_index["_source"]["Traffic Category"] = "Uncategorized"
+						
+						### DNS Domain and FQDN tagging ###
+						if dns is True:
+
+							# Source DNS
+							if "IPv4 Source" in flow_index["_source"]:
+								source_lookups = name_lookups.ip_names(4,flow_index["_source"]["IPv4 Source"])
+							elif "IPv6 Source" in flow_index["_source"]:
+								source_lookups = name_lookups.ip_names(6,flow_index["_source"]["IPv6 Source"])
+							
+							flow_index["_source"]["Source FQDN"] = source_lookups["FQDN"]
+							flow_index["_source"]["Source Domain"] = source_lookups["Domain"]
+
+							# Destination DNS
+							if "IPv4 Destination" in flow_index["_source"]:
+								destination_lookups = name_lookups.ip_names(4,flow_index["_source"]["IPv4 Destination"])
+							elif "IPv6 Destination" in flow_index["_source"]:
+								destination_lookups = name_lookups.ip_names(6,flow_index["_source"]["IPv6 Destination"])
+
+							flow_index["_source"]["Destination FQDN"] = destination_lookups["FQDN"]
+							flow_index["_source"]["Destination Domain"] = destination_lookups["Domain"]
+
+							# Content
+							src_dest_categories = [source_lookups["Content"],destination_lookups["Content"]]
+							
+							try: # Pick unique domain Content != "Uncategorized"
+								unique_content = [category for category in src_dest_categories if category != "Uncategorized"]
+								flow_index["_source"]["Content"] = unique_content[0]
+							except: # No unique domain Content
+								flow_index["_source"]["Content"] = "Uncategorized"
 						
 						# Append this single flow to the flow_dic[] for bulk upload
 						logging.debug(str(flow_index))
@@ -524,7 +437,3 @@ if __name__ == "__main__":
 			flow_dic = [] # Reset flow_dic
 
 			record_num = 0 # Reset record counter
-
-			# Prune DNS to remove stale records
-			if dns is True:	
-				dns_ops.dns_prune() # Check if the DNS records need to be pruned
