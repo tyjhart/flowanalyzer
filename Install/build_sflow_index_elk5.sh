@@ -210,3 +210,8 @@ curl -XPOST localhost:9200/_template/sflow_template?pretty -d '
 }
 }
 }'
+
+# Dummy records to make Kibana play nice when adding the Index Pattern
+index_name="sflow-"`date +'%Y-%m-%d'`
+curl -XPOST localhost:9200/$index_name/sFlow%20Counter -d '{"Bytes In" : "0"}'
+curl -XPOST localhost:9200/$index_name/sFlow%20Flow -d '{"Bytes In" : "0"}'
