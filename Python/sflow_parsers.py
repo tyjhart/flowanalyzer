@@ -356,7 +356,7 @@ def url_direction(
 def wlan_version(
 	version_num # type: int
 	):
-	"""Reconcile  InMon-defined 802.11 WLAN version numbers to WiFi letter designations"""
+	"""Reconcile InMon-defined 802.11 WLAN version numbers to WiFi letter designations"""
 	if version_num == 1:
 		return "A"
 	elif version_num == 2:
