@@ -372,9 +372,9 @@ def physical_host_cpu(
 	):
 	"""Physical Host CPU Counter - Type: Counter, Enterprise: 0, Format: 2003"""
 	sample_data = {} # Cache
-	sample_data["Load One"] = float(data.unpack_float())
-	sample_data["Load Five"] = float(data.unpack_float())
-	sample_data["Load Fifteen"] = float(data.unpack_float())
+	sample_data["Load One"] = round(data.unpack_float(),3)
+	sample_data["Load Five"] = round(data.unpack_float(),3)
+	sample_data["Load Fifteen"] = round(data.unpack_float(),3)
 	sample_data["Running Processes"] = int(data.unpack_uint())
 	sample_data["Total Processes "] = int(data.unpack_uint())
 	sample_data["CPU Count"] = int(data.unpack_uint())
@@ -400,7 +400,6 @@ def physical_host_memory(
 	sample_data = {} # Cache
 	sample_data["Memory Total"] = data.unpack_hyper()
 	sample_data["Memory Free"] = data.unpack_hyper()
-	#sample_data["Percentage Memory Free"] = sample_data["Memory Free"]/sample_data["Memory Total"]
 	sample_data["Memory Shared"] = data.unpack_hyper()
 	sample_data["Memory Buffers"] = data.unpack_hyper()
 	sample_data["Memory Cached"] = data.unpack_hyper()
