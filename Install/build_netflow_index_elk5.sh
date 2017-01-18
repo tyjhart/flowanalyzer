@@ -75,6 +75,7 @@ curl -XPOST localhost:9200/_template/flow_template?pretty -d '
 "Source AS":                            {"type":"integer"},
 "Source Domain":                        {"type":"keyword"},
 "Source FQDN":                          {"type":"keyword"},
+"Source ID":                            {"type":"integer"},
 "Source Mask":                          {"type":"integer"},
 "Source Port":                          {"type":"integer"},
 "Source Type of Service":               {"type":"integer"},
