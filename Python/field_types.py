@@ -1,6 +1,5 @@
-# Copyright (c) 2016, Manito Networks, LLC
+# Copyright (c) 2017, Manito Networks, LLC
 # All rights reserved.
-
 
 # Types of Netflow v9 fields, per https://www.ietf.org/rfc/rfc3954.txt and http://www.iana.org/assignments/ipfix/ipfix.xhtml#ipfix-information-elements
 # Special ASA fields per http://www.cisco.com/c/en/us/td/docs/security/asa/special/netflow/guide/asa_netflow.html#pgfId-1330387
