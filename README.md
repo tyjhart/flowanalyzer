@@ -8,12 +8,11 @@ See the [License section](#license) below for licensing details, and the [Releas
 1. [Project Goals](#project-goals)
 2. [Features](#features)
     1. [Quick Installation](#quick-installation)
-    2. [Flow Monitoring Protocols](#flow-monitoring-protocols)
+    2. [Protocol Support](#protocol-support)
     3. [Fields](#fields)
     4. [Tags](#tags)
     5. [DNS Reverse Lookups](#dns-reverse-lookups)
     6. [MAC Address Lookups](#mac-address-lookups)
-    7. [Development Roadmap](#development-roadmap)
 3. [Requirements](#requirements)
     1. [RAM and CPU](#ram-and-cpu)
     2. [Storage](#storage)
@@ -36,16 +35,16 @@ Our goal is to provide superior Netflow and IPFIX collection, visualization, and
 - Scalable solutions that can evolve as you grow
 - Superior documentation from architecture through installation, configuration, tuning, and troubleshooting
 
-One other goal of ours is to make Elasticsearch and Kibana easy to implement and accessible to those who haven't used it before. The learning curve for distributed search systems and dashboarding software can be steap, but we think that everyone
+One other goal is to make Elasticsearch and Kibana easy to implement and accessible to those who haven't used it before. The learning curve for distributed search systems and dashboarding software can be steap, but we think that everyone
 should be able to realize the benefits of meaningful, beautiful data visualization.
 
 # Features
-The Flow Analyzer has flow collection, tagging, and categorizing capabilities to satisfy enterprise, service provider, and research and development networking.
+The Flow Analyzer has the flow collection, tagging, and categorizing capabilities to satisfy enterprise and service provider requirements.
 
 ## Quick Installation
-You can go from zero to up-and-running with graphed flow data in less than one hour. Check out [the installation documentation](Install/README.md).
+Go from zero to visualized flow data in less than one hour. See [the installation documentation](Install/README.md) for easy to follow step-by-step instructions.
 
-## Flow Monitoring Protocols
+## Protocol Support
 The Manito Networks Flow Analyzer supports the following flow data protocols:
 
 - Netflow v5 (Cisco)
@@ -60,16 +59,16 @@ If you're not familiar with Netflow or IPFIX that's alright - take a look at the
 Our software ingests Netflow (and Netflow-equivalents), IPFIX, and sFlow data then parses and tags it, and stores it in Elasticsearch for you to query and graph in Kibana.
 
 ## Fields
-The Flow Analyzer supports all Netflow v5 fields, all standard non-proprietary Netflow v9 fields, all IPFIX fields in the RFC, and almost all sFlow structures defined by InMon Corporation's enterprise ID. See the [Fields document](Fields.md) for a description of Netflow (v5, v9) and IPFIX fields. The [sFlow document](sFlow.md) includes descriptions of supported Flow and Counter structures.
+The Flow Analyzer supports all Netflow v5 fields, non-proprietary Netflow v9 fields, IPFIX fields specified in the RFC, and almost all sFlow structures defined by InMon Corporation's enterprise ID. See the [Fields document](Fields.md) for a description of Netflow (v5, v9) and IPFIX fields. The [sFlow document](sFlow.md) includes descriptions of supported Flow and Counter structures.
 
 Kibana Visualizations and Dashboards are included so you can leverage supported fields and structures right away. 
 
-Some limitations exist, mostly around proprietary or undocumented fields in Netflow and proprietary structures in sFlow - see the [Limitations](#limitations) section for details. Efforts are made to skip over unsupported or proprietary elements and continue parsing data uninterrupted.
+Some limitations exist, mostly around proprietary or undocumented fields in Netflow and proprietary structures in sFlow. See the [Limitations](#limitations) section for details. Efforts are made to skip over unsupported or proprietary elements and continue parsing data uninterrupted.
 
 ## Tags
-Our custom Netflow, IPFIX, and sFlow collectors ingest and tag flow data. We record not only the basic protocol and port numbers, but we also take it a step further and correlate the following:
+Our custom Netflow, IPFIX, and sFlow collectors ingest, parse, and tag flow data. We record not only the basic protocol and port numbers but we also take it a step further and correlate the following:
 
-- Protocol numbers to protocol names (eg protocol 1 to "ICMP", 6 to "TCP")
+- IANA protocol numbers to names (eg protocol 1 to "ICMP", 6 to "TCP", 89 to "OSPF")
 - IANA-registered port numbers to services (eg port 80 to "HTTP", 53 to "DNS")
 - Services to categories (eg HTTP, HTTPS, Alt-HTTP to "Web")
 
@@ -84,9 +83,6 @@ Correlation of MAC address OUI's to top manufacturers is done to help graph traf
 
 Note: This feature is in beta, and the list of OUI's to be built is quite extensive.
 
-## Development Roadmap
-See the [Roadmap file](ROADMAP.md) for information on upcoming features and current development efforts.
-
 # Requirements
 At least one Ubuntu Server installation with the following **minimum** hardware specs:
 
@@ -100,15 +96,16 @@ A **minimum** of 20GB HDD space is recommended for testing the appliance, but lo
 - Flow data retenion (default 30 days)
 - Number of flow exporters (routers, switches, etc)
 - Sampling rate for protocols like Netflow v9 and IPFIX
-- Average network flow volume over time
+- Average network flow volume
 - Peak network flow volume and duration
 
-Every network is different, so it's difficult to give a hard-and-fast suggestion on the right amount of storage for your organization over the long-term. It's recommended that you start small with a couple collectors, determine your average daily index size, then scale up from there.
+Every network is different so it's difficult to give a quick suggestion for the right amount of storage for your organization. We recommended that you start small with a couple collectors to determine your average daily index size. Once you have a baseline scale up from there.
 
 ## Operating System
 The following versions of Ubuntu Server have been tested and verified to work with the [installation](./Install/README.md) script:
 
 - 16.04 LTS
+- 16.04.1 LTS
 - 16.10
 
 **Note**: The installation script is incompatible with Ubuntu versions prior to 15.04 due to the move to SystemD.
@@ -136,22 +133,20 @@ See the [Flow Management blog](http://www.manitonetworks.com/flow-management/) f
 # Ports and Protocols
 All services listen for UDP flow packets on the following default ports:
 
-Service     | Protocol  | Port  | Purpose                                   |
----         | ---       | ---   | ---                                       |
-Netflow v5  | UDP       | 2055  | Basic flow monitoring                     |
-Netflow v9  | UDP       | 9995  | Intermediate flow monitoring              |
-IPFIX       | UDP       | 4739  | Advanced flow monitoring                  |
-sFlow       | UDP       | 6343  | Advanced flow and performance monitoring  |
-
-These ports can be changed, see the [tuning documentation](Tuning.md).
+Service     | Protocol  | Default Port  | Purpose                                   |
+---         | ---       | ---           | ---                                       |
+Netflow v5  | UDP       | 2055          | Basic flow monitoring                     |
+Netflow v9  | UDP       | 9995          | Intermediate flow monitoring              |
+IPFIX       | UDP       | 4739          | Advanced flow monitoring                  |
+sFlow       | UDP       | 6343          | Advanced flow and performance monitoring  |
 
 # Access
-You can access your flow data in a few different ways - graphically via Kibana, through Elasticsearch JSON-formatted queries, and via curl HTTP requests. Access to Kibana can optionally be restricted using Squid via a reverse proxy, and the directions for setting that up are included.
+Access your flow data however you want - Kibana dashboards, Elasticsearch JSON-formatted queries, or curl HTTP requests. Access to Kibana can be restricted using Squid via a reverse proxy and the directions for setting that up are included.
 
 See the [installation documentation](Install/README.md#kibana-authentication-optional) for more information.
 
 # Limitations
-The following protocols or vendor features are **NOT** supported by the Flow Analyzer project.
+The following protocols, vendor features, or vendor-proprietary functions are **NOT** supported by the Flow Analyzer project.
 
 ## Vendor Features and Protocols
 These technologies may use a supported protocol for transport but there are proprietary fields, codes, or structures in use. Some protocols may require parsing that is undocumented or proprietary to the vendor.
@@ -166,7 +161,7 @@ These technologies may use a supported protocol for transport but there are prop
 If you run into any issues during or after installation check out the [Debugging page](Debug.md) for helpful commands and debugging options.
 
 # Contributing
-We encourage people who use the Flow Analyzer to contribute to the project if they find a bug or documentation issue, or want to see a feature added. See the [Contributing page](CONTRIBUTING.md) for more information about contributing code to the project.
+We encourage people who use the Flow Analyzer to contribute to the project if they find a bug or documentation issue, or want to see a feature added. See the [Contributing page](CONTRIBUTING.md) for more information about contributing code to the project. Interactions between participants should be within the bounds of the [Code of Conduct](Code%20of%20Conduct.md).
 
 # License
 Copyright (c) 2016, Manito Networks, LLC
@@ -183,24 +178,17 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Attributions
-"_Elasticsearch_" and "_Kibana_" are registered trademarks of Elasticsearch BV.
-
-"_Elasticsearch_" and "_Kibana_" are distributed under the Apache 2 license by Elasticsearch BV.
-
-"_Ubuntu_" is a registered trademark of Canonical Ltd.
-
-_"sFlow"_ is a registered trademark of InMon Corporation.
-
-"_Cisco_" is a registered trademark of Cisco Systems, Inc.
-
-"_Mikrotik_" is a trademark of Mikrotikls SIA.
-
-"_Huawei_" is a trademark of Huawei Technologies Co., Ltd.
-
-"_NVIDIA_" is a trademark of NVIDIA Corporation.
-
-"_Broadcom_" is a trademark of AVAGO TECHNOLOGIES GENERAL IP (SINGAPORE) PTE. LTD.
+Trademark, copyright, and license disclosures below:
+* "_Elasticsearch_" and "_Kibana_" are registered trademarks of Elasticsearch BV.
+* "_Elasticsearch_" and "_Kibana_" are distributed under the Apache 2 license by Elasticsearch BV.
+* "_Ubuntu_" is a registered trademark of Canonical Ltd.
+* "_sFlow_" is a registered trademark of InMon Corporation.
+* "_Cisco_" is a registered trademark of Cisco Systems, Inc.
+* "_Mikrotik_" is a trademark of Mikrotikls SIA.
+* "_Huawei_" is a trademark of Huawei Technologies Co., Ltd.
+* "_NVIDIA_" is a trademark of NVIDIA Corporation.
+* "_Broadcom_" is a trademark of AVAGO TECHNOLOGIES GENERAL IP (SINGAPORE) PTE. LTD.
 
 # ---
-**Copyright (c) 2016, Manito Networks, LLC**
+**Copyright (c) 2017, Manito Networks, LLC**
 **All rights reserved.**
