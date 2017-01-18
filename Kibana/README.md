@@ -1,41 +1,18 @@
-# **Kibana Visualizations and Dashboards**
+# Kibana
+Kibana is the component of the ELK stack that visualizes data - it is the face of your network flows. Kibana is driven by Searches, Visualizations, and Dashboards.
 
-Baseline Searches, Visualizations, and Dashboards are provided for Kibana so you can start analyzing flow data right away.
+# Kibana JSON Files
+The [Netflow ELK5 JSON file](netflow_elk5.json) provides a solid foundation with preconfigured Dashboards for Netflow and IPFIX flows. The [sFlow ELK5 JSON file](sflow_elk5.json) does the same for sFlow data.
 
-The [Default JSON file](Default.json) provides a solid foundation with preconfigured Dashboards, including:
+# Searches
+Searches do just that - search your flow data. Searches don't visualize or graph the data, but they can drive the Visualizations that make up Dashboards. You can search for a single field or a combination of fields. See the [Kibana Search document](Searches.md) for plenty of examples of Searches you can use.
 
-1. Traffic At A Glance
- 1. Total traffic over time
- 2. Traffic by protocol
-2. Traffic Overview
-  1. Total data over time
-  2. Total flow data metrics
-  3. Protocol types
-3. Flow Statistics
-  1. Flow count metrics
-  2. Flow types (Netflow v5, v9, IPFIX)
-  3. Sensors
-4. DNS
-  1. DNS traffic over time
-  2. Top DNS servers
-  3. Top DNS clients
-  4. Total DNS data traffic metrics
-5. Autonomous Systems
-  1. Top source AS
-  2. Top destination AS
-  3. Total traffic by AS metrics
-6. ICMP Traffic
-  1. ICMP traffic over time 
-  2. Top ICMP sources
-  3. Top ICMP destinations
-  4. Total ICMP traffic metrics
-7. Web Traffic
-  1. Web traffic over time
-  2. Web traffic by protocol (HTTP, HTTPS, HTTP-Alt, etc)
-  3. Web traffic metrics
-  4. Top web traffic destinations
+# Visualizations
+Visualizations query Elasticsearch and produce something useful for humans like a bar or line graph. Collections of Visualizations come together to create Dashboards. Visualizations are included to help you build great Dashboards of your own, or expand the included Dashboards.
 
+# Dashboards
+Dashboards are collections of Visualizations that produce meaningful insights or at-a-glance performance snapshots. Users should customize or create their own Dashboards to match their duties or workflows.
 
 # ---
-**Copyright (c) 2016, Manito Networks, LLC**
+**Copyright (c) 2017, Manito Networks, LLC**
 **All rights reserved.**
