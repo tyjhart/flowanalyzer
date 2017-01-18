@@ -84,3 +84,12 @@ Traffic: DNS
 ```
 Source\ Port: (3389 3390) OR Destination\ Port: (3389 3390)
 ```
+
+## VNC
+```
+Source\ Port: 5900 OR Destination\ Port: 5900
+```
+
+# ---
+**Copyright (c) 2017, Manito Networks, LLC**
+**All rights reserved.**
