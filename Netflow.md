@@ -48,5 +48,5 @@ Unlike Netflow v9 though, IPFIX can be used to report other kinds of events besi
 Some vendors have also released their own proprietary field definitions beyond what is supported in the standard. The openness and availability of these field definitions varies from vendor-to-vendor, and we are exploring what would be required to support mainstream vendors.
 
 # ---
-**Copyright (c) 2016, Manito Networks, LLC**
+**Copyright (c) 2017, Manito Networks, LLC**
 **All rights reserved.**
