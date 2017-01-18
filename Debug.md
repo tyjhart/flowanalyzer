@@ -105,17 +105,14 @@ First, stop the collector service already running (e.g. Netflow v9) in the backg
 ```
 sudo systemctl netflow_v9 stop
 ```
-
 Change directory to where the Flow Analyzer is running, then the Python directory:
 ```
 cd /your/directory/flowanalyzer/Python
 ```
-
 Run the collector Python file using the -l or --log debug options:
 ```
 python netflow_v9.py -l info
 ```
-
 or...
 ```
 python netflow_v9.py --log=debug
