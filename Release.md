@@ -28,3 +28,7 @@ Kibana has been updated to version 5 - see the [Kibana release notes](https://ww
 
 # v1.0.0 - Initial Release
 Initial release with Netflow v5, Netflow v9, and basic IPFIX functionality.
+
+# ---
+**Copyright (c) 2017, Manito Networks, LLC**
+**All rights reserved.**
