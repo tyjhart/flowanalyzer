@@ -6,5 +6,5 @@ and in raw Elasticsearch queries via Curl.
 The standard queries in this directory are used in baseline Visualizations that support included Dashboards.
 
 
-**Copyright (c) 2016, Manito Networks, LLC**
+**Copyright (c) 2017, Manito Networks, LLC**
 **All rights reserved.**
