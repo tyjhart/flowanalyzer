@@ -184,5 +184,5 @@ Counter     | 5703  | 1     | NVIDIA GPU Statistics                             
 See the [README Attributions section](README.md#attributions) for trademark attributions.
 
 # ---
-**Copyright (c) 2016, Manito Networks, LLC**
+**Copyright (c) 2017, Manito Networks, LLC**
 **All rights reserved.**
