@@ -119,5 +119,5 @@ Field                     | Description   | Measurement Units     | Supported   
 <sup>2</sup> Local to the individual collector device, must be combined with the device's IP address or another unique identifier.
 
 # ---
-**Copyright (c) 2016, Manito Networks, LLC**
+**Copyright (c) 2017, Manito Networks, LLC**
 **All rights reserved.**
