@@ -145,5 +145,5 @@ If you're not able to resolve your problem using the steps above it's best to [c
 chance to comment if they are seeing the same problem, or already know a good solution.
 
 # ---
-**Copyright (c) 2016, Manito Networks, LLC**
+**Copyright (c) 2017, Manito Networks, LLC**
 **All rights reserved.**
