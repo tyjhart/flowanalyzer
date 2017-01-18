@@ -55,3 +55,7 @@ Questions about support for the Manito Networks Flow Analyzer:
 
 ## Do you offer professional support?
 At the moment we do not, but we are in the process of exploring what it would take to provide that service at the level we expect of ourselves.
+
+# ---
+**Copyright (c) 2017, Manito Networks, LLC**
+**All rights reserved.**
