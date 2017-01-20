@@ -1,3 +1,0 @@
-http://your_ip:9200/_cluster/state?pretty&human=true
-
-curl 'localhost:9200/_cluster/state?pretty&human=true'

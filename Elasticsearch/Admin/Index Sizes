@@ -1,1 +1,0 @@
-curl 'localhost:9200/flow*/_stats/store?pretty&human=true'
