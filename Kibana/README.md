@@ -2,7 +2,7 @@
 Kibana is the component of the ELK stack that visualizes data - it is the face of your network flows. Kibana is driven by Searches, Visualizations, and Dashboards.
 
 # Kibana JSON Files
-The [Netflow ELK5 JSON file](netflow_elk5.json) provides a solid foundation with preconfigured Dashboards for Netflow and IPFIX flows. The [sFlow ELK5 JSON file](sflow_elk5.json) does the same for sFlow data.
+The [Netflow ELK5 JSON file](netflow_elk5.json) provides a solid foundation with preconfigured Dashboards for Netflow and IPFIX flows. The [sFlow ELK5 JSON file](sflow_elk5.json) does the same for sFlow data. The fields and data types provided by Netflow / IPFIX and sFlow are so different we provide separate Searches, Visualizations, and Dashboards for each. They are not cross-compatible because they provide very different kinds of data.
 
 # Searches
 Searches do just that - search your flow data. Searches don't visualize or graph the data, but they can drive the Visualizations that make up Dashboards. You can search for a single field or a combination of fields. See the [Kibana Search document](Searches.md) for plenty of examples of Searches you can use.
