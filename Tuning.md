@@ -1,5 +1,4 @@
 # Tuning
-
 The following information and options are here to help you tune and troubleshoot the Flow Analyzer to perform optimally in your networks. 
 It's recommended you make incremental changes, just in case something get set incorrectly so troubleshooting will be easier.
 
@@ -27,7 +26,6 @@ It's recommended you make incremental changes, just in case something get set in
     2. [MAC Address Lookups](#mac-address-lookups)
 
 ## Time Zone
-
 The Ubuntu Server's timezone is set to UTC during the install, and all events are logged into Elasticsearch with UTC timestamps.
 This is for Elasticsearch purposes, and to ensure that it's possible to correlate flow data from devices across time zones and
 DST implementations. Changing the timezone to something other than UTC isn't supported.
@@ -35,14 +33,12 @@ DST implementations. Changing the timezone to something other than UTC isn't sup
 Kibana adjusts for local time automatically, so you don't have to do anything to see events with usable timestamps.
 
 ## Files
-
 The master configuration file is **netflow_options.py**, and contains all the configurable options for the system. 
 As part of the initial configuration it is copied from netflow_options_example.py. 
 
 It already has the typical settings in place, including the ports and IP addresses listed in this document and the settings that follow.
 
 ## Services
-
 Three services run in the background that collect, parse, tag, and upload flows. The services are orchestrated by **systemd**, and are set 
 to restart on a 30sec interval if they fail for whatever reason.
 
@@ -55,7 +51,6 @@ The service files are located in the following locations:
 You should not need to edit these files, unless you really know what you're doing and want to tweak their behavior.
 
 ### Service Names
-
 Service names correspond to their respective protocols:
 
 - netflow_v5
@@ -63,7 +58,6 @@ Service names correspond to their respective protocols:
 - ipfix
 
 ### Default Ports
-
 The following ports are used by default to listen for flow packets:
 
 Service | Protocol | Port
@@ -82,6 +76,7 @@ You can view the status of the services listed above and control their operation
 systemctl status netflow_v5
 systemctl status netflow_v9
 systemctl status ipfix
+systemctl status sflow
 ```
 #### Restart Services
 Restart services by running the following:
@@ -89,6 +84,7 @@ Restart services by running the following:
 systemctl restart netflow_v5
 systemctl restart netflow_v9
 systemctl restart ipfix
+systemctl restart sflow
 ```
 #### View Service Logs
 View logs for each of the services by using **journalctl**:
@@ -96,6 +92,7 @@ View logs for each of the services by using **journalctl**:
 journalctl -u netflow_v5
 journalctl -u netflow_v9
 journalctl -u ipfix
+journalctl -u sflow
 ```
 The **journalctl** command is really versatile when it comes to displaying logs - check out the **man page** for more information:
 ```
@@ -103,7 +100,6 @@ man journalctl
 ```
 
 ## Flow Templates
-
 This isn't something you really have to manage, but be aware that Netflow v9 and IPFIX aren't static like Netflow v5 - they need templates to decode flows.
 Templates are an ordered list of the fields a device is exporting and the sizes of those fields. They are the key to decoding flows, because Netflow v9 and IPFIX
 have hundreds of fields, and not all platforms support them all. Even if they did you probably wouldn't want hundreds of data points per flow, because most of them
@@ -128,31 +124,22 @@ This is normal behavior per the Netflow v9 and IPFIX standards. The only thing t
 support that configuration (not all do).
 
 ## Elasticsearch
-
-Tuning the Elasticsearch cluster keeps it working optimally and healthy over the long-term so your flow data is always available.
-It's possible to get really phenomenal performance out of an Elasticsearch cluster, but some basic tuning is required. We've attempted
-to use recommended and sane settings for the default configuration, but if you're scaling Elasticsearch up you'll need to adjust some 
-of the values we've set for you.
+Tuning the Elasticsearch cluster keeps it working optimally and healthy over the long-term so your flow data is always available. It's possible to get really phenomenal performance out of an Elasticsearch cluster, but some basic tuning is required. We've attempted to use recommended and sane settings for the default configuration, but if you're scaling Elasticsearch up you'll need to adjust some of the values we've set for you.
 
 ### Connection
-
 By default the flow collector services are configured to connect to an Elasticsearch instance running on locahost.
 The setting can be found in **netflow_options.py**, as shown below:
-
 ```
 elasticsearch_host = '127.0.0.1'
 ```
 
 If you already have an existing Elasticsearch cluster running you can change this setting, using either an IP address or FQDN.
-You will be responsible for creating the Flow index on your own cluster, and the curl command to build the index can be found in the 
-[build_index.sh file](Install/build_index.sh).
+You will be responsible for creating the Flow index on your own cluster, and the curl command to build the index can be found in the [build_index.sh file](Install/build_index.sh).
 
 ### YML Configuration File
-
 The installation script sets a few Elasticsearch options for you in the **/etc/elasticsearch/elasticsearch.yml** configuration file.
 
 #### Node Name
-
 So we don't unintentionally interfere with other Elasticsearch nodes you might have on the network for other projects.
 ```
 node.name: Master01
@@ -160,7 +147,6 @@ node.name: Master01
 Changing this won't affect any functionality, but you will have to restart the Elasticsearch service or reboot the server for it to work.
 
 #### Cluster Name
-
 This prevents the Flow Analyzer Elasticsearch node from joining an Elasticsearch cluster you might already have in production.
 ```
 cluster.name: manito_networks
@@ -168,7 +154,6 @@ cluster.name: manito_networks
 If you decide to change the cluster name be sure to restart the Elasticsearch service or reboot the server.
 
 #### Network Host
-
 This setting determines what network interfaces Elasticsearch will listen on. By default it only listens on the local host, which
 makes it difficult to run queries remotely, or integrate it with other Elasticsearch nodes.
 ```
@@ -177,7 +162,6 @@ network.host: [_local_,_site_]
 Restart the Elasticsearch service or reboot the server if you change the interfaces listed in the network.host setting.
 
 ### Bulk Insert
-
 Depending on the traffic volume you're feeding to Flow Analyzer you may need to tune a couple settings to get the best
 performance.
 
@@ -201,11 +185,9 @@ For wired ISP's that are able to push more data, and other large enterprises the
 Performance for those larger organizations and ISPs will also depend on the performance of their Elasticsearch cluster.
 
 ### Index Age and Data Retention
-
 By default the Flow Analyzer retains 30 days of flow data. Depending on how large your Elasticsearch cluster is, how much storage is
 allocated on each node, and what your data retention needs are this may need to change. [Elastic's Curator](https://www.elastic.co/guide/en/elasticsearch/client/curator/current/about.html) 
-is used to prune the indexes in Elasticsearch to ensure that your storage isn't overwhelmed. The Curator job is fired off by a daily
-Cron job inside **/etc/cron.daily/index_prune** that is created by the installation script as shown below:
+is used to prune the indexes in Elasticsearch to ensure that your storage isn't overwhelmed. The Curator job is fired off by a daily Cron job inside **/etc/cron.daily/index_prune** that is created by the installation script as shown below:
 ```
 curator --host 127.0.0.1 delete indices --older-than 30 --prefix "flow" --time-unit days  --timestring '%Y-%m-%d'
 ```
@@ -214,7 +196,6 @@ If you need more (or less) days of flow retention adjust the value currently set
 If you are using an external Elasticsearch cluster replace the localhost (127.0.0.1) IP address with the address of your cluster.
 
 ### Disk Space
-
 The amount of disk space you have and the size of your Elasticsearch cluster will determine how many days of flow data you can keep on hand, and how often you can sample flows. Elasticsearch can run fairly well on nodes with minimal RAM if there are a number of nodes to balance across, but it will absolutely crater like any software if you run out of disk space.
 
 It's important to monitor your available disk space to make sure you're not overwhelming the available disk space, and that the index pruning job is pruning often enough.
@@ -225,44 +206,34 @@ df -h
 ```
 
 ## Lookups
-
 The Flow Analyzer can do reverse DNS lookups, as well as MAC address correlation (beta) to help you get more insight out of your flow data.
 
 ### DNS Reverse Lookups
-
 A reverse lookup against observed IPs is done if DNS lookups are enabled. Resolved domains are cached for 30 minutes to reduce
 the impact on DNS servers. Popular domains like facebook.com and cnn.com are categorized to provide some insight into website
 browsing on the network.
 
-DNS reverse lookups are disabled by default due to their potential impact on DNS servers in high traffic environments.
+DNS reverse lookups are disabled by default due to their potential impact on DNS servers in high traffic environments. DNS lookups can also introduce latency when processing flow records. See [this article on the impact of DNS lookups](https://www.manitonetworks.com/flow-management/2017/1/20/impact-of-dns-lookups) for more information.
 
-They can be enabled by changing the following default option in **netflow_options.py** once it's copied 
-in the [installation script](Install/ubuntu_install.sh):
-
+Reverse lookups can be enabled by changing the following default option in **netflow_options.py**:
 ```
 dns = False
 ```
-
-to
-
+to...
 ```
 dns = True
 ```
 
 If you have a local DNS server that can resolve internal addresses in the RFC-1918 range you can also change this default option:
-
 ```
 lookup_internal = False
 ```
-
-to
-
+to...
 ```
 lookup_internal = True
 ```
 
 ### MAC Address Lookups
-
 Correlation of MAC address OUI's to top manufacturer's is done to help graph traffic sources in hetergenous environments. 
 
 Note: This feature is in beta, and the list of OUI's to be built is quite extensive.

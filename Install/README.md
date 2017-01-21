@@ -285,7 +285,7 @@ Perform the following steps below on the following sFlow index fields:
 # Tuning
 There are additional features that you can utilize, but they have to be enabled by you. This includes:
 
- - [Reverse DNS Lookups](../Tuning.md#lookups) & Content Tagging
+ - [Reverse DNS Lookups](../Tuning.md#lookups) and Content Tagging
  - MAC Address Prefix Tagging (in development)
 
 See [the tuning documentation](../Tuning.md) for how to enable these features, and recommendations for baseline settings.
