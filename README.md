@@ -116,7 +116,7 @@ If you run into any issues during or after installation check out the [Debugging
 We encourage people who use the Flow Analyzer to contribute to the project if they find a bug or documentation issue, or want to see a feature added. See the [Contributing page](CONTRIBUTING.md) for more information about contributing code to the project. Interactions between participants should be within the bounds of the [Code of Conduct](Code%20of%20Conduct.md).
 
 # License
-Copyright (c) 2016, Manito Networks, LLC
+Copyright (c) 2017, Manito Networks, LLC
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
